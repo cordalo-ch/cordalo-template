@@ -1,0 +1,78 @@
+apply plugin: 'org.springframework.boot'
+
+sourceSets {
+    main {
+        resources {
+            srcDir rootProject.file("config/dev")
+        }
+    }
+}
+
+dependencies {
+    // Corda dependencies.
+    compile "$corda_release_group:corda-core:$corda_release_version"
+    compile "$corda_release_group:corda-jackson:$corda_release_version"
+    compile "$corda_release_group:corda-rpc:$corda_release_version"
+    compile "$corda_release_group:corda:$corda_release_version"
+
+    compile "ch.cordalo:corda-common-client:$cordalo_version"
+
+    // CorDapp dependencies.
+    compile project(":contracts")
+    compile project(":workflows")
+
+    compile("org.springframework.boot:spring-boot-starter-websocket:$spring_boot_version") {
+        exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
+    }
+    compile("org.springframework.boot:spring-boot-devtools:$spring_boot_version")
+
+    compile("org.webjars:webjars-locator-core:0.38")
+    compile("org.webjars:sockjs-client:1.1.2")
+    compile("org.webjars:stomp-websocket:2.3.3-1")
+    compile("org.webjars:bootstrap:4.3.1")
+    compile("org.webjars:jquery:3.4.1")
+
+
+    compile "org.apache.logging.log4j:log4j-slf4j-impl:${log4j_version}"
+    compile "org.apache.logging.log4j:log4j-web:${log4j_version}"
+    compile "org.slf4j:jul-to-slf4j:$slf4j_version"
+}
+
+springBoot {
+    mainClassName = "com.cordalo.template.client.webserver.Server"
+}
+
+task runWebserver0(type: JavaExec, dependsOn: assemble) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'com.cordalo.template.client.webserver.Starter'
+    args '--server.port=10901', '--config.rpc.host=localhost', '--config.rpc.port=10006', '--config.rpc.username=user1', '--config.rpc.password=test'
+}
+
+task runWebserver1(type: JavaExec, dependsOn: assemble) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'com.cordalo.template.client.webserver.Starter'
+    args '--server.port=10801', '--config.rpc.host=localhost', '--config.rpc.port=10006', '--config.rpc.username=user1', '--config.rpc.password=test'
+}
+
+task runWebserver2(type: JavaExec, dependsOn: assemble) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'com.cordalo.template.client.webserver.Starter'
+    args '--server.port=10802', '--config.rpc.host=localhost', '--config.rpc.port=10009', '--config.rpc.username=user1', '--config.rpc.password=test'
+}
+
+task runWebserver3(type: JavaExec, dependsOn: assemble) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'com.cordalo.template.client.webserver.Starter'
+    args '--server.port=10803', '--config.rpc.host=localhost', '--config.rpc.port=10012', '--config.rpc.username=user1', '--config.rpc.password=test'
+}
+
+task runWebserver4(type: JavaExec, dependsOn: assemble) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'com.cordalo.template.client.webserver.Starter'
+    args '--server.port=10804', '--config.rpc.host=localhost', '--config.rpc.port=10015', '--config.rpc.username=user1', '--config.rpc.password=test'
+}
+task runWebserver5(type: JavaExec, dependsOn: assemble) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'com.cordalo.template.client.webserver.Starter'
+    args '--server.port=10805', '--config.rpc.host=localhost', '--config.rpc.port=10018', '--config.rpc.username=user1', '--config.rpc.password=test'
+}
