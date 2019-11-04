@@ -21,8 +21,32 @@ cd script
 ./cleanAll.sh
 ```
 
-Be patient!
-When all Node and webserver are up, you can visit http://localhost:10801/?frames=10801+10802+10803,10804,10805
+Be patient! I can take upto some minutes to due issues of starting nodes in parallel. The scripts are re-trying to start until all is done and up.
+
+```
+---------------------------------------
+CORDA and Webservers are UP and running
+---------------------------------------
+Currently 6 CORDA nodes running
+Currently 5 Webservers  running
+```
+
+## Scripts
+| Name | Description |
+| cleanAll.sh  | stop nodes and web, git pull newest code and start again |
+| cleanServers.sh  | stops webservers, git pull and restart web only. Nodes still started |
+| stopForceAll.sh  | stops all nodes and web, killing all |
+| stopServers.sh  | stop web servers |
+| startAll.sh  | starts all node, web without cleaning, keep state of all nodes |
+| startServers.sh  | starts web only |
+| startNodes.sh  | starts nodes only |
+| checkStates.sh | displays the status of nodes and web |
+| tailServers.sh | tail all web server log files |
+| tailNodes.sh | tail all log files of all nodes |
+
+
+When all Node and webserver are up, 
+you can visit http://localhost:10801/?frames=10801+10802+10803,10804,10805
 
 ## Warning
 The warning from CordaApp still apply (https://docs.corda.net/tutorial-cordapp.html#running-the-example-cordapp)
