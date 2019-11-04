@@ -1,66 +1,69 @@
 <html>
 <script>
-
-function GETvar(parameterName) {
-    var result = null,
-    tmp = [];
-    location.search
-        .substr(1)
-        .split("&")
-        .forEach(function (item) {
-            tmp = item.split("=");
-            if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
-    });
-    return result;
-}
-var ports = "10801,10802,10803+10804,10805";
-var page = "frame.html";
-
-MAIN_URL = document.location.protocol + "//" + document.location.hostname
-var frames_param = GETvar("frames");
-if (frames_param == null) {
-    frames_param = ports;
-}
-var page_param = GETvar("page");
-if (page_param == null) {
-    page_param = page;
-}
-if (page_param[0] != "/") {
-    page_param = "/"+page_param;
-}
-frames_paramArray=frames_param.split(",");
-var fraction = 100 / frames_paramArray.length;
-var cols="";
-for(var port in frames_paramArray) {
-    if (cols != "") { cols = cols+","; }
-    cols = cols + fraction+"%";
-}
-var stream = "<frameset id='index_frames' cols='"+cols+"'>";
-
-var frames = frames_param.split(",");
-for (k in frames) {
-    var ports_vertical = frames[k].trim().split("+");
-    if (ports_vertical.length > 1) {
-        var fraction = 100 / ports_vertical.length;
-        var cols="";
-        for(var port in ports_vertical) {
-            if (cols != "") { cols = cols+","; }
-            cols = cols + fraction+"%";
-        }
-        stream = stream +"<frameset id='index_vertical_frames' rows='"+cols+"'>"
-        for (pk in ports_vertical) {
-            var url = MAIN_URL + ":" + ports_vertical[pk].trim()+page_param;
-            stream = stream + "<frame src='"+url+"'>";
-        }
-        stream = stream + "</frameset>";
-    } else {
-        var url = MAIN_URL + ":" + ports_vertical[0]+page_param;
-        stream = stream + "<frame src='"+url+"'>";
+    function GETvar(parameterName) {
+        var result = null,
+            tmp = [];
+        location.search
+            .substr(1)
+            .split("&")
+            .forEach(function (item) {
+                tmp = item.split("=");
+                if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+            });
+        return result;
     }
-}
-stream = stream + "</frameset>";
 
-document.write(stream);
+    var ports = "10801,10802,10803+10804,10805";
+    var page = "frame.html";
 
+    MAIN_URL = document.location.protocol + "//" + document.location.hostname
+    var frames_param = GETvar("frames");
+    if (frames_param == null) {
+        frames_param = ports;
+    }
+    var page_param = GETvar("page");
+    if (page_param == null) {
+        page_param = page;
+    }
+    if (page_param[0] !== "/") {
+        page_param = "/" + page_param;
+    }
+    frames_paramArray = frames_param.split(",");
+    var fraction = 100 / frames_paramArray.length;
+    var cols = "";
+    for (var port in frames_paramArray) {
+        if (cols !== "") {
+            cols = cols + ",";
+        }
+        cols = cols + fraction + "%";
+    }
+    var stream = "<frameset id='index_frames' cols='" + cols + "'>";
+
+    var frames = frames_param.split(",");
+    for (k in frames) {
+        var ports_vertical = frames[k].trim().split("+");
+        if (ports_vertical.length > 1) {
+            var fraction = 100 / ports_vertical.length;
+            var cols = "";
+            for (var port in ports_vertical) {
+                if (cols !== "") {
+                    cols = cols + ",";
+                }
+                cols = cols + fraction + "%";
+            }
+            stream = stream + "<frameset id='index_vertical_frames' rows='" + cols + "'>"
+            for (pk in ports_vertical) {
+                var url = MAIN_URL + ":" + ports_vertical[pk].trim() + page_param;
+                stream = stream + "<frame src='" + url + "'>";
+            }
+            stream = stream + "</frameset>";
+        } else {
+            var url = MAIN_URL + ":" + ports_vertical[0] + page_param;
+            stream = stream + "<frame src='" + url + "'>";
+        }
+    }
+    stream = stream + "</frameset>";
+
+    document.write(stream);
 </script>
 </html>

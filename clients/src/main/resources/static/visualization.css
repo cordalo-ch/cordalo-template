@@ -2,16 +2,20 @@
     padding: .1em;
     vertical-align: top;
 }
+
 .jsgrid-header-cell {
     padding: .1em;
 }
+
 .jsgrid-edit-row input {
-  padding: .8em .8em;
+    padding: .8em .8em;
 }
+
 #runningAnimation {
     display: none;
     margin: -150px;
 }
+
 #image-socket-ball {
     width: 20px;
 }
@@ -24,39 +28,49 @@
 .REQUESTED {
     background-color: blue;
 }
+
 .ACCEPTED {
     background-color: green;
 }
+
 .DENIED {
     background-color: red;
 }
+
 .WITHDRAWN {
     background-color: lightcoral;
 }
+
 h1 {
     font-size: 1.5em;
     font-weight: bold;
 }
+
 .tableTop {
-    display:table;
+    display: table;
 }
+
 .headerTop {
-    display:table-header-group;
-    font-weight:bold;
+    display: table-header-group;
+    font-weight: bold;
 }
+
 .rowTop {
-    display:table-row;
+    display: table-row;
 }
+
 .rowGroupTop {
-    display:table-row-group;
+    display: table-row-group;
 }
+
 .cellTopLeft {
-    display:table-cell;
-    width:100%;
+    display: table-cell;
+    width: 100%;
     vertical-align: middle;
 }
+
 .cellTopRight {
-    display:table-cell;
-    width:100%;
+    display: table-cell;
+    width: 100%;
     vertical-align: middle;
 }
