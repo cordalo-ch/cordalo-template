@@ -5,7 +5,6 @@ import ch.cordalo.corda.common.test.CordaTestNetwork;
 import ch.cordalo.corda.common.test.CordaloBaseTests;
 import com.google.common.collect.ImmutableList;
 import net.corda.core.flows.FlowLogic;
-import net.corda.testing.node.TestCordapp;
 
 import java.util.List;
 
@@ -15,10 +14,11 @@ public abstract class CordaloTemplateBaseTests extends CordaloBaseTests {
     }
 
     protected CordaTestNetwork network;
-    protected CordaNodeEnvironment insurance1;
-    protected CordaNodeEnvironment insurance2;
-    protected CordaNodeEnvironment companyD1;
-    protected CordaNodeEnvironment companyD2;
+    protected CordaNodeEnvironment companyA;
+    protected CordaNodeEnvironment companyB;
+    protected CordaNodeEnvironment companyC;
+    protected CordaNodeEnvironment companyD;
+    protected CordaNodeEnvironment companyE;
 
     public List<String> getCordappPackageNames() {
         return ImmutableList.of(
@@ -34,10 +34,11 @@ public abstract class CordaloTemplateBaseTests extends CordaloBaseTests {
             this.getCordappPackageNames(),
             responderClasses
         );
-        this.insurance1 = network.startEnv("Company-A", "O=Company-A,L=Zurich,ST=ZH,C=CH");
-        this.insurance2 = network.startEnv("Company-B", "O=Company-B,L=Winterthur,ST=ZH,C=CH");
-        this.companyD1 = network.startEnv("Company-C", "O=Company-C,L=Zug,ST=ZG,C=CH");
-        this.companyD2 = network.startEnv("Company-D", "O=Company-D,L=Zurich,ST=ZH,C=CH");
+        this.companyA = network.startEnv("Company-A", "O=Company-A,L=Zurich,ST=ZH,C=CH");
+        this.companyB = network.startEnv("Company-B", "O=Company-B,L=Winterthur,ST=ZH,C=CH");
+        this.companyC = network.startEnv("Company-C", "O=Company-C,L=Zug,ST=ZG,C=CH");
+        this.companyD = network.startEnv("Company-D", "O=Company-D,L=Zurich,ST=ZH,C=CH");
+        this.companyE = network.startEnv("Company-E", "O=Company-E,L=Zurich,ST=ZH,C=CH");
         this.network.startNodes();
     }
 

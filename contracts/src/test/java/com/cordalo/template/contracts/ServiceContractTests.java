@@ -21,7 +21,7 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
 
     private ServiceState newService() {
         return ServiceState.create(
-                new UniqueIdentifier(), "insurance", this.insurance1.party,
+                new UniqueIdentifier(), "insurance", this.companyA.party,
                 JsonHelper.convertStringToJson(ServiceStateTests.dataJSONString()));
     }
     private ServiceState updateService(ServiceState service) {
@@ -66,7 +66,7 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
 
     @Test
     public void service_create_normal_no_initial_state() {
-        transaction(insurance1.ledgerServices, tx -> {
+        transaction(companyA.ledgerServices, tx -> {
             ServiceState service1 = newService();
             ServiceState service2 = setInvalidState(service1, StateMachine.State.SHARED);
             tx.output(ServiceContract.ID, service2);
@@ -78,7 +78,7 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
 
     @Test
     public void service_create_normal_input_not_empty() {
-        transaction(insurance1.ledgerServices, tx -> {
+        transaction(companyA.ledgerServices, tx -> {
             ServiceState service1 = newService();
             ServiceState service2 = newService();
             tx.input(ServiceContract.ID, service1);
@@ -91,7 +91,7 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
 
     @Test
     public void service_create_normal_double_output() {
-        transaction(insurance1.ledgerServices, tx -> {
+        transaction(companyA.ledgerServices, tx -> {
             ServiceState service1 = newService();
             ServiceState service2 = newService();
             tx.input(ServiceContract.ID, service1);
@@ -105,7 +105,7 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
 
     @Test
     public void service_create_normal_double_input() {
-        transaction(insurance1.ledgerServices, tx -> {
+        transaction(companyA.ledgerServices, tx -> {
             ServiceState service1 = newService();
             ServiceState service2 = newService();
             tx.output(ServiceContract.ID, service1);
@@ -119,7 +119,7 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
 
     @Test
     public void service_create_normal() {
-        transaction(insurance1.ledgerServices, tx -> {
+        transaction(companyA.ledgerServices, tx -> {
             ServiceState service1 = newService();
             tx.output(ServiceContract.ID, service1);
             tx.command(service1.getParticipantKeys(), new ServiceContract.Commands.Create());
@@ -130,7 +130,7 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
 
     @Test
     public void service_update_normal_no_input() {
-        transaction(insurance1.ledgerServices, tx -> {
+        transaction(companyA.ledgerServices, tx -> {
             ServiceState service1 = newService();
             ServiceState service2 = updateService(service1);
             tx.output(ServiceContract.ID, service2);
@@ -143,7 +143,7 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
 
     @Test
     public void service_update_normal_not_same_ID() {
-        transaction(insurance1.ledgerServices, tx -> {
+        transaction(companyA.ledgerServices, tx -> {
             ServiceState service1 = newService();
             ServiceState service2 = updateService(newService());
             tx.input(ServiceContract.ID, service1);
@@ -156,7 +156,7 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
 
     @Test
     public void service_update_normal_ACCEPTED_invalid_state() {
-        transaction(insurance1.ledgerServices, tx -> {
+        transaction(companyA.ledgerServices, tx -> {
             ServiceState service1 = newService();
             ServiceState service1a = setInvalidState(service1, StateMachine.State.ACCEPTED);
             ServiceState service2 = setInvalidState(updateService(service1), StateMachine.State.ACCEPTED);
@@ -171,7 +171,7 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
 
     @Test
     public void service_update_normal_WITHDRAWN_invalid_state() {
-        transaction(insurance1.ledgerServices, tx -> {
+        transaction(companyA.ledgerServices, tx -> {
             ServiceState service1 = newService();
             ServiceState service1a = setInvalidState(service1, StateMachine.State.NOT_SHARED);
             ServiceState service2 = setInvalidState(updateService(service1), StateMachine.State.NOT_SHARED);
@@ -186,7 +186,7 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
 
     @Test
     public void service_update_normal_DECLINED_invalid_state() {
-        transaction(insurance1.ledgerServices, tx -> {
+        transaction(companyA.ledgerServices, tx -> {
             ServiceState service1 = newService();
             ServiceState service1a = setInvalidState(service1, StateMachine.State.DECLINED);
             ServiceState service2 = setInvalidState(updateService(service1), StateMachine.State.DECLINED);
@@ -202,7 +202,7 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
 
     @Test
     public void service_update_normal_double_output_same() {
-        transaction(insurance1.ledgerServices, tx -> {
+        transaction(companyA.ledgerServices, tx -> {
             ServiceState service1 = newService();
             ServiceState service2 = updateService(service1);
             tx.input(ServiceContract.ID, service1);
@@ -216,7 +216,7 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
 
     @Test
     public void service_update_normal_double_output_different() {
-        transaction(insurance1.ledgerServices, tx -> {
+        transaction(companyA.ledgerServices, tx -> {
             ServiceState service1 = newService();
             ServiceState service2 = updateService(service1);
             ServiceState service3 = updateService(service2);
@@ -233,7 +233,7 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
 
     @Test
     public void service_update_normal() {
-        transaction(insurance1.ledgerServices, tx -> {
+        transaction(companyA.ledgerServices, tx -> {
             ServiceState service1 = newService();
             ServiceState service2 = updateService(service1);
             tx.input(ServiceContract.ID, service1);
@@ -249,9 +249,9 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
 
     @Test
     public void service_share_direct_failed() {
-        transaction(insurance1.ledgerServices, tx -> {
+        transaction(companyA.ledgerServices, tx -> {
             ServiceState service1 = newService();
-            ServiceState service2 = shareService(service1, this.insurance2.party);
+            ServiceState service2 = shareService(service1, this.companyB.party);
             tx.output(ServiceContract.ID, service2);
             tx.command(service2.getParticipantKeys(), new ServiceContract.Commands.Share());
             tx.failsWith("List should not be empty");
@@ -262,9 +262,9 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
 
     @Test
     public void service_share_direct_failed_same_parties() {
-        transaction(insurance1.ledgerServices, tx -> {
+        transaction(companyA.ledgerServices, tx -> {
             ServiceState service1 = newService();
-            ServiceState service2 = shareService(service1, this.insurance1.party);
+            ServiceState service2 = shareService(service1, this.companyA.party);
             tx.input(ServiceContract.ID, service1);
             tx.output(ServiceContract.ID, service2);
             tx.command(service2.getParticipantKeys(), new ServiceContract.Commands.Share());
@@ -275,7 +275,7 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
 
     @Test
     public void service_share_direct_failed_sp_null() {
-        transaction(insurance1.ledgerServices, tx -> {
+        transaction(companyA.ledgerServices, tx -> {
             ServiceState service1 = newService();
             ServiceState service2 = shareService(service1, null);
             tx.input(ServiceContract.ID, service1);
@@ -288,9 +288,9 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
 
     @Test
     public void service_share_direct() {
-        transaction(insurance1.ledgerServices, tx -> {
+        transaction(companyA.ledgerServices, tx -> {
             ServiceState service1 = newService();
-            ServiceState service2 = shareService(service1, this.insurance2.party);
+            ServiceState service2 = shareService(service1, this.companyB.party);
             tx.input(ServiceContract.ID, service1);
             tx.output(ServiceContract.ID, service2);
             tx.command(service2.getParticipantKeys(), new ServiceContract.Commands.Share());
@@ -301,10 +301,10 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
 
     @Test
     public void service_share_updated() {
-        transaction(insurance1.ledgerServices, tx -> {
+        transaction(companyA.ledgerServices, tx -> {
             ServiceState service1 = newService();
             ServiceState service1a = updateService(service1);
-            ServiceState service2 = shareService(service1a, this.insurance2.party);
+            ServiceState service2 = shareService(service1a, this.companyB.party);
             tx.input(ServiceContract.ID, service1a);
             tx.output(ServiceContract.ID, service2);
             tx.command(service2.getParticipantKeys(), new ServiceContract.Commands.Share());
@@ -316,7 +316,7 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
 
     @Test
     public void service_create_withdraw_failed_no_input() {
-        transaction(insurance1.ledgerServices, tx -> {
+        transaction(companyA.ledgerServices, tx -> {
             ServiceState service1 = newService();
             ServiceState service2 = withAction(service1, "WITHDRAW");
             tx.output(ServiceContract.ID, service2);
@@ -328,7 +328,7 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
 
     @Test
     public void service_create_withdraw_wrong_state() {
-        transaction(insurance1.ledgerServices, tx -> {
+        transaction(companyA.ledgerServices, tx -> {
             ServiceState service1 = newService();
             ServiceState service2 = withAction(service1, "WITHDRAW");
             ServiceState service2a = setInvalidState(service2, StateMachine.State.ACCEPTED);
@@ -343,7 +343,7 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
 
     @Test
     public void service_create_withdraw() {
-        transaction(insurance1.ledgerServices, tx -> {
+        transaction(companyA.ledgerServices, tx -> {
             ServiceState service1 = newService();
             ServiceState service2 = withAction(service1, "WITHDRAW");
             tx.input(ServiceContract.ID, service1);
@@ -356,7 +356,7 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
 
     @Test
     public void service_create_withdraw_updated() {
-        transaction(insurance1.ledgerServices, tx -> {
+        transaction(companyA.ledgerServices, tx -> {
             ServiceState service1 = updateService(newService());
             ServiceState service2 = withAction(service1, "WITHDRAW");
             tx.input(ServiceContract.ID, service1);
@@ -371,8 +371,8 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
 
     @Test
     public void service_update_shared_updated() {
-        transaction(insurance1.ledgerServices, tx -> {
-            ServiceState service1 = shareService(updateService(newService()), this.insurance2.party);
+        transaction(companyA.ledgerServices, tx -> {
+            ServiceState service1 = shareService(updateService(newService()), this.companyB.party);
             ServiceState service2 = updateService(service1);
             tx.input(ServiceContract.ID, service1);
             tx.output(ServiceContract.ID, service2);
@@ -385,8 +385,8 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
 
     @Test
     public void service_update2_shared_updated() {
-        transaction(insurance1.ledgerServices, tx -> {
-            ServiceState service1 = updateService(shareService(updateService(newService()), this.insurance2.party));
+        transaction(companyA.ledgerServices, tx -> {
+            ServiceState service1 = updateService(shareService(updateService(newService()), this.companyB.party));
             ServiceState service2 = updateService(service1);
             tx.input(ServiceContract.ID, service1);
             tx.output(ServiceContract.ID, service2);
@@ -400,8 +400,8 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
 
     @Test
     public void service_decline() {
-        transaction(insurance1.ledgerServices, tx -> {
-            ServiceState service1 = shareService(newService(), this.insurance2.party);
+        transaction(companyA.ledgerServices, tx -> {
+            ServiceState service1 = shareService(newService(), this.companyB.party);
             ServiceState service2 = withAction(service1, "DECLINE");
             tx.input(ServiceContract.ID, service1);
             tx.output(ServiceContract.ID, service2);
@@ -415,8 +415,8 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
 
     @Test
     public void service_decline_after_update() {
-        transaction(insurance1.ledgerServices, tx -> {
-            ServiceState service1 = updateService(shareService(newService(), this.insurance2.party));
+        transaction(companyA.ledgerServices, tx -> {
+            ServiceState service1 = updateService(shareService(newService(), this.companyB.party));
             ServiceState service2 = withAction(service1, "DECLINE");
             tx.input(ServiceContract.ID, service1);
             tx.output(ServiceContract.ID, service2);
@@ -429,8 +429,8 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
 
     @Test
     public void service_decline_invalid_state() {
-        transaction(insurance1.ledgerServices, tx -> {
-            ServiceState service1 = shareService(newService(), this.insurance2.party);
+        transaction(companyA.ledgerServices, tx -> {
+            ServiceState service1 = shareService(newService(), this.companyB.party);
             ServiceState service2 = setInvalidState(withAction(service1, "DECLINE"), StateMachine.State.ACCEPTED);
             tx.input(ServiceContract.ID, service1);
             tx.output(ServiceContract.ID, service2);
@@ -443,7 +443,7 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
 
     @Test(expected = IllegalStateException.class)
     public void service_decline_invalid_pre_state_on_state_feature() {
-        transaction(insurance1.ledgerServices, tx -> {
+        transaction(companyA.ledgerServices, tx -> {
             ServiceState service1 = newService();
             ServiceState service2 = withAction(service1, "DECLINE");
             tx.input(ServiceContract.ID, service1);
@@ -457,9 +457,9 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
 
     @Test
     public void service_decline_invalid_pre_state() {
-        transaction(insurance1.ledgerServices, tx -> {
+        transaction(companyA.ledgerServices, tx -> {
             ServiceState service1 = newService();
-            ServiceState service2 = setInvalidStateProvider(service1, StateMachine.State.DECLINED, this.insurance2.party);
+            ServiceState service2 = setInvalidStateProvider(service1, StateMachine.State.DECLINED, this.companyB.party);
             tx.input(ServiceContract.ID, service1);
             tx.output(ServiceContract.ID, service2);
             tx.command(service2.getParticipantKeys(), new ServiceContract.Commands.ActionAfterShare("DECLINE"));
@@ -472,8 +472,8 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
 
     @Test
     public void service_accept() {
-        transaction(insurance1.ledgerServices, tx -> {
-            ServiceState service1 = shareService(newService(), this.insurance2.party);
+        transaction(companyA.ledgerServices, tx -> {
+            ServiceState service1 = shareService(newService(), this.companyB.party);
             ServiceState service2 = withAction(service1, "ACCEPT");
             tx.input(ServiceContract.ID, service1);
             tx.output(ServiceContract.ID, service2);
@@ -487,8 +487,8 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
 
     @Test
     public void service_accept_after_update() {
-        transaction(insurance1.ledgerServices, tx -> {
-            ServiceState service1 = updateService(shareService(newService(), this.insurance2.party));
+        transaction(companyA.ledgerServices, tx -> {
+            ServiceState service1 = updateService(shareService(newService(), this.companyB.party));
             ServiceState service2 = withAction(service1, "ACCEPT");
             tx.input(ServiceContract.ID, service1);
             tx.output(ServiceContract.ID, service2);
@@ -501,8 +501,8 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
 
     @Test
     public void service_accept_invalid_state() {
-        transaction(insurance1.ledgerServices, tx -> {
-            ServiceState service1 = shareService(newService(), this.insurance2.party);
+        transaction(companyA.ledgerServices, tx -> {
+            ServiceState service1 = shareService(newService(), this.companyB.party);
             ServiceState service2 = setInvalidState(withAction(service1, "ACCEPT"), StateMachine.State.DECLINED);
             tx.input(ServiceContract.ID, service1);
             tx.output(ServiceContract.ID, service2);
@@ -515,7 +515,7 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
 
     @Test(expected = IllegalStateException.class)
     public void service_accept_invalid_pre_state_on_state_feature() {
-        transaction(insurance1.ledgerServices, tx -> {
+        transaction(companyA.ledgerServices, tx -> {
             ServiceState service1 = newService();
             ServiceState service2 = withAction(service1, "ACCEPT");
             tx.input(ServiceContract.ID, service1);
@@ -529,9 +529,9 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
 
     @Test
     public void service_accept_invalid_pre_state() {
-        transaction(insurance1.ledgerServices, tx -> {
+        transaction(companyA.ledgerServices, tx -> {
             ServiceState service1 = newService();
-            ServiceState service2 = setInvalidStateProvider(service1, StateMachine.State.ACCEPTED, this.insurance2.party);
+            ServiceState service2 = setInvalidStateProvider(service1, StateMachine.State.ACCEPTED, this.companyB.party);
             tx.input(ServiceContract.ID, service1);
             tx.output(ServiceContract.ID, service2);
             tx.command(service2.getParticipantKeys(), new ServiceContract.Commands.ActionAfterShare("ACCEPT"));

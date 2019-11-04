@@ -44,7 +44,7 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
     @Test
     public void create_service() throws Exception {
         SignedTransaction tx = this.newServiceCreateFlow("Exit", dataJSONString(), 7);
-        StateVerifier verifier = StateVerifier.fromTransaction(tx, this.insurance1.ledgerServices);
+        StateVerifier verifier = StateVerifier.fromTransaction(tx, this.companyA.ledgerServices);
         ServiceState service = verifier
                 .output().one()
                 .one(ServiceState.class)
@@ -58,7 +58,7 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
     @Test
     public void update_before_share_service() throws Exception {
         SignedTransaction tx = this.newServiceCreateFlow("Exit", dataJSONString(), 7);
-        StateVerifier verifier = StateVerifier.fromTransaction(tx, this.insurance1.ledgerServices);
+        StateVerifier verifier = StateVerifier.fromTransaction(tx, this.companyA.ledgerServices);
         ServiceState service = verifier
                 .output().one()
                 .one(ServiceState.class)
@@ -67,7 +67,7 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
 
         StateVerifier verifier2 = StateVerifier.fromTransaction(
                 this.newServiceUpdateFlow(service.getId(), dataUpdateJSONString(), 42),
-                this.insurance1.ledgerServices);
+                this.companyA.ledgerServices);
         ServiceState service2 = verifier2
                 .output().one()
                 .one(ServiceState.class)
@@ -81,7 +81,7 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
     @Test
     public void delete_before_share_service() throws Exception {
         SignedTransaction tx = this.newServiceCreateFlow("Exit", dataJSONString(), 7);
-        StateVerifier verifier = StateVerifier.fromTransaction(tx, this.insurance1.ledgerServices);
+        StateVerifier verifier = StateVerifier.fromTransaction(tx, this.companyA.ledgerServices);
         ServiceState service = verifier
                 .output().one()
                 .one(ServiceState.class)
@@ -90,7 +90,7 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
 
         StateVerifier verifier2 = StateVerifier.fromTransaction(
                 this.newServiceDeleteFlow(service.getId()),
-                this.insurance1.ledgerServices);
+                this.companyA.ledgerServices);
         verifier2.output().empty();
     }
 
@@ -100,15 +100,15 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
     public void share_service() throws Exception {
         StateVerifier verifier = StateVerifier.fromTransaction(
                 this.newServiceCreateFlow("Exit", dataJSONString(), 7),
-                this.insurance1.ledgerServices);
+                this.companyA.ledgerServices);
         ServiceState service = verifier
                 .output().one()
                 .one(ServiceState.class)
                 .object();
 
         StateVerifier verifier2 = StateVerifier.fromTransaction(
-                this.newServiceShareFlow(service.getId(), this.insurance2.party),
-                this.insurance1.ledgerServices);
+                this.newServiceShareFlow(service.getId(), this.companyB.party),
+                this.companyA.ledgerServices);
         ServiceState sharedService = verifier2
                 .output().one()
                 .one(ServiceState.class)
@@ -122,15 +122,15 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
     public void delete_after_share_service() throws Exception {
         StateVerifier verifier = StateVerifier.fromTransaction(
                 this.newServiceCreateFlow("Exit", dataJSONString(), 7),
-                this.insurance1.ledgerServices);
+                this.companyA.ledgerServices);
         ServiceState service = verifier
                 .output().one()
                 .one(ServiceState.class)
                 .object();
 
         StateVerifier verifier2 = StateVerifier.fromTransaction(
-                this.newServiceShareFlow(service.getId(), this.insurance2.party),
-                this.insurance1.ledgerServices);
+                this.newServiceShareFlow(service.getId(), this.companyB.party),
+                this.companyA.ledgerServices);
         ServiceState sharedService = verifier2
                 .output().one()
                 .one(ServiceState.class)
@@ -139,7 +139,7 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
         Assert.assertEquals("ZVP be false", "false", sharedService.getData("coverages.ZVP"));
         StateVerifier verifier3 = StateVerifier.fromTransaction(
                 this.newServiceDeleteFlow(sharedService.getId()),
-                this.insurance1.ledgerServices);
+                this.companyA.ledgerServices);
         verifier3.output().empty();
     }
 
@@ -147,15 +147,15 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
     public void action_ACCEPT_service() throws Exception {
         StateVerifier verifier = StateVerifier.fromTransaction(
                 this.newServiceCreateFlow("Exit", dataJSONString(), 7),
-                this.insurance1.ledgerServices);
+                this.companyA.ledgerServices);
         ServiceState service = verifier
                 .output().one()
                 .one(ServiceState.class)
                 .object();
 
         StateVerifier verifierS = StateVerifier.fromTransaction(
-                this.newServiceShareFlow(service.getId(), insurance2.party),
-                this.insurance1.ledgerServices);
+                this.newServiceShareFlow(service.getId(), companyB.party),
+                this.companyA.ledgerServices);
         ServiceState serviceS = verifierS
                 .output().one()
                 .one(ServiceState.class)
@@ -164,14 +164,14 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
 
         StateVerifier verifierA = StateVerifier.fromTransaction(
                 this.newServiceActionFlow(serviceS.getId(), "ACCEPT"),
-                this.insurance1.ledgerServices);
+                this.companyA.ledgerServices);
         ServiceState serviceA = verifierA
                 .output().one()
                 .one(ServiceState.class)
                 .object();
 
         Assert.assertEquals("ZVP be false", "false", serviceA.getData("coverages.ZVP"));
-        Assert.assertEquals("insurer2 must be service provider", insurance2.party, serviceA.getServiceProvider());
+        Assert.assertEquals("insurer2 must be service provider", companyB.party, serviceA.getServiceProvider());
         Assert.assertEquals("state is ACCEPTED", "ACCEPTED", serviceA.getState().toString());
     }
 
@@ -181,15 +181,15 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
     public void action_ACCEPT_by_counterparty_service() throws Exception {
         StateVerifier verifier = StateVerifier.fromTransaction(
                 this.newServiceCreateFlow("Exit", dataJSONString(), 7),
-                this.insurance1.ledgerServices);
+                this.companyA.ledgerServices);
         ServiceState service = verifier
                 .output().one()
                 .one(ServiceState.class)
                 .object();
 
         StateVerifier verifierS = StateVerifier.fromTransaction(
-                this.newServiceShareFlow(service.getId(), insurance2.party),
-                this.insurance1.ledgerServices);
+                this.newServiceShareFlow(service.getId(), companyB.party),
+                this.companyA.ledgerServices);
         ServiceState serviceS = verifierS
                 .output().one()
                 .one(ServiceState.class)
@@ -197,15 +197,15 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
         Assert.assertEquals("state is SHARED", "SHARED", serviceS.getState().toString());
 
         StateVerifier verifierA = StateVerifier.fromTransaction(
-                this.newServiceActionFlowBy(serviceS.getId(), "ACCEPT", insurance2.node),
-                this.insurance1.ledgerServices);
+                this.newServiceActionFlowBy(serviceS.getId(), "ACCEPT", companyB.node),
+                this.companyA.ledgerServices);
         ServiceState serviceA = verifierA
                 .output().one()
                 .one(ServiceState.class)
                 .object();
 
         Assert.assertEquals("ZVP be false", "false", serviceA.getData("coverages.ZVP"));
-        Assert.assertEquals("insurer2 must be service provider", insurance2.party, serviceA.getServiceProvider());
+        Assert.assertEquals("insurer2 must be service provider", companyB.party, serviceA.getServiceProvider());
         Assert.assertEquals("state is ACCEPTED", "ACCEPTED", serviceA.getState().toString());
     }
 
@@ -214,7 +214,7 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
     public void action_CONFIRM_service() throws Exception {
         StateVerifier verifier = StateVerifier.fromTransaction(
                 this.newServiceCreateFlow("Exit", dataJSONString(), 7),
-                this.insurance1.ledgerServices);
+                this.companyA.ledgerServices);
         ServiceState service = verifier
                 .output().one()
                 .one(ServiceState.class)
@@ -222,7 +222,7 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
 
         StateVerifier verifier1 = StateVerifier.fromTransaction(
                 this.newServiceActionFlow(service.getId(), "INFORM"),
-                this.insurance1.ledgerServices);
+                this.companyA.ledgerServices);
         ServiceState service1 = verifier1
                 .output().one()
                 .one(ServiceState.class)
@@ -230,7 +230,7 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
 
         StateVerifier verifier2 = StateVerifier.fromTransaction(
                 this.newServiceActionFlow(service1.getId(), "CONFIRM"),
-                this.insurance1.ledgerServices);
+                this.companyA.ledgerServices);
         ServiceState service2 = verifier2
                 .output().one()
                 .one(ServiceState.class)

@@ -38,7 +38,7 @@ public class ServiceStateTests extends CordaloTemplateBaseTests {
         ServiceState service = ServiceState.create(
                 new UniqueIdentifier(),
                 "insurance",
-                this.insurance1.party,
+                this.companyA.party,
                 JsonHelper.convertStringToJson(dataJSONString()));
         Assert.assertEquals("state must be CREATED",
                 StateMachine.State.CREATED, service.getState());
@@ -48,7 +48,7 @@ public class ServiceStateTests extends CordaloTemplateBaseTests {
         ServiceState service = ServiceState.create(
                 new UniqueIdentifier(),
                 "insurance",
-                this.insurance1.party,
+                this.companyA.party,
                 JsonHelper.convertStringToJson(dataJSONString()));
         ServiceState serviceUpdated = service.update(JsonHelper.convertStringToJson(dataUpdateJSONString()));
         Assert.assertEquals("state must be still CREATED",
