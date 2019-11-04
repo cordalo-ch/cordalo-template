@@ -21,7 +21,7 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
 
     private ServiceState newService() {
         return ServiceState.create(
-                new UniqueIdentifier(), "insurance", this.companyA.party,
+                new UniqueIdentifier(), "ServiceA", this.companyA.party,
                 JsonHelper.convertStringToJson(ServiceStateTests.dataJSONString()));
     }
     private ServiceState updateService(ServiceState service) {

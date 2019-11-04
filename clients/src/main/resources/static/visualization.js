@@ -178,9 +178,6 @@ function price(price) {
 
 var ME=""
 var ME_RANDOM_PEER=""
-var ME_brokerMandate=""
-var ME_insuranceMandates=[]
-var ME_insurers=[]
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));

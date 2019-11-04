@@ -23,13 +23,13 @@ public class ServiceStateTests extends CordaloTemplateBaseTests {
 
 
     public static String dataJSONString() {
-        return "{ \"insurance-branch\" : \"health\", \"coverages\" : { \"OKP\" : true, \"ZVP\" : false } }";
+        return "{ \"service-industry\" : \"manufacturing\", \"flags\" : { \"valid\" : true, \"addOns\" : false } }";
     }
     public static String dataUpdateJSONString() {
-        return "{ \"insurance-branch\" : \"health\", \"coverages\" : { \"OKP\" : true, \"ZVP\" : true, \"ADD-ON1\" : true } }";
+        return "{ \"service-industry\" : \"manufacturing\", \"flags\" : { \"valid\" : true, \"addOns\" : true, \"ADD-ON1\" : true } }";
     }
     public static String dataUpdateAfterShareJSONString() {
-        return "{ \"insurance-branch\" : \"health\", \"coverages\" : { \"OKP\" : true, \"ZVP\" : true, \"ADD-ON1\" : true, \"UW\" : true } }";
+        return "{ \"service-industry\" : \"manufacturing\", \"flags\" : { \"valid\" : true, \"addOns\" : true, \"ADD-ON1\" : true, \"UW\" : true } }";
     }
 
 
@@ -37,7 +37,7 @@ public class ServiceStateTests extends CordaloTemplateBaseTests {
     public void test_create() {
         ServiceState service = ServiceState.create(
                 new UniqueIdentifier(),
-                "insurance",
+                "ServiceB",
                 this.companyA.party,
                 JsonHelper.convertStringToJson(dataJSONString()));
         Assert.assertEquals("state must be CREATED",
@@ -47,16 +47,16 @@ public class ServiceStateTests extends CordaloTemplateBaseTests {
     public void test_update_after_create() {
         ServiceState service = ServiceState.create(
                 new UniqueIdentifier(),
-                "insurance",
+                "ServiceC",
                 this.companyA.party,
                 JsonHelper.convertStringToJson(dataJSONString()));
         ServiceState serviceUpdated = service.update(JsonHelper.convertStringToJson(dataUpdateJSONString()));
         Assert.assertEquals("state must be still CREATED",
                 StateMachine.State.CREATED, service.getState());
-        Assert.assertEquals("old ZVP value must be false",
-                "false", JsonHelper.getDataValue(service.getServiceData(), "coverages.ZVP"));
-        Assert.assertEquals("old ZVP value must be true",
-                "true", JsonHelper.getDataValue(serviceUpdated.getServiceData(), "coverages.ZVP"));
+        Assert.assertEquals("old addOns value must be false",
+                "false", JsonHelper.getDataValue(service.getServiceData(), "flags.addOns"));
+        Assert.assertEquals("old addOns value must be true",
+                "true", JsonHelper.getDataValue(serviceUpdated.getServiceData(), "flags.addOns"));
     }
 
 }

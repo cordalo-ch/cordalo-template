@@ -31,13 +31,13 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
 
 
     public static String dataJSONString() {
-        return "{ \"insurance-branch\" : \"health\", \"coverages\" : { \"OKP\" : true, \"ZVP\" : false } }";
+        return "{ \"service-industry\" : \"manufacturing\", \"flags\" : { \"valid\" : true, \"addOn\" : false } }";
     }
     public static String dataUpdateJSONString() {
-        return "{ \"insurance-branch\" : \"health\", \"coverages\" : { \"OKP\" : true, \"ZVP\" : true, \"ADD-ON1\" : true } }";
+        return "{ \"service-industry\" : \"manufacturing\", \"flags\" : { \"valid\" : true, \"addOn\" : true, \"ADD-ON1\" : true } }";
     }
     public static String dataUpdateAfterShareJSONString() {
-        return "{ \"insurance-branch\" : \"health\", \"coverages\" : { \"OKP\" : true, \"ZVP\" : true, \"ADD-ON1\" : true, \"UW\" : true } }";
+        return "{ \"service-industry\" : \"manufacturing\", \"flags\" : { \"valid\" : true, \"addOn\" : true, \"ADD-ON1\" : true, \"UW\" : true } }";
     }
 
 
@@ -50,7 +50,7 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
                 .one(ServiceState.class)
                 .object();
 
-        Assert.assertEquals("OKP be true", "true", service.getData("coverages.OKP"));
+        Assert.assertEquals("valid be true", "true", service.getData("flags.valid"));
         Assert.assertEquals("price must be 42", "7", String.valueOf(service.getPrice()));
     }
 
@@ -63,7 +63,7 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
                 .output().one()
                 .one(ServiceState.class)
                 .object();
-        Assert.assertEquals("ZVP must be false", "false", service.getData("coverages.ZVP"));
+        Assert.assertEquals("addOn must be false", "false", service.getData("flags.addOn"));
 
         StateVerifier verifier2 = StateVerifier.fromTransaction(
                 this.newServiceUpdateFlow(service.getId(), dataUpdateJSONString(), 42),
@@ -73,7 +73,7 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
                 .one(ServiceState.class)
                 .object();
 
-        Assert.assertEquals("ZVP must be true", "true", service2.getData("coverages.ZVP"));
+        Assert.assertEquals("addOn must be true", "true", service2.getData("flags.addOn"));
         Assert.assertEquals("price must be 42", "42", String.valueOf(service2.getPrice()));
     }
 
@@ -86,7 +86,7 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
                 .output().one()
                 .one(ServiceState.class)
                 .object();
-        Assert.assertEquals("ZVP must be false", "false", service.getData("coverages.ZVP"));
+        Assert.assertEquals("addOn must be false", "false", service.getData("flags.addOn"));
 
         StateVerifier verifier2 = StateVerifier.fromTransaction(
                 this.newServiceDeleteFlow(service.getId()),
@@ -114,7 +114,7 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
                 .one(ServiceState.class)
                 .object();
 
-        Assert.assertEquals("ZVP be false", "false", sharedService.getData("coverages.ZVP"));
+        Assert.assertEquals("addOn be false", "false", sharedService.getData("flags.addOn"));
     }
 
 
@@ -136,7 +136,7 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
                 .one(ServiceState.class)
                 .object();
 
-        Assert.assertEquals("ZVP be false", "false", sharedService.getData("coverages.ZVP"));
+        Assert.assertEquals("addOn be false", "false", sharedService.getData("flags.addOn"));
         StateVerifier verifier3 = StateVerifier.fromTransaction(
                 this.newServiceDeleteFlow(sharedService.getId()),
                 this.companyA.ledgerServices);
@@ -170,8 +170,8 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
                 .one(ServiceState.class)
                 .object();
 
-        Assert.assertEquals("ZVP be false", "false", serviceA.getData("coverages.ZVP"));
-        Assert.assertEquals("insurer2 must be service provider", companyB.party, serviceA.getServiceProvider());
+        Assert.assertEquals("addOn be false", "false", serviceA.getData("flags.addOn"));
+        Assert.assertEquals("Service2 must be service provider", companyB.party, serviceA.getServiceProvider());
         Assert.assertEquals("state is ACCEPTED", "ACCEPTED", serviceA.getState().toString());
     }
 
@@ -204,8 +204,8 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
                 .one(ServiceState.class)
                 .object();
 
-        Assert.assertEquals("ZVP be false", "false", serviceA.getData("coverages.ZVP"));
-        Assert.assertEquals("insurer2 must be service provider", companyB.party, serviceA.getServiceProvider());
+        Assert.assertEquals("addOn be false", "false", serviceA.getData("flags.addOn"));
+        Assert.assertEquals("Service2 must be service provider", companyB.party, serviceA.getServiceProvider());
         Assert.assertEquals("state is ACCEPTED", "ACCEPTED", serviceA.getState().toString());
     }
 
@@ -236,7 +236,7 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
                 .one(ServiceState.class)
                 .object();
 
-        Assert.assertEquals("ZVP be false", "false", service2.getData("coverages.ZVP"));
+        Assert.assertEquals("addOn be false", "false", service2.getData("flags.addOn"));
         Assert.assertEquals("state is CONFIRMED", "CONFIRMED", service2.getState().toString());
     }
 
