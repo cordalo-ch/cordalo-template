@@ -64,11 +64,11 @@ function strongE(i) {
 }
 
 function makeOptions(id, list) {
-    var s = "<select id='" + id + "' onChange='onSelectionChanged(this)'><option>Action</option>";
-    Object.entries(list).forEach(([key, value]) = >
-    s = s + (key === "self" ? "" : "<br><option value=\"" + value + "\">" + key + "</option>")
-)
-    ;
+    var s = "<select id='"+id+"' onChange='onSelectionChanged(this)'><option>Action</option>";
+
+    Object.entries(list).forEach(([key, value]) =>
+    s = s + (key === "self" ? "" : "<br><option value=\""+value+"\">"+key+"</option>"));
+
     s = s + "</select>";
     return s;
 }
