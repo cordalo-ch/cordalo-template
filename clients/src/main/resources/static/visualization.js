@@ -11,7 +11,7 @@ function animationOn() {
     setWebSocketConnected(true, true);
 }
 
-function createNewService(self, service, spShort, price, optionalIds){
+function createNewService(self, service, spShort, price){
     animationOn();
     $.ajax(
         {
@@ -61,7 +61,7 @@ function strongE(i) {
     return (i < 10 ? "</strong><br>" : "");
 }
 function makeOptions(id, list) {
-    var s = "<select id='"+id+"' onChange='onSelectionChanged(this)'><option>choose</option>";
+    var s = "<select id='"+id+"' onChange='onSelectionChanged(this)'><option>Action</option>";
     Object.entries(list).forEach(([key, value]) =>
         s = s + (key == "self" ? "" : "<br><option value=\""+value+"\">"+key+"</option>"));
     s = s + "</select>";
@@ -131,21 +131,14 @@ function show_services(tagName, result) {
                  return strongS(i)+item.state.serviceName +"<br>"+price(item.state.price) + strongE(i);
                 }
             },
-            { title: "Roles", name: "state", type: "text", itemTemplate: function(value, item) {
+            { title: "Provider", name: "state", type: "text", itemTemplate: function(value, item) {
                  i = i + 1;
-                 return strongS(i)+"I: "+X500toO(item.state.initiatorX500)
-                    +"<br>SP: "+X500toO(item.state.serviceProviderX500)+strongE(i);
+                 return strongS(i)+X500toO(item.state.serviceProviderX500)+strongE(i);
                 }
             },
             { title: "State", name: "state.state", type: "text", itemTemplate: function(value, item) {
                  i = i + 1;
                  return strongS(i)+value+"(*)<br>"+makeOptions(item.state.id.id, item.links)+strongE(i);
-                }
-            },
-            { title: "Data", name: "state.serviceData", type: "text", itemTemplate: function(value, item) {
-                 i = i + 1;
-                var data = Object.keys(value);
-                return strongS(i)+data.join("<br>")+strongE(i);
                 }
             },
             { title: "Link", name: "state.id", type: "text", align: "center", width: 30, itemTemplate: function(value) {

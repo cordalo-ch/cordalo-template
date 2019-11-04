@@ -2,13 +2,12 @@ buildscript {
     ext {
         corda_release_group = 'net.corda'
         corda_release_version = '4.1'
-        corda_gradle_plugins_version = '4.0.42'
+        corda_gradle_plugins_version = '4.0.46'
         junit_version = '4.12'
-        quasar_version = '0.7.10'
-        spring_boot_version = '2.0.9.RELEASE'
-        spring_boot_gradle_plugin_version = '2.0.9.RELEASE'
-        slf4j_version = '1.7.25'
-        log4j_version = '2.11.2'
+        spring_boot_version = '2.2.0.RELEASE'
+        spring_boot_gradle_plugin_version = '2.2.0.RELEASE'
+        slf4j_version = '1.7.28'
+        log4j_version = '2.12.1'
         corda_platform_version = '4'
         cordalo_version='0.4-SNAPSHOT'
     }
@@ -157,7 +156,7 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
         rpcUsers = [[ user: "user1", "password": "test", "permissions": ["ALL"]]]
     }
     node {
-        name "O=Company-D,L=Zurich,ST=ZH,C=CH"
+        name "O=Company-D,L=Geneva,ST=ZH,C=CH"
         p2pPort 10014
         rpcSettings {
             address("localhost:10015")
