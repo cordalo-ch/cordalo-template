@@ -1,118 +1,66 @@
 <html>
-<head>
-    <!-- jquery  -->
-    <script
-        src="https://code.jquery.com/jquery-3.3.1.min.js"
-        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-        crossorigin="anonymous"></script>
+<script>
 
-    <!-- js grid plugin  -->
-    <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.css" />
-    <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid-theme.min.css" />
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
-
-    <!-- js views  -->
-    <script src="https://www.jsviews.com/download/jsviews.min.js"></script>
-    <link href="https://www.jsviews.com/samples/samples.css" rel="stylesheet" />
-
-    <!-- websocket -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.4.0/sockjs.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-
-    <script src="visualization.js"></script>
-    <style>
-        .jsgrid-cell {
-            padding: .1em;
-            vertical-align: top;
-        }
-        .jsgrid-header-cell {
-            padding: .1em;
-        }
-        .jsgrid-edit-row input {
-          padding: .8em .8em;
-        }
-        #runningAnimation {
-            display: none;
-            margin: -150px;
-        }
-        #image-socket-ball {
-            width: 20px;
-        }
-
-        .STATUS {
-            color: white;
-            padding: 5px;
-        }
-
-        .REQUESTED {
-            background-color: blue;
-        }
-        .ACCEPTED {
-            background-color: green;
-        }
-        .DENIED {
-            background-color: red;
-        }
-        .WITHDRAWN {
-            background-color: lightcoral;
-        }
-        h1 {
-            font-size: 1.5em;
-            font-weight: bold;
-        }
-.tableTop {
-    display:table;
+function GETvar(parameterName) {
+    var result = null,
+    tmp = [];
+    location.search
+        .substr(1)
+        .split("&")
+        .forEach(function (item) {
+            tmp = item.split("=");
+            if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+    });
+    return result;
 }
-.headerTop {
-    display:table-header-group;
-    font-weight:bold;
-}
-.rowTop {
-    display:table-row;
-}
-.rowGroupTop {
-    display:table-row-group;
-}
-.cellTopLeft {
-    display:table-cell;
-    width:100%;
-    vertical-align: middle;
-}
-.cellTopRight {
-    display:table-cell;
-    width:100%;
-    vertical-align: middle;
-}
+var ports = "10801,10802,10803+10804,10805";
+var page = "frame.html";
 
-    </style>
-</head>
-<body>
-<h1>
-    <div class="tableTop">
-        <div class="rowGroupTop">
-            <div class="rowTop">
-                <div class="cellTopLeft"><span id="party_me">Node</span> <A HREF="javascript:history.go(0)">refresh</A> <A HREF="demo.html?frames=10801,10802,10803+10804">demo</A><span id="image-socket"></span></div>
-                <div class="cellTopRight"><span id="image_me"></span></div>
-            </div>
-        </div>
-    </div>
+MAIN_URL = document.location.protocol + "//" + document.location.hostname
+var frames_param = GETvar("frames");
+if (frames_param == null) {
+    frames_param = ports;
+}
+var page_param = GETvar("page");
+if (page_param == null) {
+    page_param = page;
+}
+if (page_param[0] != "/") {
+    page_param = "/"+page_param;
+}
+frames_paramArray=frames_param.split(",");
+var fraction = 100 / frames_paramArray.length;
+var cols="";
+for(var port in frames_paramArray) {
+    if (cols != "") { cols = cols+","; }
+    cols = cols + fraction+"%";
+}
+var stream = "<frameset id='index_frames' cols='"+cols+"'>";
 
-</h1>
+var frames = frames_param.split(",");
+for (k in frames) {
+    var ports_vertical = frames[k].trim().split("+");
+    if (ports_vertical.length > 1) {
+        var fraction = 100 / ports_vertical.length;
+        var cols="";
+        for(var port in ports_vertical) {
+            if (cols != "") { cols = cols+","; }
+            cols = cols + fraction+"%";
+        }
+        stream = stream +"<frameset id='index_vertical_frames' rows='"+cols+"'>"
+        for (pk in ports_vertical) {
+            var url = MAIN_URL + ":" + ports_vertical[pk].trim()+page_param;
+            stream = stream + "<frame src='"+url+"'>";
+        }
+        stream = stream + "</frameset>";
+    } else {
+        var url = MAIN_URL + ":" + ports_vertical[0]+page_param;
+        stream = stream + "<frame src='"+url+"'>";
+    }
+}
+stream = stream + "</frameset>";
 
-<span id="share-data_block">
-<h3>Services</h3>
-<div id="services-template"></div>
-</span>
-<span id="share-data-new" style="display:block">
-    <a href="#" onClick='createNewService(this, "Tele Medicine", "B", 25, "medical-history")'>B34</a>
-    <a href="#" onClick='createNewService(this, "Tele Medicine", "B", 99, "medical-history")'>B90</a>
-    <a href="#" onClick='createNewService(this, "Tele Medicine", "B", 100, "medical-history,immunizations")'>B100</a>
-    <a href="#" onClick='createNewService(this, "Tele Medicine", "B", 30, "medical-history,immunizations,genetics")'>B30</a>
-    <a href="#" onClick='createNewService(this, "Tele Medicine", "B", 10, "medical-history,medication,immunizations,genetics")'>B10</a>
-    <a href="#" onClick='createNewService(this, "Nutrition Consultation", "N", 45, "body-vitals")'>N34</a>
-    <a href="#" onClick='createNewService(this, "Nutrition Consultation", "N", 53, "body-vitals,nutrition")'>N53</a>
-    <a href="#" onClick='createNewService(this, "Nutrition Consultation", "N", 87, "body-vitals,nutrition,ongoingConditions")'>N87</a>
-</span>
+document.write(stream);
 
-</body>
+</script>
 </html>

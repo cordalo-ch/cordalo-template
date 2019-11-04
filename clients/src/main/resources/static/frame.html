@@ -1,0 +1,57 @@
+<html>
+<head>
+    <!-- jquery  -->
+    <script
+        src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+
+    <!-- js grid plugin  -->
+    <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.css" />
+    <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid-theme.min.css" />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
+
+    <!-- js views  -->
+    <script src="https://www.jsviews.com/download/jsviews.min.js"></script>
+    <link href="https://www.jsviews.com/samples/samples.css" rel="stylesheet" />
+
+    <!-- websocket -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.4.0/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
+    <script src="cordalo.js"></script>
+    <script src="visualization.js"></script>
+    <link rel="stylesheet" type="text/css" href="visualization.css">
+
+    </style>
+</head>
+<body>
+<h1>
+    <div class="tableTop">
+        <div class="rowGroupTop">
+            <div class="rowTop">
+                <div class="cellTopLeft"><span id="party_me">Node</span>&nbsp;<span id="image-socket"></span></div>
+                <div class="cellTopRight"><span id="image_me"></span></div>
+            </div>
+        </div>
+    </div>
+
+</h1>
+
+<span id="share-data_block">
+<h3>Services</h3>
+<div id="services-template"></div>
+</span>
+<span id="share-data-new" style="display:block">
+    <a href="#" onClick='createNewService(this, "Tele Medicine", "B", 25, "medical-history")'>B34</a>
+    <a href="#" onClick='createNewService(this, "Tele Medicine", "B", 99, "medical-history")'>B90</a>
+    <a href="#" onClick='createNewService(this, "Tele Medicine", "B", 100, "medical-history,immunizations")'>B100</a>
+    <a href="#" onClick='createNewService(this, "Tele Medicine", "B", 30, "medical-history,immunizations,genetics")'>B30</a>
+    <a href="#" onClick='createNewService(this, "Tele Medicine", "B", 10, "medical-history,medication,immunizations,genetics")'>B10</a>
+    <a href="#" onClick='createNewService(this, "Nutrition Consultation", "N", 45, "body-vitals")'>N34</a>
+    <a href="#" onClick='createNewService(this, "Nutrition Consultation", "N", 53, "body-vitals,nutrition")'>N53</a>
+    <a href="#" onClick='createNewService(this, "Nutrition Consultation", "N", 87, "body-vitals,nutrition,ongoingConditions")'>N87</a>
+</span>
+
+</body>
+</html>
