@@ -33,6 +33,7 @@ Currently 5 Webservers  running
 
 ## Scripts
 | Name | Description |
+| ------------- | ------------- |
 | cleanAll.sh  | stop nodes and web, git pull newest code and start again |
 | cleanServers.sh  | stops webservers, git pull and restart web only. Nodes still started |
 | stopForceAll.sh  | stops all nodes and web, killing all |
