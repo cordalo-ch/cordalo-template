@@ -41,6 +41,7 @@ Per default the demo start 5 Corda nodes
 | `O=Company-D,L=Geneva,ST=ZH,C=CH`  | localhost:10015 | localhost:10055 | localhost:10804
 | `O=Company-E,L=Uster,ST=ZH,C=CH`  | localhost:10018 | localhost:10058 | localhost:10805
 
+Each above node is able to start the following flow
 * Buying some products (P) flow with different costs attached to it (25, 99, 34)
 * Trigger some support (S) flow  with different costs attached to it (9, 10, 45)
 * Trigger some Alarm Services (A) flow  with different costs attached to it (53, 87)
@@ -51,6 +52,6 @@ and one Corda notary
 | ------------- | ------------- | ------------- | ------------- | 
 | `O=Notary,L=Bern,ST=BE,C=CH`  | localhost:10003 | localhost:10043 | none
 
-Each Node is able to start the following flow
-
-
+Example http://localhost:10801/?frames=10801+10802,10803+10804,10805
+ ![foo bar](documentation/img/gui.png  "GUI"   )
+ 
