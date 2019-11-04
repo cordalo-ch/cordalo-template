@@ -4,10 +4,10 @@ BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 cd $CORDA_HOME
 
 get_nodes(){
-	retval=$(netstat -an | egrep "10103|10106|10109|10112|10115" | grep LISTEN | wc -l)
+	retval=$(netstat -an | egrep "10103|10106|10109|10112|10115|10118" | grep LISTEN | wc -l)
 }
 get_webservers(){
-        retval=$(netstat -an | egrep "10801|10802|10803|10804|10805" | grep LISTEN | wc -l)
+        retval=$(netstat -an | egrep "10801|10802|10803|10804|10805|10806" | grep LISTEN | wc -l)
 }
 
 get_nodes
