@@ -14,7 +14,7 @@ var cordaloEnv = (function() {
     function _GetMainUrl() {
         if (port != null) {
             if (local != null) {
-                return "http://localhost:"+port
+                return "http://"+local+"":"+port
             } else {
                 return document.location.protocol + "//" + document.location.hostname + ":" + port
             }
@@ -28,6 +28,11 @@ var cordaloEnv = (function() {
             f("missing mock for "+o);
             return this; // This is needed so other functions can keep chaining off of this
         };
+        if (local) {
+            if (local == "true") {
+                local = "localhost"
+            }
+        }
     }
     var port = _GETvar("port");
     var local = _GETvar("local");
