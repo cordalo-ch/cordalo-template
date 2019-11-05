@@ -70,11 +70,11 @@ Configuration settings take place in build.gradle file and for the demo we start
 | `O=Company-E,L=Uster,ST=ZH,C=CH`       | 10018 | 10118 | 10017 | 10058 | (http://localhost:10805)
 
 ## Default preconditions in scripts
-- RPC servers starts with 10006, increment by 3
-- Admin servers starts with 10046, increment by 3
-- ssh servers starts with 
-- web servers
-
+- RPC   servers starts with 10003, increment by 3
+- SSH   servers starts with 10103, increment by 3
+- P2P   servers starts with 10002, increment by 3
+- Admin servers starts with 10043, increment by 3 (not needed in the future by corda)
+- Web   servers starts with 10801, increment by 1
 
 Each above node is able to start the following flow
 * Buying some products (P) flow with different costs attached to it (25, 99, 34)
