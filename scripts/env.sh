@@ -10,3 +10,5 @@ export NodeSSHPorts=`echo $NodeSSHPorts | awk '{gsub(" ","|"); print}'`
 
 export NodeWebPorts=`grep server.port ../clients/build.gradle | awk -F "'" '{print $2}' | awk -F "=" '{print $2}'`
 export NodeWebPorts=`echo $NodeWebPorts | awk '{gsub(" ","|"); print}'`
+
+export NodeSSHPortStart=`echo $NodeSSHPorts | awk -F "|" '{print $1}'`

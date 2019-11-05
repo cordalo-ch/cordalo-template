@@ -15,7 +15,7 @@ checkPorts(){
 	fi
 }
 
-i=10103
+i=${NodeSSHPortStart}
 nodes=( $NodeNames )
 for n in "${nodes[@]}"
 do
