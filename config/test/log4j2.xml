@@ -16,5 +16,8 @@
         <Logger name="net.corda" level="info" additivity="false">
             <AppenderRef ref="Console-Appender"/>
         </Logger>
+        <Logger name="co.paralleluniverse.fibers.instrument" level="error" additivity="false">
+            <AppenderRef ref="Console-Appender"/>
+        </Logger>
     </Loggers>
 </Configuration>
