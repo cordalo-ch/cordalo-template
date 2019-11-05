@@ -21,8 +21,8 @@ cd script
 ./cleanAll.sh
 ```
 
-Be patient! I can take upto some minutes to due issues of starting nodes in parallel. The scripts are re-trying to start until all is done and up.
-
+Be patient! I can take upto some minutes due to issues in the official CORDA starting procedures of nodes running in parallel. The scripts are re-trying until all is up and running.
+The webservers are started after the nodes. If everything is done, the scripts stops and shows the following
 ```
 ---------------------------------------
 CORDA and Webservers are UP and running
@@ -54,28 +54,33 @@ The warning from CordaApp still apply (https://docs.corda.net/tutorial-cordapp.h
 
 **On Unix/Mac OSX, do not click/change focus until all seven additional terminal windows have opened, or some nodes may fail to start.**
 
-# Understanding the demo
+# Demo
 
-Per default the demo start 5 Corda nodes
+## Configuration for the nodes
 
-| Name | RPC | Admin | Webserver |
-| ------------- | ------------- | ------------- | ------------- | 
-| `O=Company-A,L=Zurich,ST=ZH,C=CH`  | localhost:10006 | localhost:10046 | localhost:10801
-| `O=Company-B,L=Winterthur,ST=ZH,C=CH`  | localhost:10009 | localhost:10049 | localhost:10802
-| `O=Company-C,L=Zug,ST=ZG,C=CH`  | localhost:10012 | localhost:10052 | localhost:10803
-| `O=Company-D,L=Geneva,ST=ZH,C=CH`  | localhost:10015 | localhost:10055 | localhost:10804
-| `O=Company-E,L=Uster,ST=ZH,C=CH`  | localhost:10018 | localhost:10058 | localhost:10805
+Configuration settings take place in build.gradle file and for the demo we start 5 Corda nodes and a Notary.
+
+| Name | RPC | SSH | P2P | Admin | Webserver |
+| ------------- | ------------- | ------------- | ------------- | ------------- | -------------- | 
+| `O=Notary,L=Bern,ST=BE,C=CH`           | 10003 | 10103 | 10002 | 10043 | none
+| `O=Company-A,L=Zurich,ST=ZH,C=CH`      | 10006 | 10106 | 10005 | 10046 | (http://localhost:10801)
+| `O=Company-B,L=Winterthur,ST=ZH,C=CH`  | 10009 | 10109 | 10008 | 10049 | (http://localhost:10802)
+| `O=Company-C,L=Zug,ST=ZG,C=CH`         | 10012 | 10112 | 10011 | 10052 | (http://localhost:10803)
+| `O=Company-D,L=Geneva,ST=ZH,C=CH`      | 10015 | 10115 | 10014 | 10055 | (http://localhost:10804)
+| `O=Company-E,L=Uster,ST=ZH,C=CH`       | 10018 | 10118 | 10017 | 10058 | (http://localhost:10805)
+
+## Default preconditions in scripts
+- RPC servers starts with 10006, increment by 3
+- Admin servers starts with 10046, increment by 3
+- ssh servers starts with 
+- web servers
+
 
 Each above node is able to start the following flow
 * Buying some products (P) flow with different costs attached to it (25, 99, 34)
 * Trigger some support (S) flow  with different costs attached to it (9, 10, 45)
 * Trigger some Alarm Services (A) flow  with different costs attached to it (53, 87)
 
-and one Corda notary
-
-| Name | RPC | Admin | Webserver |
-| ------------- | ------------- | ------------- | ------------- | 
-| `O=Notary,L=Bern,ST=BE,C=CH`  | localhost:10003 | localhost:10043 | none
 
 Example http://localhost:10801/?frames=10801+10802,10803+10804,10805
  ![foo bar](documentation/img/gui.png  "GUI"   )
