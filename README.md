@@ -1,6 +1,20 @@
 # cordalo-template
+(based on java)
 
-A simple way to run and vizualize multiple node in your browser.
+A simple way to run and vizualize multiple Corda node in your browser in 1 view. 
+
+We show in this example 
+- how to write simple contracts to validate commands (using a builder notation)
+- how to write simple Flows and no need to handle all the sync, collect, finalize functionality
+- how to write easy and functional testcases for contracts and flow - with or without spinning of Mocknodes
+- how to write a simple Statemachine to execute, valide actions and states.
+- how to simply share an object with participants
+- how to use vaultTracker and websockets to bring Vault changes automatically to the frontend
+- how to visualize multiple nodes in a demo environment to see interaction between nodes
+
+Example snapshot
+ ![foo bar](documentation/img/gui.png  "GUI"   )
+
 
 # Running the demo
 
@@ -54,7 +68,8 @@ The warning from CordaApp still apply (https://docs.corda.net/tutorial-cordapp.h
 
 **On Unix/Mac OSX, do not click/change focus until all seven additional terminal windows have opened, or some nodes may fail to start.**
 
-# Demo
+
+# Configuration
 
 ## Configuration for the nodes
 
@@ -63,18 +78,25 @@ Configuration settings take place in build.gradle file and for the demo we start
 | Name | RPC | SSH | P2P | Admin | Webserver |
 | ------------- | ------------- | ------------- | ------------- | ------------- | -------------- | 
 | `O=Notary,L=Bern,ST=BE,C=CH`           | 10003 | 10103 | 10002 | 10043 | none
-| `O=Company-A,L=Zurich,ST=ZH,C=CH`      | 10006 | 10106 | 10005 | 10046 | (http://localhost:10801)
-| `O=Company-B,L=Winterthur,ST=ZH,C=CH`  | 10009 | 10109 | 10008 | 10049 | (http://localhost:10802)
-| `O=Company-C,L=Zug,ST=ZG,C=CH`         | 10012 | 10112 | 10011 | 10052 | (http://localhost:10803)
-| `O=Company-D,L=Geneva,ST=ZH,C=CH`      | 10015 | 10115 | 10014 | 10055 | (http://localhost:10804)
-| `O=Company-E,L=Uster,ST=ZH,C=CH`       | 10018 | 10118 | 10017 | 10058 | (http://localhost:10805)
+| `O=Company-A,L=Zurich,ST=ZH,C=CH`      | 10006 | 10106 | 10005 | 10046 | http://localhost:10801
+| `O=Company-B,L=Winterthur,ST=ZH,C=CH`  | 10009 | 10109 | 10008 | 10049 | http://localhost:10802
+| `O=Company-C,L=Zug,ST=ZG,C=CH`         | 10012 | 10112 | 10011 | 10052 | http://localhost:10803
+| `O=Company-D,L=Geneva,ST=ZH,C=CH`      | 10015 | 10115 | 10014 | 10055 | http://localhost:10804
+| `O=Company-E,L=Uster,ST=ZH,C=CH`       | 10018 | 10118 | 10017 | 10058 | http://localhost:10805
 
-## Default preconditions in scripts
+## Port configurations
 - RPC   servers starts with 10003, increment by 3
 - SSH   servers starts with 10103, increment by 3
 - P2P   servers starts with 10002, increment by 3
 - Admin servers starts with 10043, increment by 3 (not needed in the future by corda)
 - Web   servers starts with 10801, increment by 1
+
+
+# Demo
+
+We want to 
+
+
 
 Each above node is able to start the following flow
 * Buying some products (P) flow with different costs attached to it (25, 99, 34)
@@ -82,6 +104,4 @@ Each above node is able to start the following flow
 * Trigger some Alarm Services (A) flow  with different costs attached to it (53, 87)
 
 
-Example http://localhost:10801/?frames=10801+10802,10803+10804,10805
- ![foo bar](documentation/img/gui.png  "GUI"   )
  
