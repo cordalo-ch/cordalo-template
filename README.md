@@ -46,22 +46,46 @@ Currently 5 Webservers  running
 ```
 
 ## Scripts
-| Name | Description |
-| ------------- | ------------- |
-| cleanAll.sh  | stop nodes and web, git pull newest code and start again |
-| cleanServers.sh  | stops webservers, git pull and restart web only. Nodes still started |
-| stopForceAll.sh  | stops all nodes and web, killing all |
+| Name | Description | Special note |
+| ------------- | ------------- | ------------- |
+| cleanAll.sh  | stop nodes and web, git pull newest code and start again | all CORDA data lost |
+| cleanServers.sh  | stops webservers, git pull and restart web only. Nodes still running | Start only webservers |
+| stopForceAll.sh  | stops all nodes and web, killing all | kill all processes |
 | stopServers.sh  | stop web servers |
-| startAll.sh  | starts all node, web without cleaning, keep state of all nodes |
+| startAll.sh  | starts all node, web without cleaning, keep state of all nodes | start with existing data |
 | startServers.sh  | starts web only |
 | startNodes.sh  | starts nodes only |
 | checkStates.sh | displays the status of nodes and web |
 | tailServers.sh | tail all web server log files |
 | tailNodes.sh | tail all log files of all nodes |
 
+## UI
 
-When all Node and webserver are up, 
-you can visit http://localhost:10801/?frames=10801+10802+10803,10804,10805
+When all Node and webserver are up, you can visit 
+http://localhost:10801/?frames=10801+10802+10803,10804,10805
+
+### Display & develop single frame
+
+http://localhost:10801/frame.html
+the following paramters can control the API and ports.
+Use these parameters to debug locally (from IntelliJ or any other test webserver) to use the API from another location
+
+| Parameter | Description | example |
+| ------------- | ------------- | ------------- |
+| port | port used for backend web API | port=10801 |
+| local | using "localhost" fix for URL or configure any hostname as endpoint | local=true |
+| mock | use MOCK data within .js only instead backend | mock=true |
+
+### Display all frames
+
+http://localhost:10801/index.html
+use parameters "frames" to control the different ports with the columns or rows
+
+| Parameter | Description | example |
+| ------------- | ------------- | ------------- |
+| , | use , to seperate columns | frames=10801,10802,10803,10804,10805 - 5 columns |
+| + | use + to seperate row | local=true |
+
 
 ## Warning
 The warning from CordaApp still apply (https://docs.corda.net/tutorial-cordapp.html#running-the-example-cordapp)
