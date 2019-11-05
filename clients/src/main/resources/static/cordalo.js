@@ -14,7 +14,7 @@ var cordaloEnv = (function() {
     function _GetMainUrl() {
         if (port != null) {
             if (local != null) {
-                return "http://"+local+"":"+port
+                return "http://"+local+":"+port
             } else {
                 return document.location.protocol + "//" + document.location.hostname + ":" + port
             }

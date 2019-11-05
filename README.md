@@ -73,7 +73,7 @@ Use these parameters to debug locally (from IntelliJ or any other test webserver
 | Parameter | Description | example |
 | ------------- | ------------- | ------------- |
 | port | port used for backend web API | port=10801 |
-| local | using "localhost" fix for URL or configure any hostname as endpoint | local=true |
+| local | using "true" for "localhost" or any other domain name or IP | local=true, local=123.456.0.789 |
 | mock | use MOCK data within .js only instead backend | mock=true |
 
 ### Display all frames
@@ -84,7 +84,7 @@ use parameters "frames" to control the different ports with the columns or rows
 | Parameter | Description | example |
 | ------------- | ------------- | ------------- |
 | , | use , to seperate columns | frames=10801,10802,10803,10804,10805 - 5 columns |
-| + | use + to seperate row | local=true |
+| + | use + to seperate row | frames=10801+10802,10803,10804+10805 - 3 columns, 1st and last have 2 rows |
 
 
 ## Warning

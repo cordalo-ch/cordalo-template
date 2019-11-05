@@ -64,13 +64,17 @@ function strongE(i) {
 }
 
 function makeOptions(id, list) {
-    var s = "<select id='"+id+"' onChange='onSelectionChanged(this)'><option>Action</option>";
+    var keys = Object.keys(list);
+    if (keys.length > 1) {
+        var s = "<select id='"+id+"' onChange='onSelectionChanged(this)'><option>Action</option>";
 
-    Object.entries(list).forEach(([key, value]) =>
-    s = s + (key === "self" ? "" : "<br><option value=\""+value+"\">"+key+"</option>"));
+        Object.entries(list).forEach(([key, value]) =>
+            s = s + (key === "self" ? "" : "<br><option value=\""+value+"\">"+key+"</option>"));
 
-    s = s + "</select>";
-    return s;
+        s = s + "</select>";
+        return s;
+    }
+    return "";
 }
 
 function onSelectionChanged(select) {
@@ -147,7 +151,7 @@ function show_services(tagName, result) {
             {
                 title: "State", name: "state.state", type: "text", itemTemplate: function (value, item) {
                     i = i + 1;
-                    return strongS(i) + value + "(*)<br>" + makeOptions(item.state.id.id, item.links) + strongE(i);
+                    return strongS(i) + value + "<br>" + makeOptions(item.state.id.id, item.links) + strongE(i);
                 }
             },
             {
