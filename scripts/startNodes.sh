@@ -1,6 +1,7 @@
 #!/bin/bash
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 . $BASEDIR/env.sh
+
 cd $BASEDIR
 (( max_nof = NodeNof ))
 max_time=80
@@ -8,7 +9,7 @@ echo "Starting max $max_nof CORDA servers"
 echo "-----------------------------------"
 
 get_sshd(){
-	retval=$(netstat -an | egrep "10103|10106|10109|10112|10115|10118" | grep LISTEN | wc -l)
+	retval=$(netstat -an | egrep "${NodeSSHPorts}" | grep LISTEN | wc -l)
 }
 
 wait_until_first_started(){

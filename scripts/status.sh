@@ -1,19 +1,19 @@
 #!/bin/bash
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 . $BASEDIR/env.sh
+
 cd $CORDA_HOME
-
-get_nodes(){
-	retval=$(netstat -an | egrep "10103|10106|10109|10112|10115|10118" | grep LISTEN | wc -l)
+get_sshd(){
+	retval=$(netstat -an | egrep "${NodeSSHPorts}" | grep LISTEN | wc -l)
 }
-get_webservers(){
-        retval=$(netstat -an | egrep "10801|10802|10803|10804|10805|10806" | grep LISTEN | wc -l)
+get_webd(){
+        retval=$(netstat -an | egrep "${NodeWebPorts}" | grep LISTEN | wc -l)
 }
 
-get_nodes
+get_sshd
 nof=$retval
 
-get_webservers
+get_webd
 nof2=$retval
 echo "Currently $nof CORDA nodes running"
 echo "Currently $nof2 Webservers  running"

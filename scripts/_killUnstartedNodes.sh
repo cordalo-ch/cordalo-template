@@ -22,11 +22,6 @@ do
   checkPorts $i $n
   (( i=i+3 ))
 done
-##checkPorts 10103 $NodeName0
-##checkPorts 10106 $NodeName1
-##checkPorts 10109 $NodeName2
-##checkPorts 10112 $NodeName3
-##checkPorts 10115 $NodeName4
 
 retval=${stopped}
 
