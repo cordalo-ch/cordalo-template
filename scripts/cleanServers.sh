@@ -8,7 +8,7 @@ cd $BASEDIR
 $BASEDIR/stopServers.sh
 
 cd $CORDA_HOME
-./gradlew :clients:clean :clients:build
+./gradlew assemble
 cd $BASEDIR
 
 $BASEDIR/startServers.sh

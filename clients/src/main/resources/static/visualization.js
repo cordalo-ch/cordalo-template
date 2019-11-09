@@ -143,9 +143,10 @@ function show_services(tagName, result) {
                 }
             },
             {
-                title: "Provider", name: "state", type: "text", itemTemplate: function (value, item) {
+                title: "Partners", name: "state", type: "text", itemTemplate: function (value, item) {
                     i = i + 1;
-                    return strongS(i) + X500toO(item.state.serviceProviderX500) + strongE(i);
+                    var x500_O = participantsWithoutMe(item.state.participantsX500).map(x => X500toO(x));
+                    return strongS(i) + x500_O.join(",") + strongE(i);
                 }
             },
             {
@@ -194,17 +195,22 @@ function price(price) {
 
 
 var ME = "";
+var ME_X500 = "";
 var ME_RANDOM_PEER = "";
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
 
+function participantsWithoutMe(list) {
+    return list.filter(x => x != ME_X500);
+}
 function get_me() {
     $get({
         url: cordaloEnv.API_URL("/api/v1/cordalo/template/me"),
         data: {},
         success: function (result) {
+            ME_X500 = result.me.x500Principal.name;
             var x500name = result.me.x500Principal.name.split(",");
             var O = x500name[0].split("=")[1];
             var L = x500name[1].split("=")[1];
