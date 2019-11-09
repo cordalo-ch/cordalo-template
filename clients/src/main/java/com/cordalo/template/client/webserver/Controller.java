@@ -12,6 +12,8 @@ import com.google.common.collect.ImmutableMap;
 import com.cordalo.template.contracts.StateMachine;
 import com.cordalo.template.flows.ServiceFlow;
 import com.cordalo.template.states.ServiceState;
+import net.corda.client.jackson.JacksonSupport;
+import net.corda.client.rpc.CordaRPCClient;
 import net.corda.core.contracts.UniqueIdentifier;
 import net.corda.core.identity.CordaX500Name;
 import net.corda.core.identity.Party;
@@ -20,6 +22,7 @@ import net.corda.core.node.NodeInfo;
 import net.corda.core.node.services.Vault;
 import net.corda.core.node.services.vault.QueryCriteria;
 import net.corda.core.transactions.SignedTransaction;
+import net.corda.core.utilities.NetworkHostAndPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +34,7 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -50,8 +54,11 @@ public class Controller {
 
     public static final boolean DEBUG = true;
 
-    private final CordaRPCOps proxy;
-    private final CordaX500Name myLegalName;
+    private CordaRPCOps proxy;
+    private CordaX500Name myLegalName;
+
+    @Autowired
+    private NodeRPCConnection rpc;
 
     @Autowired
     private  SimpMessagingTemplate messagingTemplate;
@@ -63,9 +70,13 @@ public class Controller {
     private final static String MAPPING_PATH = "/api/v1/";
     private final static String BASE_PATH = "cordalo/template";
 
-    public Controller(NodeRPCConnection rpc) {
+    public Controller() {
         StateMachine.State.values();
         StateMachine.StateTransition.values();
+    }
+
+    @PostConstruct
+    public void initializeController() {
         if (DEBUG && rpc.getProxy() == null) {
             this.proxy = null;
             this.myLegalName = null;
