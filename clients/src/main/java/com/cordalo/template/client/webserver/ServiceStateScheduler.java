@@ -1,5 +1,7 @@
 package com.cordalo.template.client.webserver;
 
+import ch.cordalo.corda.common.client.webserver.NodeRPCConnection;
+import ch.cordalo.corda.common.client.webserver.VaultChangeScheduler;
 import com.cordalo.template.states.ServiceState;
 import org.springframework.stereotype.Component;
 

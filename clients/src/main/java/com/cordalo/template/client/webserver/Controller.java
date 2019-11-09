@@ -1,5 +1,6 @@
 package com.cordalo.template.client.webserver;
 
+import ch.cordalo.corda.common.client.webserver.NodeRPCConnection;
 import ch.cordalo.corda.common.client.webserver.StateAndLinks;
 import ch.cordalo.corda.common.client.webserver.StateBuilder;
 import ch.cordalo.corda.common.contracts.JsonHelper;
@@ -65,13 +66,13 @@ public class Controller {
     public Controller(NodeRPCConnection rpc) {
         StateMachine.State.values();
         StateMachine.StateTransition.values();
-        if (DEBUG && rpc.proxy == null) {
+        if (DEBUG && rpc.getProxy() == null) {
             this.proxy = null;
             this.myLegalName = null;
             return;
         }
-        this.proxy = rpc.proxy;
-        this.myLegalName = rpc.proxy.nodeInfo().getLegalIdentities().get(0).getName();
+        this.proxy = rpc.getProxy();
+        this.myLegalName = rpc.getProxy().nodeInfo().getLegalIdentities().get(0).getName();
     }
 
     private ResponseEntity<List<StateAndLinks<ServiceState>>> getResponse(HttpServletRequest request, List<ServiceState> list, HttpStatus status) throws URISyntaxException {

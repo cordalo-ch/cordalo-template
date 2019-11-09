@@ -1,9 +1,11 @@
 package com.cordalo.template.states;
 
 import ch.cordalo.corda.common.contracts.JsonHelper;
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.cordalo.template.contracts.ServiceContract;
 import com.cordalo.template.contracts.StateMachine;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import net.corda.core.contracts.BelongsToContract;
 import net.corda.core.contracts.LinearState;
 import net.corda.core.contracts.UniqueIdentifier;
@@ -90,7 +92,9 @@ public class ServiceState implements LinearState {
         return serviceProvider;
     }
 
-
+    public List<String> getParticipantsX500() {
+        return this.getParticipants().stream().map(x -> x.nameOrNull().getX500Principal().getName()).collect(Collectors.toList());
+    }
     @NotNull
     public String getInitiatorX500() {
         return initiator.getName().getX500Principal().getName();
