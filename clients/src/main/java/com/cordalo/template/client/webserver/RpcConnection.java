@@ -5,6 +5,8 @@ import net.corda.client.rpc.CordaRPCClient;
 import net.corda.client.rpc.CordaRPCConnection;
 import net.corda.core.messaging.CordaRPCOps;
 import net.corda.core.utilities.NetworkHostAndPort;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +20,9 @@ import javax.annotation.PreDestroy;
  */
 @Component
 public class RpcConnection implements AutoCloseable {
+
+    private final static Logger logger = LoggerFactory.getLogger(RpcConnection.class);
+
     // The host of the node we are connecting to.
     @Value("${config.rpc.host}")
     private String host;
@@ -34,6 +39,9 @@ public class RpcConnection implements AutoCloseable {
     private CordaRPCConnection rpcConnection;
     private CordaRPCOps proxy;
 
+    public RpcConnection() {
+    }
+
     @PostConstruct
     public void initialiseNodeRPCConnection() {
         JacksonSupport.createNonRpcMapper();
@@ -43,6 +51,7 @@ public class RpcConnection implements AutoCloseable {
             rpcConnection = rpcClient.start(username, password);
             proxy = rpcConnection.getProxy();
         } catch (Exception e) {
+            logger.error("NodeRPC connection + proxy is not initialized (null)");
             rpcConnection = null;
             proxy = null;
         }

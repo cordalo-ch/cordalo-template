@@ -21,14 +21,11 @@ import net.corda.core.node.services.vault.QueryCriteria;
 import net.corda.core.transactions.SignedTransaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.net.URISyntaxException;
 import java.util.Collections;
@@ -54,12 +51,6 @@ public class Controller {
     private CordaRPCOps proxy;
     private CordaX500Name myLegalName;
 
-    @Autowired
-    private RpcConnection rpc;
-
-    @Autowired
-    private  SimpMessagingTemplate messagingTemplate;
-
     private final List<String> serviceNames = ImmutableList.of("Notary");
 
     private final static Logger logger = LoggerFactory.getLogger(Controller.class);
@@ -67,13 +58,9 @@ public class Controller {
     private final static String MAPPING_PATH = "/api/v1/";
     private final static String BASE_PATH = "cordalo/template";
 
-    public Controller() {
+    public Controller(RpcConnection rpc) {
         StateMachine.State.values();
         StateMachine.StateTransition.values();
-    }
-
-    @PostConstruct
-    public void initializeController() {
         if (DEBUG && rpc.getProxy() == null) {
             this.proxy = null;
             this.myLegalName = null;
