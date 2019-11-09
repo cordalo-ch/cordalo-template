@@ -220,9 +220,11 @@ public class Controller {
 
 
     @MessageMapping(value = BASE_PATH + "/services")
-    @SendTo("/topic/cordalo/template/services")
+    @SendTo("/topic/vaultChanged/cordalo/template/service")
     public ResponseEntity<StateAndLinks<ServiceState>> createServiceMessage(
             @RequestParam(name = "message") LinkedHashMap<String, Object> serviceObject) {
+        logger.info("createServiceMessage: received");
+
         String serviceName = JsonHelper.getDataValue(serviceObject, "service-name");
         String data = JsonHelper.getDataValue(serviceObject, "data");
         Integer price = Integer.parseInt(
