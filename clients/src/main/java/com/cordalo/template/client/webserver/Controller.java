@@ -102,7 +102,7 @@ public class Controller {
     }
     private ResponseEntity<StateAndLinks<ServiceState>> createUpdateActionResponse(HttpServletRequest request, ServiceState serviceState, HttpStatus status) throws URISyntaxException {
         ResponseEntity<StateAndLinks<ServiceState>> response = this.getResponse(request, serviceState, status);
-        this.messagingTemplate.convertAndSend("/topic/vaultChanged/cordalo/template", response.getBody());
+        this.messagingTemplate.convertAndSend("/topic/vaultChanged/cordalo/template/service", response.getBody());
         return response;
     }
 
@@ -205,7 +205,7 @@ public class Controller {
                     .startTrackedFlowDynamic(ServiceFlow.Delete.class, uid)
                     .getReturnValue()
                     .get();
-            this.messagingTemplate.convertAndSend("/topic/cordalo/template/services", "");
+            this.messagingTemplate.convertAndSend("/topic/vaultChanged/cordalo/template/service", "");
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 
 
