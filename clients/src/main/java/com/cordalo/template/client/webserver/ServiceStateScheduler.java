@@ -13,6 +13,6 @@ public class ServiceStateScheduler extends VaultChangeScheduler<ServiceState> {
 
     @PostConstruct
     public void installFeed() {
-        this.installVaultFeedAndSubscribeToTopic("/topic/vaultChanged/cordalo/template");
+        this.installVaultFeedAndSubscribeToTopic("/topic/vaultChanged/cordalo/template/serviceState");
     }
 }

@@ -221,7 +221,7 @@ public class ServiceContract implements Contract {
                 });
             }
         }
-
+/*
         @CordaSerializable
         public class Reference extends ReferenceContract.Commands.Reference<ServiceState> implements ServiceContract.Commands {
             public Reference(ServiceState myState) {
@@ -233,6 +233,7 @@ public class ServiceContract implements Contract {
                 this.verify(tx);
             }
         }
+ */
     }
 
     @Override

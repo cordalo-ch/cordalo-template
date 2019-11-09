@@ -4,6 +4,8 @@ import ch.cordalo.corda.common.client.webserver.StateAndLinks;
 import ch.cordalo.corda.common.client.webserver.StateBuilder;
 import ch.cordalo.corda.common.contracts.JsonHelper;
 import ch.cordalo.corda.common.contracts.StateVerifier;
+import com.cordalo.template.flows.ChatMessageFlow;
+import com.cordalo.template.states.ChatMessageState;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.cordalo.template.contracts.StateMachine;
@@ -88,7 +90,22 @@ public class Controller {
     }
     private ResponseEntity<StateAndLinks<ServiceState>> createUpdateActionResponse(HttpServletRequest request, ServiceState serviceState, HttpStatus status) throws URISyntaxException {
         ResponseEntity<StateAndLinks<ServiceState>> response = this.getResponse(request, serviceState, status);
-        this.messagingTemplate.convertAndSend("/topic/cordalo/template/services", response.getBody());
+        this.messagingTemplate.convertAndSend("/topic/vaultChanged/cordalo/template", response.getBody());
+        return response;
+    }
+
+
+    private ResponseEntity<StateAndLinks<ChatMessageState>> getResponse(HttpServletRequest request, ChatMessageState message, HttpStatus status) throws URISyntaxException {
+        String[] actions = { "reply" };
+        return new StateBuilder<>(message, ResponseEntity.status(HttpStatus.OK))
+                .stateMapping(MAPPING_PATH, BASE_PATH, request)
+                .self("messages")
+                .links("messages", actions)
+                .build();
+    }
+    private ResponseEntity<StateAndLinks<ChatMessageState>> createUpdateResponse(HttpServletRequest request, ChatMessageState message, HttpStatus status) throws URISyntaxException {
+        ResponseEntity<StateAndLinks<ChatMessageState>> response = this.getResponse(request, message, status);
+        this.messagingTemplate.convertAndSend("/topic/vaultChanged/cordalo/template/chatMessage", response.getBody());
         return response;
     }
 
@@ -337,6 +354,61 @@ public class Controller {
                     .body(new StateAndLinks<ServiceState>().error(ex));
         }
     }
+
+
+
+
+
+    /**
+     * create a new chat message with from sender to receiver
+     * @param request is the original http request to calculate links in response
+     * @param receiver string repesenting a party
+     * @param message optional - string message of chat, if empty german joke is choosen
+     */
+    @RequestMapping(
+            value = BASE_PATH + "/messages",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<StateAndLinks<ChatMessageState>> sendMessage(
+            HttpServletRequest request,
+            @RequestParam(value = "receiver", required = true) String receiver,
+            @RequestParam(name = "message", required = false) String message) {
+        Party receiverParty = proxy.wellKnownPartyFromX500Name(CordaX500Name.parse(receiver));
+        if (receiverParty == null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new StateAndLinks<ChatMessageState>().error("receiver not a valid peer."));
+        }
+        try {
+            SignedTransaction signedTx= null;
+            if (message != null && !message.isEmpty()) {
+                signedTx = proxy
+                    .startTrackedFlowDynamic(ChatMessageFlow.Send.class,
+                            receiverParty,
+                            message)
+                    .getReturnValue()
+                    .get();
+            } else {
+                signedTx = proxy
+                        .startTrackedFlowDynamic(ChatMessageFlow.Send.class,
+                                receiverParty)
+                        .getReturnValue()
+                        .get();
+            }
+
+            StateVerifier verifier = StateVerifier.fromTransaction(signedTx, null);
+            ChatMessageState chatMessage = verifier.output().one(ChatMessageState.class).object();
+            return this.createUpdateResponse(request, chatMessage, HttpStatus.CREATED);
+
+        } catch (Throwable ex) {
+            logger.error(ex.getMessage(), ex);
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
+                    .body(new StateAndLinks<ChatMessageState>().error(ex));
+        }
+    }
+
+
 
 
 }
