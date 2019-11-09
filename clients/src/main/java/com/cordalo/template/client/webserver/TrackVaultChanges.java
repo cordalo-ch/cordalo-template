@@ -22,7 +22,7 @@ import java.util.LinkedHashMap;
  */
 
 public abstract class TrackVaultChanges<T extends LinearState> {
-    private static final Logger logger = LoggerFactory.getLogger(ch.cordalo.corda.common.client.webserver.VaultChangeScheduler.class);
+    private static final Logger logger = LoggerFactory.getLogger(TrackVaultChanges.class);
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
     private final CordaRPCOps proxy;
