@@ -80,6 +80,7 @@ public class Controller {
         if (DEBUG && rpc.getProxy() == null) {
             this.proxy = null;
             this.myLegalName = null;
+            logger.error("NodeRPC connection + proxy is not initialized (null)");
             return;
         }
         this.proxy = rpc.getProxy();
