@@ -14,7 +14,6 @@ import static org.springframework.boot.WebApplicationType.SERVLET;
  */
 @SpringBootApplication
 @EnableScheduling
-@EnableAutoConfiguration
 @ComponentScan(basePackages = {"ch.cordalo.corda.common.client.webserver", "com.cordalo.template.client.webserver"})
 public class Starter {
     /**
