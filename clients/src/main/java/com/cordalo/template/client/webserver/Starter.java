@@ -2,6 +2,7 @@ package com.cordalo.template.client.webserver;
 
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -13,7 +14,8 @@ import static org.springframework.boot.WebApplicationType.SERVLET;
  */
 @SpringBootApplication
 @EnableScheduling
-@ComponentScan(basePackages = {"ch.cordalo.corda.common.client.webserver"})
+@EnableAutoConfiguration
+@ComponentScan(basePackages = {"ch.cordalo.corda.common.client.webserver", "com.cordalo.template.client.webserver"})
 public class Starter {
     /**
      * Starts our Spring Boot application.
