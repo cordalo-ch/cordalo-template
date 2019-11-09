@@ -14,6 +14,6 @@ public class ChatMessageScheduler extends TrackVaultChanges<ChatMessageState> {
 
     @PostConstruct
     public void installFeed() {
-        this.installVaultFeedAndSubscribeToTopic("/topic/vaultChanged/cordalo/template/chatMessage");
+        this.installVaultFeedAndSubscribeToTopic("/topic/vaultChanged/chatMessage");
     }
 }

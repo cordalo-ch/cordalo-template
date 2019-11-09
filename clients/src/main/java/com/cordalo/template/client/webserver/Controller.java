@@ -103,7 +103,7 @@ public class Controller {
     }
     private ResponseEntity<StateAndLinks<ServiceState>> createUpdateActionResponse(HttpServletRequest request, ServiceState serviceState, HttpStatus status) throws URISyntaxException {
         ResponseEntity<StateAndLinks<ServiceState>> response = this.getResponse(request, serviceState, status);
-        this.messagingTemplate.convertAndSend("/topic/vaultChanged/cordalo/template/service", response.getBody());
+        //this.messagingTemplate.convertAndSend("/topic/vaultChanged/cordalo/template/service", response.getBody());
         return response;
     }
 
@@ -118,7 +118,7 @@ public class Controller {
     }
     private ResponseEntity<StateAndLinks<ChatMessageState>> createUpdateResponse(HttpServletRequest request, ChatMessageState message, HttpStatus status) throws URISyntaxException {
         ResponseEntity<StateAndLinks<ChatMessageState>> response = this.getResponse(request, message, status);
-        this.messagingTemplate.convertAndSend("/topic/vaultChanged/cordalo/template/chatMessage", response.getBody());
+        //this.messagingTemplate.convertAndSend("/topic/vaultChanged/cordalo/template/chatMessage", response.getBody());
         return response;
     }
 
@@ -206,7 +206,7 @@ public class Controller {
                     .startTrackedFlowDynamic(ServiceFlow.Delete.class, uid)
                     .getReturnValue()
                     .get();
-            this.messagingTemplate.convertAndSend("/topic/vaultChanged/cordalo/template/service", "");
+            //this.messagingTemplate.convertAndSend("/topic/vaultChanged/cordalo/template/service", "");
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 
 
@@ -217,47 +217,6 @@ public class Controller {
         }
 
     }
-
-
-    @MessageMapping(value = BASE_PATH + "/services")
-    @SendTo("/topic/vaultChanged/cordalo/template/service")
-    public ResponseEntity<StateAndLinks<ServiceState>> createServiceMessage(
-            @RequestParam(name = "message") LinkedHashMap<String, Object> serviceObject) {
-        logger.info("createServiceMessage: received");
-
-        String serviceName = JsonHelper.getDataValue(serviceObject, "service-name");
-        String data = JsonHelper.getDataValue(serviceObject, "data");
-        Integer price = Integer.parseInt(
-                JsonHelper.getDataValue(serviceObject, "price"));
-        try {
-            if (data == null || data.isEmpty() || JsonHelper.convertStringToJson(data) == null) {
-                data = "{}";
-            }
-        } catch (IllegalStateException ex) {
-            logger.error(ex.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
-        try {
-            final SignedTransaction signedTx = proxy
-                    .startTrackedFlowDynamic(ServiceFlow.Create.class,
-                            serviceName,
-                            data,
-                            price)
-                    .getReturnValue()
-                    .get();
-
-            StateVerifier verifier = StateVerifier.fromTransaction(signedTx, null);
-            ServiceState service = verifier.output().one(ServiceState.class).object();
-            return ResponseEntity.status(HttpStatus.CREATED).body(new StateAndLinks<>(service));
-
-        } catch (Throwable ex) {
-            logger.error(ex.getMessage(), ex);
-            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
-                    .body(new StateAndLinks<ServiceState>().error(ex));
-        }
-    }
-
-
 
     /**
      * create a new service with given data
