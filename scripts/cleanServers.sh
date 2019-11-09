@@ -7,7 +7,9 @@ git pull
 cd $BASEDIR
 $BASEDIR/stopServers.sh
 
-$BASEDIR/../gradlew :clients:clean :clients:build
+cd $CORDA_HOME
+./gradlew :clients:clean :clients:build
+cd $BASEDIR
 
 $BASEDIR/startServers.sh
 
