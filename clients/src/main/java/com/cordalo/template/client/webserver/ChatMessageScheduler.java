@@ -1,5 +1,7 @@
 package com.cordalo.template.client.webserver;
 
+import ch.cordalo.corda.common.client.webserver.RpcConnection;
+import ch.cordalo.corda.common.client.webserver.TrackVaultChanges;
 import com.cordalo.template.states.ChatMessageState;
 import org.springframework.stereotype.Component;
 
