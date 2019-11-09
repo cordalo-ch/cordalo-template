@@ -1,6 +1,5 @@
 package com.cordalo.template.client.webserver;
 
-import ch.cordalo.corda.common.client.webserver.NodeRPCConnection;
 import net.corda.core.contracts.LinearState;
 import net.corda.core.identity.CordaX500Name;
 import net.corda.core.messaging.CordaRPCOps;
@@ -32,7 +31,7 @@ public abstract class TrackVaultChanges<T extends LinearState> {
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
-    protected TrackVaultChanges(NodeRPCConnection rpc, Class<T> typeOfT) {
+    protected TrackVaultChanges(RpcConnection rpc, Class<T> typeOfT) {
         this.typeOfT = typeOfT;
         if (rpc.getProxy() == null) {
             this.proxy = null;

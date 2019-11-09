@@ -1,19 +1,16 @@
 package com.cordalo.template.client.webserver;
 
-import ch.cordalo.corda.common.client.webserver.NodeRPCConnection;
 import ch.cordalo.corda.common.client.webserver.StateAndLinks;
 import ch.cordalo.corda.common.client.webserver.StateBuilder;
 import ch.cordalo.corda.common.contracts.JsonHelper;
 import ch.cordalo.corda.common.contracts.StateVerifier;
+import com.cordalo.template.contracts.StateMachine;
 import com.cordalo.template.flows.ChatMessageFlow;
+import com.cordalo.template.flows.ServiceFlow;
 import com.cordalo.template.states.ChatMessageState;
+import com.cordalo.template.states.ServiceState;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.cordalo.template.contracts.StateMachine;
-import com.cordalo.template.flows.ServiceFlow;
-import com.cordalo.template.states.ServiceState;
-import net.corda.client.jackson.JacksonSupport;
-import net.corda.client.rpc.CordaRPCClient;
 import net.corda.core.contracts.UniqueIdentifier;
 import net.corda.core.identity.CordaX500Name;
 import net.corda.core.identity.Party;
@@ -22,22 +19,22 @@ import net.corda.core.node.NodeInfo;
 import net.corda.core.node.services.Vault;
 import net.corda.core.node.services.vault.QueryCriteria;
 import net.corda.core.transactions.SignedTransaction;
-import net.corda.core.utilities.NetworkHostAndPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static java.util.stream.Collectors.toList;
 
@@ -58,7 +55,7 @@ public class Controller {
     private CordaX500Name myLegalName;
 
     @Autowired
-    private NodeRPCConnection rpc;
+    private RpcConnection rpc;
 
     @Autowired
     private  SimpMessagingTemplate messagingTemplate;
