@@ -50,15 +50,15 @@ public class ControllerServices extends CordaloController {
     private ResponseEntity<List<StateAndLinks<ServiceState>>> getResponses(HttpServletRequest request, List<ServiceState> list, HttpStatus status) throws URISyntaxException {
         return new StateBuilder<>(list, ResponseEntity.status(status))
                 .stateMapping(MAPPING_PATH, BASE_PATH, request)
-                .links( "services", x -> x.getState().getNextActions())
-                .self("services")
+                .links(x -> x.getState().getNextActions())
+                .self()
                 .buildList();
     }
     private ResponseEntity<StateAndLinks<ServiceState>> getResponses(HttpServletRequest request, ServiceState service, HttpStatus status) throws URISyntaxException {
         return new StateBuilder<>(service, ResponseEntity.status(HttpStatus.OK))
                 .stateMapping(MAPPING_PATH, BASE_PATH, request)
-                .links("services", x -> x.getState().getNextActions())
-                .self("services")
+                .links(x -> x.getState().getNextActions())
+                .self()
                 .build();
     }
 

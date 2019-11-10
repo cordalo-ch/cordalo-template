@@ -53,8 +53,8 @@ public class ControllerMessages extends CordaloController {
         String[] actions = { "reply" };
         return new StateBuilder<>(message, ResponseEntity.status(HttpStatus.OK))
                 .stateMapping(MAPPING_PATH, BASE_PATH, request)
-                .self("messages")
-                .links("messages", actions)
+                .self()
+                .links(actions)
                 .build();
     }
 
@@ -62,8 +62,8 @@ public class ControllerMessages extends CordaloController {
         String[] actions = { "reply" };
         return new StateBuilder<>(list, ResponseEntity.status(HttpStatus.OK))
                 .stateMapping(MAPPING_PATH, BASE_PATH, request)
-                .self("messages")
-                .links("messages", actions)
+                .self()
+                .links(actions)
                 .buildList();
     }
     /**
