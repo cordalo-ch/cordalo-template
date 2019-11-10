@@ -15,7 +15,7 @@ function strongE(i) {
 function makeOptions(id, list, actionText = "Action", onSelectionMethod = "onSelectionChanged") {
     var keys = Object.keys(list);
     if (keys.length > 1) {
-        var s = "<select id='"+id+"' onChange='"+onSelectionChanged+"(this)'><option>"+actionText+"</option>";
+        var s = "<select id='"+id+"' onChange='"+onSelectionMethod+"(this)'><option>"+actionText+"</option>";
         Object.entries(list).forEach(([key, value]) =>
             s = s + (key === "self" ? "" : "<br><option value=\""+value+"\">"+key+"</option>"));
         s = s + "</select>";
