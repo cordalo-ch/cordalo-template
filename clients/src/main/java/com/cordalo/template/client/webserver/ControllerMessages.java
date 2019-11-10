@@ -33,7 +33,7 @@ import static java.util.stream.Collectors.toList;
 
 
 @RestController
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "*,localhost:63342")
 @RequestMapping("/api/v1/cordalo/template") // The paths for HTTP requests are relative to this base path.
 public class ControllerMessages extends CordaloController {
 
@@ -58,10 +58,34 @@ public class ControllerMessages extends CordaloController {
                 .build();
     }
 
+    private ResponseEntity<List<StateAndLinks<ChatMessageState>>> getResponses(HttpServletRequest request, List<ChatMessageState> list, HttpStatus status) throws URISyntaxException {
+        String[] actions = { "reply" };
+        return new StateBuilder<>(list, ResponseEntity.status(HttpStatus.OK))
+                .stateMapping(MAPPING_PATH, BASE_PATH, request)
+                .self("messages")
+                .links("messages", actions)
+                .buildList();
+    }
+    /**
+     * returns all unconsumed services that exist in the node's vault.
+     */
+    @RequestMapping(
+            value = BASE_PATH,
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseBody
+    public ResponseEntity<List<StateAndLinks<ChatMessageState>>> getMessages(
+            HttpServletRequest request) throws URISyntaxException {
+        List<ChatMessageState> list = this.getProxy().vaultQuery(ChatMessageState.class).getStates()
+                .stream().map(state -> state.getState().getData()).collect(toList());
+        return this.getResponses(request, list, HttpStatus.OK);
+    }
+
     /**
      * create a new chat message with from sender to receiver
      * @param request is the original http request to calculate links in response
-     * @param receiver string repesenting a party
+     * @param to string repesenting a party
      * @param message optional - string message of chat, if empty german joke is choosen
      */
     @RequestMapping(
@@ -72,9 +96,9 @@ public class ControllerMessages extends CordaloController {
     @ResponseBody
     public ResponseEntity<StateAndLinks<ChatMessageState>> sendMessage(
             HttpServletRequest request,
-            @RequestParam(value = "receiver", required = true) String receiver,
+            @RequestParam(value = "to", required = true) String to,
             @RequestParam(name = "message", required = false) String message) {
-        Party receiverParty = this.partyFromString(receiver);
+        Party receiverParty = this.partyFromString(to);
         if (receiverParty == null){
             return this.buildResponseFromException(HttpStatus.BAD_REQUEST, "receiver not a valid peer.");
         }

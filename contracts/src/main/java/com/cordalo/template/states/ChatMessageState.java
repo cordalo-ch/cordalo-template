@@ -111,4 +111,11 @@ public class ChatMessageState implements LinearState {
     public int hashCode() {
         return Objects.hash(id, getSender(), getReceiver(), getMessage(), getBaseMessageId());
     }
+    public String getSenderX500() {
+        return this.sender.getName().getX500Principal().getName();
+    }
+    public String getReceiverX500() {
+        return this.receiver.getName().getX500Principal().getName();
+    }
+
 }

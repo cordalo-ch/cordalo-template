@@ -6,7 +6,6 @@ import ch.cordalo.corda.common.client.webserver.StateBuilder;
 import ch.cordalo.corda.common.contracts.JsonHelper;
 import ch.cordalo.corda.common.contracts.StateVerifier;
 import com.cordalo.template.contracts.StateMachine;
-import com.cordalo.template.flows.ChatMessageFlow;
 import com.cordalo.template.flows.ServiceFlow;
 import com.cordalo.template.states.ChatMessageState;
 import com.cordalo.template.states.ServiceState;
@@ -32,13 +31,8 @@ import java.util.UUID;
 import static java.util.stream.Collectors.toList;
 
 
-/**
- * Define your API endpoints here.
- * supported by example for WebSockets
- * https://www.toptal.com/java/stomp-spring-boot-websocket
- */
 @RestController
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "*,localhost:63342")
 @RequestMapping("/api/v1/cordalo/template") // The paths for HTTP requests are relative to this base path.
 public class ControllerServices extends CordaloController {
 
@@ -53,14 +47,14 @@ public class ControllerServices extends CordaloController {
         StateMachine.StateTransition.values();
     }
 
-    private ResponseEntity<List<StateAndLinks<ServiceState>>> getResponse(HttpServletRequest request, List<ServiceState> list, HttpStatus status) throws URISyntaxException {
+    private ResponseEntity<List<StateAndLinks<ServiceState>>> getResponses(HttpServletRequest request, List<ServiceState> list, HttpStatus status) throws URISyntaxException {
         return new StateBuilder<>(list, ResponseEntity.status(status))
                 .stateMapping(MAPPING_PATH, BASE_PATH, request)
                 .links( "services", x -> x.getState().getNextActions())
                 .self("services")
                 .buildList();
     }
-    private ResponseEntity<StateAndLinks<ServiceState>> getResponse(HttpServletRequest request, ServiceState service, HttpStatus status) throws URISyntaxException {
+    private ResponseEntity<StateAndLinks<ServiceState>> getResponses(HttpServletRequest request, ServiceState service, HttpStatus status) throws URISyntaxException {
         return new StateBuilder<>(service, ResponseEntity.status(HttpStatus.OK))
                 .stateMapping(MAPPING_PATH, BASE_PATH, request)
                 .links("services", x -> x.getState().getNextActions())
@@ -68,25 +62,20 @@ public class ControllerServices extends CordaloController {
                 .build();
     }
 
-    private ResponseEntity<StateAndLinks<ChatMessageState>> getResponse(HttpServletRequest request, ChatMessageState message, HttpStatus status) throws URISyntaxException {
-        String[] actions = { "reply" };
-        return new StateBuilder<>(message, ResponseEntity.status(HttpStatus.OK))
-                .stateMapping(MAPPING_PATH, BASE_PATH, request)
-                .self("messages")
-                .links("messages", actions)
-                .build();
-    }
-
     /**
      * returns all unconsumed services that exist in the node's vault.
      */
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(
+            value = BASE_PATH,
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     @ResponseBody
     public ResponseEntity<List<StateAndLinks<ServiceState>>> getServices(
             HttpServletRequest request) throws URISyntaxException {
         List<ServiceState> list = this.getProxy().vaultQuery(ServiceState.class).getStates()
                 .stream().map(state -> state.getState().getData()).collect(toList());
-        return this.getResponse(request, list, HttpStatus.OK);
+        return this.getResponses(request, list, HttpStatus.OK);
     }
 
     /**
@@ -114,7 +103,7 @@ public class ControllerServices extends CordaloController {
             return null;
         } else {
             ServiceState service = states.get(states.size()-1);
-            return this.getResponse(request, service, HttpStatus.OK);
+            return this.getResponses(request, service, HttpStatus.OK);
         }
     }
 
@@ -185,7 +174,7 @@ public class ControllerServices extends CordaloController {
 
             StateVerifier verifier = StateVerifier.fromTransaction(signedTx, null);
             ServiceState service = verifier.output().one(ServiceState.class).object();
-            return this.getResponse(request, service, HttpStatus.CREATED);
+            return this.getResponses(request, service, HttpStatus.CREATED);
 
         } catch (Throwable ex) {
             logger.error(ex.getMessage(), ex);
@@ -234,7 +223,7 @@ public class ControllerServices extends CordaloController {
 
                 StateVerifier verifier = StateVerifier.fromTransaction(signedTx, null);
                 ServiceState service = verifier.output().one(ServiceState.class).object();
-                return this.getResponse(request, service, HttpStatus.OK);
+                return this.getResponses(request, service, HttpStatus.OK);
 
             } else {
                 final SignedTransaction signedTx = this.getProxy()
@@ -246,7 +235,7 @@ public class ControllerServices extends CordaloController {
 
                 StateVerifier verifier = StateVerifier.fromTransaction(signedTx, null);
                 ServiceState service = verifier.output().one(ServiceState.class).object();
-                return this.getResponse(request, service, HttpStatus.OK);
+                return this.getResponses(request, service, HttpStatus.OK);
             }
         } catch (Throwable ex) {
             logger.error(ex.getMessage(), ex);
