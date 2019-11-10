@@ -4,8 +4,11 @@ if (cordaloEnv) {
     console.log("load cordalo.js in your html page");
 }
 
-function createNewMessage(self, to, message) {
+function createNewMessage(self, message) {
     animationOn();
+    if (!message) {
+        message = "";
+    }
     $.ajax(
         {
             url: cordaloEnv.API_URL("/api/v1/cordalo/template/messages/"),
@@ -13,7 +16,7 @@ function createNewMessage(self, to, message) {
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"
             },
-            data: "to=" + encodeURI(receiver) + "&message=" + encodeURI(message)
+            data: "to=" + encodeURI(get_random_peer()) + "&message=" + encodeURI(message)
         }
     ).done(function (result) {
     }).fail(function (jqXHR, textStatus) {
@@ -99,36 +102,29 @@ function show_messages(tagName, result) {
         data: result.reverse(),
 
         fields: [
-
-            /*
-              */
             {
-                title: "Message", name: "state.message", type: "text", itemTemplate: function (value, item) {
+                title: "Chat", name: "state", type: "text", itemTemplate: function (value, item) {
                     i = i + 1;
-                    return strongS(i) + value + strongE(i);
-                }
-            },
-            {
-                title: "From", name: "state", type: "text", itemTemplate: function (value, item) {
-                    i = i + 1;
-                    var x500_O = X500toO(item.state.senderX500);
-                    return strongS(i) + x500_O + strongE(i);
-                }
-            },
-            {
-                title: "To", name: "state", type: "text", itemTemplate: function (value, item) {
-                    i = i + 1;
-                    var x500_O = X500toO(item.state.receiverX500);
-                    return strongS(i) + x500_O + strongE(i);
+                    var chat = "";
+                    var align="";
+                    if (value.senderX500 == cordaloEnv.ME("X500")) {
+                        chat = "-> "+X500toO(value.receiverX500);
+                        align="right";
+                    } else {
+                        chat = "<- " + X500toO(value.senderX500);
+                        align="left";
+                    }
+                    chat = value.message +"<br>("+chat+")";
+                    return "<span align=\""+align+"\">"+strongS(i) + chat + strongE(i)+"</span>";
                 }
             },
             {
                 title: "Link",
-                name: "state.id",
+                name: "state.linearId",
                 type: "text",
                 align: "center",
                 width: 30,
-                itemTemplate: function (value) {
+                itemTemplate: function (value, item) {
                     var res = "<a target='_blank' href='" + cordaloEnv.API_URL("/api/v1/cordalo/template/messages/" + value.id) + "'>o</a>&nbsp;"
                         + "<a value=" + value.id + " href=\"#\" onClick=\"deleteMessage(this)\"'>X</a>";
                     i = i + 10;
