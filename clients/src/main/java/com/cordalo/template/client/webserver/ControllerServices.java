@@ -32,7 +32,7 @@ import static java.util.stream.Collectors.toList;
 
 
 @RestController
-@CrossOrigin(origins = "*,localhost:63342")
+@CrossOrigin(origins = "http://localhost:63342")
 @RequestMapping("/api/v1/cordalo/template") // The paths for HTTP requests are relative to this base path.
 public class ControllerServices extends CordaloController {
 

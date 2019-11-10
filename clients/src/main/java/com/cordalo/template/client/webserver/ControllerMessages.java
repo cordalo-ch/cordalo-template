@@ -33,7 +33,7 @@ import static java.util.stream.Collectors.toList;
 
 
 @RestController
-@CrossOrigin(origins = "*,localhost:63342")
+@CrossOrigin(origins = "http://localhost:63342")
 @RequestMapping("/api/v1/cordalo/template") // The paths for HTTP requests are relative to this base path.
 public class ControllerMessages extends CordaloController {
 
@@ -129,6 +129,32 @@ public class ControllerMessages extends CordaloController {
         }
     }
 
+
+    /**
+     * deletes an unconsumed message with a given ID from the node's vault.
+     * @param id unique identifier as UUID for service
+     */
+    @RequestMapping(
+            value = BASE_PATH + "/{id}",
+            method = RequestMethod.DELETE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseBody
+    public ResponseEntity<StateAndLinks<ServiceState>> deleteMessageById(
+            @PathVariable("id") String id) {
+        UniqueIdentifier uid = new UniqueIdentifier(null, UUID.fromString(id));
+        try {
+            final SignedTransaction signedTx = this.getProxy()
+                    .startTrackedFlowDynamic(ChatMessageFlow.Delete.class, uid)
+                    .getReturnValue()
+                    .get();
+            //this.messagingTemplate.convertAndSend("/topic/vaultChanged/cordalo/template/service", "");
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        } catch (Throwable ex) {
+            logger.error(ex.getMessage(), ex);
+            return this.buildResponseFromException(HttpStatus.EXPECTATION_FAILED, ex);
+        }
+    }
 
 
 

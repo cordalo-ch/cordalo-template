@@ -5,9 +5,7 @@ import ch.cordalo.corda.common.flows.ResponderBaseFlow;
 import co.paralleluniverse.fibers.Suspendable;
 import com.cordalo.template.contracts.ChatMessageContract;
 import com.cordalo.template.states.ChatMessageState;
-import com.cordalo.template.states.ServiceState;
 import kotlin.Unit;
-import net.corda.core.contracts.AlwaysAcceptAttachmentConstraint;
 import net.corda.core.contracts.StateAndRef;
 import net.corda.core.contracts.UniqueIdentifier;
 import net.corda.core.flows.*;
@@ -109,8 +107,42 @@ public class ChatMessageFlow {
     }
 
 
+    @InitiatingFlow(version = 2)
+    @StartableByRPC
+    public static class Delete extends BaseFlow {
+
+        private final UniqueIdentifier id;
+
+        public Delete(UniqueIdentifier id) {
+            this.id = id;
+        }
+
+        @Override
+        public ProgressTracker getProgressTracker() {
+            return super.progressTracker_sync;
+        }
+
+        @Suspendable
+        @Override
+        public SignedTransaction call() throws FlowException {
+            Party me = getOurIdentity();
+
+            getProgressTracker().setCurrentStep(PREPARATION);
+            StateAndRef<ChatMessageState> messageStateRef = this.getLastStateByLinearId(ChatMessageState.class, this.id);
+            ChatMessageState messageState = this.getStateByRef(messageStateRef);
+
+            getProgressTracker().setCurrentStep(BUILDING);
+            TransactionBuilder transactionBuilder = getTransactionBuilderSignedByParticipants(
+                    messageState,
+                    new ChatMessageContract.Commands.Reply());
+            transactionBuilder.addInputState(messageStateRef);
+
+            return signSyncCollectAndFinalize(messageState.getParticipants(), transactionBuilder);
+        }
+    }
+
     @InitiatedBy(ChatMessageFlow.Send.class)
-    public static class SendResponder extends ResponderBaseFlow<ServiceState> {
+    public static class SendResponder extends ResponderBaseFlow<ChatMessageState> {
 
         public SendResponder(FlowSession otherFlow) {
             super(otherFlow);
@@ -125,9 +157,23 @@ public class ChatMessageFlow {
 
 
     @InitiatedBy(ChatMessageFlow.Reply.class)
-    public static class ReplyResponder extends ResponderBaseFlow<ServiceState> {
+    public static class ReplyResponder extends ResponderBaseFlow<ChatMessageState> {
 
         public ReplyResponder(FlowSession otherFlow) {
+            super(otherFlow);
+        }
+
+        @Suspendable
+        @Override
+        public Unit call() throws FlowException {
+            return this.receiveIdentitiesCounterpartiesNoTxChecking();
+        }
+    }
+
+    @InitiatedBy(ChatMessageFlow.Delete.class)
+    public static class DeleteResponder extends ResponderBaseFlow<ChatMessageState> {
+
+        public DeleteResponder(FlowSession otherFlow) {
             super(otherFlow);
         }
 
