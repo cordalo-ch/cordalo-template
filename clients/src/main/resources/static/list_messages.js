@@ -115,7 +115,7 @@ function show_messages(tagName, result) {
                         align="left";
                     }
                     chat = value.message +"<br>("+chat+")";
-                    return "<span align=\""+align+"\">"+strongS(i) + chat + strongE(i)+"</span>";
+                    return "<span style=\"width:100%;text-align:"+align+"\">"+strongS(i) + chat + strongE(i)+"</span>";
                 }
             },
             {
@@ -123,7 +123,7 @@ function show_messages(tagName, result) {
                 name: "state.linearId",
                 type: "text",
                 align: "center",
-                width: 30,
+                width: 20,
                 itemTemplate: function (value, item) {
                     var res = "<a target='_blank' href='" + cordaloEnv.API_URL("/api/v1/cordalo/template/messages/" + value.id) + "'>o</a>&nbsp;"
                         + "<a value=" + value.id + " href=\"#\" onClick=\"deleteMessage(this)\"'>X</a>";

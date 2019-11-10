@@ -32,6 +32,7 @@ function connectWebSocket() {
         console.log('Connected: ' + frame);
         stompClient.subscribe('/topic/vaultChanged/*', function (changes) {
             get_services();
+            get_messages();
             animationOff();
         });
     });
