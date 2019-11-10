@@ -41,10 +41,32 @@
     background-color: lightcoral;
 }
 
+body {
+    font-family: 'Helvetica Neue', HelveticaNeue, Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    padding: 0 0 0 0px;
+    margin: 2px;
+    color: #172e40;
+}
+
 h1 {
     font-size: 1.5em;
     font-weight: bold;
+    margin: 1px;
 }
+h3 {
+    font-size: 1.17em;
+    font-weight: bold;
+    margin: 1em 0.1em 0.1em 0.1em;
+}
+
+.jsgrid  {
+    font-size: 12px;
+}
+.jsgrid-nodata-row .jsgrid-cell {
+    padding: 0.2em 0;
+}
+
 
 .tableTop {
     display: table;
