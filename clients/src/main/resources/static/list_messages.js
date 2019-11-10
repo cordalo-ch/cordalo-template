@@ -114,7 +114,8 @@ function show_messages(tagName, result) {
                         chat = "<- " + X500toO(value.senderX500);
                         align="left";
                     }
-                    chat = value.message +"<br>("+chat+")";
+                    var msg = value.message.replace("\n", "<br>");
+                    chat = msg +"<br>("+chat+")";
                     return "<span style=\"width:100%;text-align:"+align+"\">"+strongS(i) + chat + strongE(i)+"</span>";
                 }
             },
