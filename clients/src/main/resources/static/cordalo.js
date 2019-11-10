@@ -39,6 +39,7 @@ var cordaloEnv = (function() {
     var mock = _GETvar("mock");
     var MAIN_URL = _GetMainUrl();
     var MOCK_DATA = [];
+    var ME = [];
     init();
 
     return {
@@ -47,6 +48,12 @@ var cordaloEnv = (function() {
         },
         addMock: function(url, data) {
             MOCK_DATA[url] = data;
+        },
+        setME: function(key, value) {
+            ME[key] = meData;
+        },
+        ME: function(name) {
+            return ME[name];
         },
         findAPI: function(url) {
             const regex = /http[s]?\:\/\/[^\/]*\:?[0-9]*(\/.*)/gs;

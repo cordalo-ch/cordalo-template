@@ -2,19 +2,19 @@ package com.cordalo.template.client.webserver;
 
 import ch.cordalo.corda.common.client.webserver.RpcConnection;
 import ch.cordalo.corda.common.client.webserver.TrackVaultChanges;
-import com.cordalo.template.states.ChatMessageState;
+import com.cordalo.template.states.ServiceState;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
 @Component
-public class ChatMessageScheduler extends TrackVaultChanges<ChatMessageState> {
-    public ChatMessageScheduler(RpcConnection rpc) {
-        super(rpc, ChatMessageState.class);
+public class TrackVaultChangesServiceState extends TrackVaultChanges<ServiceState> {
+    public TrackVaultChangesServiceState(RpcConnection rpc) {
+        super(rpc, ServiceState.class);
     }
 
     @PostConstruct
     public void installFeed() {
-        this.installVaultFeedAndSubscribeToTopic("/topic/vaultChanged/chatMessage");
+        this.installVaultFeedAndSubscribeToTopic("/topic/vaultChanged/serviceState");
     }
 }

@@ -4,246 +4,6 @@ if (cordaloEnv) {
     console.log("load cordalo.js in your html page");
 }
 
-function animationOff() {
-    setWebSocketConnected(true, false);
-}
-
-function animationOn() {
-    setWebSocketConnected(true, true);
-}
-
-function createNewService(self, service, spShort, price) {
-    animationOn();
-    $.ajax(
-        {
-            url: cordaloEnv.API_URL("/api/v1/cordalo/template/services/"),
-            method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-            data: "service-name=" + encodeURI(service) + "&data=" + encodeURI(getServiceData()) + "&price=" + encodeURI(price)
-        }
-    ).done(function (result) {
-    }).fail(function (jqXHR, textStatus) {
-        alert(jqXHR.responseText);
-    });
-}
-
-function deleteService(service) {
-    var id = $(service).attr("value");
-    if (confirm('Are you sure to delete service ' + id + '?')) {
-        animationOn();
-        $.ajax(
-            {
-                url: cordaloEnv.API_URL("/api/v1/cordalo/template/services/" + id),
-                method: "DELETE",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded"
-                },
-                data: ""
-            }
-        ).done(function (result) {
-            get_services();
-            animationOff();
-        }).fail(function (jqXHR, textStatus) {
-            alert(jqXHR.responseText);
-        });
-    }
-}
-
-function getServiceData() {
-    return "{\"test\": \"42\"}";
-}
-
-function strongS(i) {
-    return (i < 10 ? "<strong>" : "");
-}
-
-function strongE(i) {
-    return (i < 10 ? "</strong><br>" : "");
-}
-
-function makeOptions(id, list) {
-    var keys = Object.keys(list);
-    if (keys.length > 1) {
-        var s = "<select id='"+id+"' onChange='onSelectionChanged(this)'><option>Action</option>";
-
-        Object.entries(list).forEach(([key, value]) =>
-            s = s + (key === "self" ? "" : "<br><option value=\""+value+"\">"+key+"</option>"));
-
-        s = s + "</select>";
-        return s;
-    }
-    return "";
-}
-
-function onSelectionChanged(select) {
-    if ($(select).val() !== '') {
-        var url = $(select).val();
-        var action = url.split("/").reverse()[0];
-        if (action !== "SHARE") {
-            animationOn();
-            $.ajax(
-                {
-                    url: url,
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded"
-                    },
-                    data: ""
-                }
-            ).done(function (result) {
-
-            }).fail(function (jqXHR, textStatus) {
-                alert(jqXHR.responseText);
-            });
-        } else {
-            animationOn();
-            $.ajax(
-                {
-                    url: url,
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded"
-                    },
-                    data: "service-provider=" + encodeURI(ME_RANDOM_PEER)
-                }
-            ).done(function (result) {
-
-            }).fail(function (jqXHR, textStatus) {
-                alert(jqXHR.responseText);
-            });
-        }
-    }
-};
-
-
-function show_services(tagName, result) {
-    var i = 0;
-    $(tagName).jsGrid({
-        height: "auto",
-        width: "100%",
-
-        sorting: true,
-        paging: false,
-        selecting: false,
-        filtering: false,
-        autoload: true,
-
-        data: result.reverse(),
-
-        fields: [
-
-            /*
-              */
-            {
-                title: "Service", name: "state.serviceName", type: "text", itemTemplate: function (value, item) {
-                    i = i + 1;
-                    return strongS(i) + item.state.serviceName + "<br>" + price(item.state.price) + strongE(i);
-                }
-            },
-            {
-                title: "Partners", name: "state", type: "text", itemTemplate: function (value, item) {
-                    i = i + 1;
-                    var x500_O = participantsWithoutMe(item.state.participantsX500).map(x => X500toO(x));
-                    return strongS(i) + x500_O.join(",") + strongE(i);
-                }
-            },
-            {
-                title: "State", name: "state.state", type: "text", itemTemplate: function (value, item) {
-                    i = i + 1;
-                    return strongS(i) + value + "<br>" + makeOptions(item.state.id.id, item.links) + strongE(i);
-                }
-            },
-            {
-                title: "Link",
-                name: "state.id",
-                type: "text",
-                align: "center",
-                width: 30,
-                itemTemplate: function (value) {
-                    var res = "<a target='_blank' href='" + cordaloEnv.API_URL("/api/v1/cordalo/template/services/" + value.id) + "'>o</a>&nbsp;"
-                        + "<a value=" + value.id + " href=\"#\" onClick=\"deleteService(this)\"'>X</a>";
-                    i = i + 10;
-                    return strongS(i) + res + strongE(i);
-                }
-            }
-        ]
-    });
-}
-
-
-/**
- * @return {string}
- */
-function X500toOL(x500) {
-    if (x500 == null || x500 === "") return "";
-    var DNs = x500.split(/[,=]/);
-    return DNs[1] + ", " + DNs[3]
-}
-
-function X500toO(x500) {
-    if (x500 == null || x500 === "") return "";
-    var DNs = x500.split(/[,=]/);
-    return DNs[1];
-}
-
-function price(price) {
-    if (price == null) return "";
-    return "CHF " + price;
-}
-
-
-var ME = "";
-var ME_X500 = "";
-var ME_RANDOM_PEER = "";
-
-function getRandomInt(max) {
-    return Math.floor(Math.random() * Math.floor(max));
-}
-
-function participantsWithoutMe(list) {
-    return list.filter(x => x != ME_X500);
-}
-function get_me() {
-    $get({
-        url: cordaloEnv.API_URL("/api/v1/cordalo/template/me"),
-        data: {},
-        success: function (result) {
-            ME_X500 = result.me.x500Principal.name;
-            var x500name = result.me.x500Principal.name.split(",");
-            var O = x500name[0].split("=")[1];
-            var L = x500name[1].split("=")[1];
-            var C = x500name[2].split("=")[1];
-            var imageName = O.trim().replace(/[ ]/g, '_').replace(/[,\.]/g, '').toLowerCase();
-            $("#party_me").html(O + ", " + L + " (" + C + ")");
-            $("#image_me").html("<img style=\"width:80px\" src=\"images/node_" + imageName + ".jpeg\"/>");
-            ME = O;
-        }
-    }).fail(function (e) {
-        $("#party_me").html(e.statusText);
-    });
-}
-
-function get_peers() {
-    $get({
-        url: cordaloEnv.API_URL("/api/v1/cordalo/template/peers"),
-        data: {},
-        success: function (result) {
-            ME_RANDOM_PEER = result.peers[getRandomInt(result.peers.length)].x500Principal.name;
-        }
-    });
-}
-
-function get_services() {
-    $get({
-        url: cordaloEnv.API_URL("/api/v1/cordalo/template/services"),
-        data: {},
-        success: function (result) {
-            show_services("#services-template", result);
-        }
-    });
-}
 
 function setWebSocketConnected(connected, running) {
     if (connected && running) {
@@ -255,6 +15,13 @@ function setWebSocketConnected(connected, running) {
     }
 }
 
+function animationOff() {
+    setWebSocketConnected(true, false);
+}
+
+function animationOn() {
+    setWebSocketConnected(true, true);
+}
 
 function connectWebSocket() {
     var socket = new SockJS(cordaloEnv.API_URL("/gs-guide-websocket"));
@@ -275,7 +42,9 @@ $(document).ready(function () {
     setWebSocketConnected(false);
     get_me();
     get_peers();
+
     get_services();
+    get_messages();
 
     connectWebSocket();
 
@@ -328,7 +97,7 @@ cordaloEnv.addMock(
 );
 
 cordaloEnv.addMock(
-    "/api/v1/cordalo/template/me",
+    "/api/v1/network/me",
     {
         "me": {
             "commonName": null,
@@ -345,7 +114,7 @@ cordaloEnv.addMock(
     }
 );
 cordaloEnv.addMock(
-    "/api/v1/cordalo/template/peers",
+    "/api/v1/network/peers",
     {
         "peers": [{
             "commonName": null,
