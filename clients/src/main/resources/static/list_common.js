@@ -38,7 +38,7 @@ function get_peers() {
 function get_random_peer() {
     var peers = cordaloEnv.ME("peers");
     if (peers) {
-        return peers[getRandomInt[peers.length)].x500Principal.name;
+        return peers[getRandomInt(peers.length)].x500Principal.name;
     }
     return "";
 }
