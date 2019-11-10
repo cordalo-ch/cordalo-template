@@ -16,7 +16,6 @@ import java.util.Map;
 import static java.util.stream.Collectors.toList;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:63342")
 @RequestMapping("/api/v1/network") // The paths for HTTP requests are relative to this base path.
 public class ControllerMe extends CordaloController {
 
