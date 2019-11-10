@@ -98,5 +98,26 @@ public class ChatMessageContract implements Contract {
             }
         }
 
+
+        class Delete implements ChatMessageContract.Commands {
+            @Override
+            public void verify(LedgerTransaction tx, StateVerifier verifier) throws IllegalArgumentException {
+                requireThat(req -> {
+                    verifier.output().empty("output must be empty");
+                    ChatMessageState message = verifier
+                            .input()
+                            .one()
+                            .one(ChatMessageState.class)
+                            .isNotEmpty(ChatMessageState::getLinearId, "id must be provided")
+                            .isNotEmpty(ChatMessageState::getSender, "sender must be provided")
+                            .isNotEmpty(ChatMessageState::getReceiver, "receiver must be provided")
+                            .isNotEmpty(ChatMessageState::getMessage, "message cannot be empty")
+                            .object();
+                    return null;
+                });
+            }
+        }
+
+
     }
 }

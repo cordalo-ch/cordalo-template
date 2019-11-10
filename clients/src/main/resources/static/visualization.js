@@ -31,9 +31,13 @@ function connectWebSocket() {
         setWebSocketConnected(true, false);
         console.log('Connected: ' + frame);
         stompClient.subscribe('/topic/vaultChanged/*', function (changes) {
-            get_services();
-            get_messages();
             animationOff();
+            if (changes.headers.destination == "/topic/vaultChanged/chatMessage") {
+                get_messages();
+            }
+            if (changes.headers.destination == "/topic/vaultChanged/serviceState") {
+                get_services();
+            }
         });
     });
 }

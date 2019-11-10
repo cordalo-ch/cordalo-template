@@ -1,12 +1,15 @@
 package com.cordalo.template.client.webserver;
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.*;
-import org.springframework.web.servlet.resource.GzipResourceResolver;
-import org.springframework.web.servlet.resource.PathResourceResolver;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-@EnableWebMvc
+/**
+ * https://docs.spring.io/spring-boot/docs/1.4.3.RELEASE/reference/htmlsingle/#boot-features-spring-mvc-auto-configuration
+ * remove
+ *  @EnableWebMvc
+ */
 public class WebConfig implements WebMvcConfigurer {
 
     @Override
@@ -30,19 +33,19 @@ public class WebConfig implements WebMvcConfigurer {
 
     /* checkout
     https://stackoverflow.com/questions/42393211/how-can-i-serve-static-html-from-spring-boot
-     */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry
                 .addResourceHandler("/**") // « /css/myStatic.css
                 .addResourceLocations("classpath:/static/") // Default Static Location
-                .setCachePeriod( 3600 )
-                .resourceChain(true) // 4.1
-                .addResolver(new GzipResourceResolver()) // 4.1
-                .addResolver(new PathResourceResolver());
+                ;
+
+                //.setCachePeriod( 3600 )
+                //.resourceChain(true) // 4.1
+                //.addResolver(new GzipResourceResolver()) // 4.1
+                //.addResolver(new PathResourceResolver());
+
     }
-    public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/")
-                .setViewName("forward:/index.html");
-    }
-}
+     */
+
+ }

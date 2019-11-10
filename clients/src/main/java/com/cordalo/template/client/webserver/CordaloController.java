@@ -2,9 +2,6 @@ package com.cordalo.template.client.webserver;
 
 import ch.cordalo.corda.common.client.webserver.RpcConnection;
 import ch.cordalo.corda.common.client.webserver.StateAndLinks;
-import com.cordalo.template.states.ChatMessageState;
-import com.cordalo.template.states.ServiceState;
-import net.corda.core.contracts.ContractState;
 import net.corda.core.contracts.LinearState;
 import net.corda.core.identity.CordaX500Name;
 import net.corda.core.identity.Party;

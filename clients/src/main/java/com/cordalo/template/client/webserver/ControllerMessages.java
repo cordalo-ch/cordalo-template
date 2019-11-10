@@ -3,18 +3,13 @@ package com.cordalo.template.client.webserver;
 import ch.cordalo.corda.common.client.webserver.RpcConnection;
 import ch.cordalo.corda.common.client.webserver.StateAndLinks;
 import ch.cordalo.corda.common.client.webserver.StateBuilder;
-import ch.cordalo.corda.common.contracts.JsonHelper;
 import ch.cordalo.corda.common.contracts.StateVerifier;
 import com.cordalo.template.contracts.StateMachine;
 import com.cordalo.template.flows.ChatMessageFlow;
-import com.cordalo.template.flows.ServiceFlow;
 import com.cordalo.template.states.ChatMessageState;
 import com.cordalo.template.states.ServiceState;
 import net.corda.core.contracts.UniqueIdentifier;
-import net.corda.core.identity.CordaX500Name;
 import net.corda.core.identity.Party;
-import net.corda.core.node.services.Vault;
-import net.corda.core.node.services.vault.QueryCriteria;
 import net.corda.core.transactions.SignedTransaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URISyntaxException;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 

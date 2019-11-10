@@ -134,7 +134,7 @@ public class ChatMessageFlow {
             getProgressTracker().setCurrentStep(BUILDING);
             TransactionBuilder transactionBuilder = getTransactionBuilderSignedByParticipants(
                     messageState,
-                    new ChatMessageContract.Commands.Reply());
+                    new ChatMessageContract.Commands.Delete());
             transactionBuilder.addInputState(messageStateRef);
 
             return signSyncCollectAndFinalize(messageState.getParticipants(), transactionBuilder);

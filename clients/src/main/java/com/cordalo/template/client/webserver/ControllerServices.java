@@ -7,7 +7,6 @@ import ch.cordalo.corda.common.contracts.JsonHelper;
 import ch.cordalo.corda.common.contracts.StateVerifier;
 import com.cordalo.template.contracts.StateMachine;
 import com.cordalo.template.flows.ServiceFlow;
-import com.cordalo.template.states.ChatMessageState;
 import com.cordalo.template.states.ServiceState;
 import net.corda.core.contracts.UniqueIdentifier;
 import net.corda.core.identity.CordaX500Name;

@@ -123,7 +123,7 @@ function show_messages(tagName, result) {
                 name: "state.linearId",
                 type: "text",
                 align: "center",
-                width: 20,
+                width: 25,
                 itemTemplate: function (value, item) {
                     var res = "<a target='_blank' href='" + cordaloEnv.API_URL("/api/v1/cordalo/template/messages/" + value.id) + "'>o</a>&nbsp;"
                         + "<a value=" + value.id + " href=\"#\" onClick=\"deleteMessage(this)\"'>X</a>";

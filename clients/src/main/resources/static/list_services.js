@@ -132,7 +132,7 @@ function show_services(tagName, result) {
                 name: "state.id",
                 type: "text",
                 align: "center",
-                width: 30,
+                width: 25,
                 itemTemplate: function (value) {
                     var res = "<a target='_blank' href='" + cordaloEnv.API_URL("/api/v1/cordalo/template/services/" + value.id) + "'>o</a>&nbsp;"
                         + "<a value=" + value.id + " href=\"#\" onClick=\"deleteService(this)\"'>X</a>";
