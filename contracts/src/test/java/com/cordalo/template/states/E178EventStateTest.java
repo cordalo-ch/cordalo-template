@@ -29,6 +29,7 @@ public class E178EventStateTest extends E178BaseTests {
                 this.regulator.party,
                 this.retailer.party,
                 this.leasing.party,
+                this.insurer.party,
                 "ZH",
                 E178EventState.E178StatusType.INITIAL
         );
@@ -40,6 +41,7 @@ public class E178EventStateTest extends E178BaseTests {
         assertThat(e178EventState.getRegulator(), is(this.regulator.party));
         assertThat(e178EventState.getRetailer(), is(this.retailer.party));
         assertThat(e178EventState.getLeasing(), is(this.leasing.party));
+        assertThat(e178EventState.getInsurer(), is(this.insurer.party));
         assertThat(e178EventState.getStatus(), is(E178EventState.E178StatusType.INITIAL));
     }
 

@@ -35,6 +35,10 @@ public class E178EventState implements LinearState {
     @NotNull
     private Party leasing;
 
+    @JsonIgnore
+    @NotNull
+    private Party insurer;
+
     @NotNull
     private String state;
 
@@ -63,16 +67,23 @@ public class E178EventState implements LinearState {
         List<AbstractParty> list = new ArrayList<>();
         list.add(this.regulator);
         list.add(this.retailer);
+        list.add(this.insurer);
         list.add(this.leasing);
         return list;
     }
 
     @ConstructorForDeserialization
-    public E178EventState(@NotNull UniqueIdentifier id, @NotNull Party regulator, @NotNull Party retailer, @NotNull Party leasing, @NotNull String state, @NotNull E178StatusType status) {
+    public E178EventState(@NotNull UniqueIdentifier id,
+                          @NotNull Party regulator,
+                          @NotNull Party retailer,
+                          @NotNull Party leasing,
+                          @NotNull Party insurer,
+                          @NotNull String state, @NotNull E178StatusType status) {
         this.id = id;
         this.regulator = regulator;
         this.retailer = retailer;
         this.leasing = leasing;
+        this.insurer = insurer;
         this.state = state;
         this.status = status;
     }
@@ -99,6 +110,11 @@ public class E178EventState implements LinearState {
     }
 
     @NotNull
+    public Party getInsurer() {
+        return insurer;
+    }
+
+    @NotNull
     public String getState() {
         return state;
     }
@@ -117,12 +133,13 @@ public class E178EventState implements LinearState {
                 regulator.equals(e178EventState.regulator) &&
                 retailer.equals(e178EventState.retailer) &&
                 leasing.equals(e178EventState.leasing) &&
+                insurer.equals(e178EventState.insurer) &&
                 state.equals(e178EventState.state) &&
                 status == e178EventState.status;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, regulator, retailer, leasing, state, status);
+        return Objects.hash(id, regulator, retailer, leasing, insurer, state, status);
     }
 }
