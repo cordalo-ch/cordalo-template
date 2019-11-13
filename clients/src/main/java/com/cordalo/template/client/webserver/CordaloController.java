@@ -2,6 +2,7 @@ package com.cordalo.template.client.webserver;
 
 import ch.cordalo.corda.common.client.webserver.RpcConnection;
 import ch.cordalo.corda.common.client.webserver.StateAndLinks;
+import ch.cordalo.corda.ext.CordaProxy;
 import net.corda.core.contracts.LinearState;
 import net.corda.core.identity.CordaX500Name;
 import net.corda.core.identity.Party;
@@ -17,37 +18,24 @@ import java.util.List;
 
 public abstract class CordaloController {
 
-    private CordaRPCOps proxy;
-    private Party me;
-
-    private final List<Party> notaries;
-
+    private final CordaProxy rpc;
     private final static Logger logger = LoggerFactory.getLogger(CordaloController.class);
 
-    public CordaloController(RpcConnection rpc) {
-        if (rpc.getProxy() == null) {
-            this.proxy = null;
-            this.me = null;
-            this.notaries = Collections.emptyList();
+    public CordaloController() {
+        this.rpc = CordaProxy.getInstance();
+        if (rpc == null || !rpc.isValid()) {
             logger.error("NodeRPC connection + proxy is not initialized (null)");
             return;
         }
-        this.proxy = rpc.getProxy();
-        this.me = rpc.getProxy().nodeInfo().getLegalIdentities().get(0);
-        this.notaries = rpc.getProxy().notaryIdentities();
     }
 
     public CordaRPCOps getProxy() {
-        return proxy;
+        return this.rpc.getProxy();
     }
 
-    public Party getMe() {
-        return me;
-    }
+    public Party getMe() { return this.rpc.getMe(); }
 
-    public List<Party> getNotaries() {
-        return notaries;
-    }
+    public Party getNotary() {  return this.rpc.getNotary(); }
 
     public boolean isValid() {
         return this.getProxy() != null;

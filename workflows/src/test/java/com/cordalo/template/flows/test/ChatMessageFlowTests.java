@@ -2,6 +2,8 @@ package com.cordalo.template.flows.test;
 
 import ch.cordalo.corda.common.contracts.StateVerifier;
 import ch.cordalo.corda.common.test.CordaNodeEnvironment;
+import ch.cordalo.corda.common.test.MockCordaProxy;
+import ch.cordalo.corda.ext.CordaProxy;
 import com.cordalo.template.flows.ChatMessageFlow;
 import com.cordalo.template.states.ChatMessageState;
 import net.corda.core.concurrent.CordaFuture;

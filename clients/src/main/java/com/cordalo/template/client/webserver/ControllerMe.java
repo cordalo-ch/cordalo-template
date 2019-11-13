@@ -27,8 +27,8 @@ public class ControllerMe extends CordaloController {
     private final static String MAPPING_PATH = "/api/v1/network";
     private final static String BASE_PATH = "";
 
-    public ControllerMe(RpcConnection rpc) {
-        super(rpc);
+    public ControllerMe() {
+        super();
         StateMachine.State.values();
         StateMachine.StateTransition.values();
     }
@@ -53,7 +53,7 @@ public class ControllerMe extends CordaloController {
         return ImmutableMap.of("peers", nodeInfoSnapshot
                 .stream()
                 .map(node -> node.getLegalIdentities().get(0))
-                .filter(x500 -> !x500.equals(this.getMe()) && !this.getNotaries().contains(x500))
+                .filter(x500 -> !x500.equals(this.getMe()) && !x500.equals(this.getNotary()))
                 .map(x500 -> x500.getName())
                 .collect(toList()));
     }

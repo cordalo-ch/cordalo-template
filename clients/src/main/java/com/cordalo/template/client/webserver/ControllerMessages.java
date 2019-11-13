@@ -35,8 +35,8 @@ public class ControllerMessages extends CordaloController {
     private final static String MAPPING_PATH = "/api/v1/cordalo/template";
     private final static String BASE_PATH = "/messages";
 
-    public ControllerMessages(RpcConnection rpc) {
-        super(rpc);
+    public ControllerMessages() {
+        super();
         StateMachine.State.values();
         StateMachine.StateTransition.values();
     }

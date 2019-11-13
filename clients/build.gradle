@@ -1,4 +1,5 @@
 apply plugin: 'org.springframework.boot'
+apply plugin: 'net.corda.plugins.quasar-utils'
 
 sourceSets {
     main {
@@ -32,10 +33,18 @@ dependencies {
     compile("org.webjars:bootstrap:4.3.1")
     compile("org.webjars:jquery:3.4.1")
 
-
     compile "org.apache.logging.log4j:log4j-slf4j-impl:${log4j_version}"
     compile "org.apache.logging.log4j:log4j-web:${log4j_version}"
     compile "org.slf4j:jul-to-slf4j:$slf4j_version"
+
+    testCompile "$corda_release_group:corda-node-driver:$corda_release_version"
+    testCompile("org.springframework.boot:spring-boot-starter-test:$spring_boot_version") {
+        exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
+    }
+    testCompile "junit:junit:$junit_version"
+    testCompile "ch.cordalo:corda-common-test:$cordalo_version"
+    testCompile project(":contracts").sourceSets.test.output
+
 }
 
 springBoot {
