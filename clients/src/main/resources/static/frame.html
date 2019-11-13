@@ -31,6 +31,7 @@
     <script src="list_common.js"></script>
     <script src="list_messages.js"></script>
     <script src="list_services.js"></script>
+    <script src="list_e178.js"></script>
     <script src="visualization.js"></script>
     <link rel="stylesheet" type="text/css" href="visualization.css">
 </head>
@@ -47,6 +48,27 @@
 
 </h1>
 
+
+<span id="e178-data_block">
+<h3>Messages</h3>
+<div id="e178-template"></div>
+</span>
+<span id="e178-data-new" style="display:block">
+    <a href="#" onClick='createNewE178(this, "123.456.786", "AG")'>123.456.786 / AG</a>
+    <a href="#" onClick='createNewE178(this, "111.222.333", "ZH")'>111.222.333 / ZH</a>
+</span>
+
+
+<span id="messages-data_block">
+<h3>Messages</h3>
+<div id="messages-template"></div>
+</span>
+<span id="messages-data-new" style="display:block">
+    <a href="#" onClick='createNewMessage(this)'>send joke</a>
+    <a href="#" onClick='createNewMessage(this, "hello world")'>send hello world</a>
+</span>
+
+
 <span id="share-data_block">
 <h3>Services</h3>
 <div id="services-template"></div>
@@ -61,16 +83,6 @@ P=Product, S=Support, A=Alarm Services and price<br>
     <a href="#" onClick='createNewService(this, "Support-Z", "N", 45)'>S-45</a>
     <a href="#" onClick='createNewService(this, "Alarm-1", "N", 53)'>A-53</a>
     <a href="#" onClick='createNewService(this, "Alarm-2", "N", 87)'>A-87</a>
-</span>
-
-
-<span id="messages-data_block">
-<h3>Messages</h3>
-<div id="messages-template"></div>
-</span>
-<span id="messages-data-new" style="display:block">
-    <a href="#" onClick='createNewMessage(this)'>send joke</a>
-    <a href="#" onClick='createNewMessage(this, "hello world")'>send hello world</a>
 </span>
 
 </body>

@@ -38,6 +38,12 @@ public class E178EventFlowTests extends E178BaseTests {
         network.runNetwork();
         return future.get();
     }
+    protected SignedTransaction newIssueE178(E178EventState e178, CordaNodeEnvironment leasing, String state, CordaNodeEnvironment regulator) throws ExecutionException, InterruptedException {
+        FlowLogic<SignedTransaction> flow = new E178EventFlow.Issue(e178.getLinearId(), state, regulator.party);
+        CordaFuture<SignedTransaction> future = leasing.node.startFlow(flow);
+        network.runNetwork();
+        return future.get();
+    }
 
     @Test
     public void test_e178_request() throws Exception {
@@ -49,6 +55,28 @@ public class E178EventFlowTests extends E178BaseTests {
                 .object();
 
         Assert.assertEquals("state must be ZH", "ZH", e178.getState());
+    }
+
+
+
+    @Test
+    public void test_e178_issue() throws Exception {
+        SignedTransaction tx = this.newRequestE178(this.retailer,this.leasing, "ZH");
+        StateVerifier verifier = StateVerifier.fromTransaction(tx, this.retailer.ledgerServices);
+        E178EventState e178 = verifier
+                .output().one()
+                .one(E178EventState.class)
+                .object();
+        SignedTransaction tx2 = this.newIssueE178(e178, this.leasing, "AG", this.regulator);
+        StateVerifier verifier2 = StateVerifier.fromTransaction(tx2, this.leasing.ledgerServices);
+        E178EventState e178_2 = verifier2
+                .output().one()
+                .one(E178EventState.class)
+                .object();
+
+
+        Assert.assertEquals("state must be ZH", "ZH", e178.getState());
+        Assert.assertEquals("state must be AG", "AG", e178_2.getState());
     }
 
 }
