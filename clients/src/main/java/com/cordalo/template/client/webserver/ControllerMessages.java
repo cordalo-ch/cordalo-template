@@ -1,5 +1,6 @@
 package com.cordalo.template.client.webserver;
 
+import ch.cordalo.corda.common.client.webserver.RpcConnection;
 import ch.cordalo.corda.common.client.webserver.StateAndLinks;
 import ch.cordalo.corda.common.client.webserver.StateBuilder;
 import ch.cordalo.corda.common.contracts.StateVerifier;
@@ -38,8 +39,8 @@ public class ControllerMessages extends CordaloController {
     private final static String MAPPING_PATH = "/api/v1/cordalo/template";
     private final static String BASE_PATH = "/messages";
 
-    public ControllerMessages() {
-        super();
+    public ControllerMessages(RpcConnection rpcConnection) {
+        super(rpcConnection);
         StateMachine.State.values();
         StateMachine.StateTransition.values();
     }

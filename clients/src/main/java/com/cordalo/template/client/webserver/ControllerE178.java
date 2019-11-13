@@ -1,5 +1,6 @@
 package com.cordalo.template.client.webserver;
 
+import ch.cordalo.corda.common.client.webserver.RpcConnection;
 import ch.cordalo.corda.common.client.webserver.StateAndLinks;
 import ch.cordalo.corda.common.client.webserver.StateBuilder;
 import ch.cordalo.corda.common.contracts.StateVerifier;
@@ -36,8 +37,9 @@ public class ControllerE178 extends CordaloController {
     private final static String MAPPING_PATH = "/api/v1/cordalo/template";
     private final static String BASE_PATH = "/e178";
 
-    public ControllerE178() {
-        super();
+
+    public ControllerE178(RpcConnection rpcConnection) {
+        super(rpcConnection);
     }
 
 

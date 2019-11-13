@@ -16,6 +16,7 @@ import net.corda.core.node.services.vault.QueryCriteria;
 import net.corda.core.transactions.SignedTransaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -39,8 +40,8 @@ public class ControllerServices extends CordaloController {
     private final static String MAPPING_PATH = "/api/v1/cordalo/template";
     private final static String BASE_PATH = "/services";
 
-    public ControllerServices() {
-        super();
+    public ControllerServices(RpcConnection rpcConnection) {
+        super(rpcConnection);
         StateMachine.State.values();
         StateMachine.StateTransition.values();
     }

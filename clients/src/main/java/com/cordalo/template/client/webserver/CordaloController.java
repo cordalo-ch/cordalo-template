@@ -22,12 +22,9 @@ public abstract class CordaloController {
 
     private final CordaProxy rpc;
 
-    @Autowired
-    private RpcConnection rpcConnection;
-
     private final static Logger logger = LoggerFactory.getLogger(CordaloController.class);
 
-    public CordaloController() {
+    public CordaloController(RpcConnection rpcConnection) {
         if (CordaProxy.getInstance() == null) {
             CordaProxy.register(new CordaRpcProxy(rpcConnection));
             this.rpc = CordaProxy.getInstance();
