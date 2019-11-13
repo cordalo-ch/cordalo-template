@@ -1,14 +1,9 @@
 package com.cordalo.template.contracts;
 
-import ch.cordalo.corda.common.contracts.ReferenceContract;
 import ch.cordalo.corda.common.contracts.StateVerifier;
-import ch.cordalo.corda.common.contracts.test.TestState;
 import com.cordalo.template.states.ChatMessageState;
-import com.cordalo.template.states.ServiceState;
 import net.corda.core.contracts.CommandData;
 import net.corda.core.contracts.Contract;
-import net.corda.core.contracts.ContractsDSL;
-import net.corda.core.serialization.CordaSerializable;
 import net.corda.core.transactions.LedgerTransaction;
 
 import static net.corda.core.contracts.ContractsDSL.requireThat;

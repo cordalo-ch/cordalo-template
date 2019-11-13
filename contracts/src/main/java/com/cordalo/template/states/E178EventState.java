@@ -1,6 +1,7 @@
 package com.cordalo.template.states;
 
-import com.cordalo.template.contracts.ChatMessageContract;
+import ch.cordalo.corda.ext.Participants;
+import com.cordalo.template.contracts.E178EventContract;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.corda.core.contracts.BelongsToContract;
 import net.corda.core.contracts.LinearState;
@@ -10,49 +11,49 @@ import net.corda.core.identity.Party;
 import net.corda.core.serialization.ConstructorForDeserialization;
 import net.corda.core.serialization.CordaSerializable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.security.PublicKey;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
-@BelongsToContract(ChatMessageContract.class)
+@BelongsToContract(E178EventContract.class)
 public class E178EventState implements LinearState {
 
     @NotNull
-    private UniqueIdentifier id;
+    private final UniqueIdentifier id;
 
     @JsonIgnore
-    @NotNull
-    private Party regulator;
+    @Nullable
+    private final Party regulator;
 
     @JsonIgnore
-    @NotNull
-    private Party retailer ;
+    @Nullable
+    private final Party retailer ;
 
     @JsonIgnore
-    @NotNull
-    private Party leasing;
+    @Nullable
+    private final Party leasing;
 
     @JsonIgnore
-    @NotNull
-    private Party insurer;
+    @Nullable
+    private final Party insurer;
 
     @NotNull
-    private String state;
+    private final String state;
 
     @CordaSerializable
     public enum E178StatusType {
-        INITIAL,
         REQUESTED,
         ISSUED,
+        INSURANCE_REQUESTED,
         INSURED,
-        REGISTERED
+        REGISTERED,
+        CANCELED
     }
 
     @NotNull
-    private E178StatusType status;
+    private final E178StatusType status;
 
     @NotNull
     @Override
@@ -64,26 +65,26 @@ public class E178EventState implements LinearState {
     @JsonIgnore
     @Override
     public List<AbstractParty> getParticipants() {
-        List<AbstractParty> list = new ArrayList<>();
-        list.add(this.regulator);
-        list.add(this.retailer);
-        list.add(this.insurer);
-        list.add(this.leasing);
-        return list;
+        return new Participants(
+                this.retailer,
+                this.leasing,
+                this.regulator,
+                this.insurer
+        ).getParties();
     }
 
     @ConstructorForDeserialization
     public E178EventState(@NotNull UniqueIdentifier id,
-                          @NotNull Party regulator,
-                          @NotNull Party retailer,
-                          @NotNull Party leasing,
-                          @NotNull Party insurer,
+                          @Nullable Party retailer,
+                          @Nullable Party leasing,
+                          @Nullable Party insurer,
+                          @Nullable Party regulator,
                           @NotNull String state, @NotNull E178StatusType status) {
         this.id = id;
-        this.regulator = regulator;
         this.retailer = retailer;
         this.leasing = leasing;
         this.insurer = insurer;
+        this.regulator = regulator;
         this.state = state;
         this.status = status;
     }
@@ -91,28 +92,36 @@ public class E178EventState implements LinearState {
     @NotNull
     @JsonIgnore
     public List<PublicKey> getParticipantKeys() {
-        return getParticipants().stream().map(AbstractParty::getOwningKey).collect(Collectors.toList());
+        return new Participants(this.getParticipants()).getPublicKeys();
+    }
+    @NotNull
+    public List<String> getParticipantsX500() {
+        return new Participants(this.getParticipants()).getPartiesX500();
     }
 
-    @NotNull
+    @Nullable
     public Party getRegulator() {
         return regulator;
     }
+    public String getRegulatorX500() { return Participants.partyToX500(this.getRegulator());}
 
-    @NotNull
+    @Nullable
     public Party getRetailer() {
         return retailer;
     }
+    public String getRetailerX500() { return Participants.partyToX500(this.getRetailer());}
 
-    @NotNull
+    @Nullable
     public Party getLeasing() {
         return leasing;
     }
+    public String getLeasingX500() { return Participants.partyToX500(this.getLeasing());}
 
-    @NotNull
+    @Nullable
     public Party getInsurer() {
         return insurer;
     }
+    public String getInsurerX500() { return Participants.partyToX500(this.getInsurer());}
 
     @NotNull
     public String getState() {
@@ -128,18 +137,47 @@ public class E178EventState implements LinearState {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        E178EventState e178EventState = (E178EventState) o;
-        return id.equals(e178EventState.id) &&
-                regulator.equals(e178EventState.regulator) &&
-                retailer.equals(e178EventState.retailer) &&
-                leasing.equals(e178EventState.leasing) &&
-                insurer.equals(e178EventState.insurer) &&
-                state.equals(e178EventState.state) &&
-                status == e178EventState.status;
+        E178EventState that = (E178EventState) o;
+        return id.equals(that.id) &&
+                Objects.equals(getRegulator(), that.getRegulator()) &&
+                Objects.equals(getRetailer(), that.getRetailer()) &&
+                Objects.equals(getLeasing(), that.getLeasing()) &&
+                Objects.equals(getInsurer(), that.getInsurer()) &&
+                getState().equals(that.getState()) &&
+                getStatus() == that.getStatus();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, regulator, retailer, leasing, insurer, state, status);
+        return Objects.hash(id, getRegulator(), getRetailer(), getLeasing(), getInsurer(), getState(), getStatus());
     }
+
+    /* action */
+
+    protected E178EventState changeState(E178StatusType status){
+        return new E178EventState(this.getLinearId(), this.getRetailer(), this.getLeasing(), this.getInsurer(), this.getRegulator(), this.getState(), status);
+    }
+    public static E178EventState request(Party retail, Party leasing, String state) {
+        return new E178EventState(new UniqueIdentifier(), retail, leasing, null, null, state, E178StatusType.REQUESTED);
+    }
+    public E178EventState issue(String state, Party regulator) {
+        return new E178EventState(this.getLinearId(), this.getRetailer(), this.getLeasing(), this.getInsurer(), regulator, state, E178StatusType.REGISTERED);
+    }
+    public E178EventState issue(Party regulator) {
+        return new E178EventState(this.getLinearId(), this.getRetailer(), this.getLeasing(), this.getInsurer(), regulator, this.getState(), E178StatusType.REGISTERED);
+    }
+
+    public E178EventState requestInsurance(Party insurer) {
+        return new E178EventState(this.getLinearId(), this.getRetailer(), this.getLeasing(), insurer, this.getRegulator(), this.getState(), E178StatusType.INSURANCE_REQUESTED);
+    }
+    public E178EventState insure(Party insurer, Party regulator) {
+        return new E178EventState(this.getLinearId(), this.getRetailer(), this.getLeasing(), insurer, regulator, this.getState(), E178StatusType.INSURED);
+    }
+    public E178EventState registered() {
+        return this.changeState(E178StatusType.REGISTERED);
+    }
+    public E178EventState cancel() {
+        return this.changeState(E178StatusType.CANCELED);
+    }
+
 }

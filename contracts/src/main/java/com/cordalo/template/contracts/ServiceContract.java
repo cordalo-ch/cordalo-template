@@ -1,14 +1,12 @@
 package com.cordalo.template.contracts;
 
 import ch.cordalo.corda.common.contracts.CommandVerifier;
-import ch.cordalo.corda.common.contracts.ReferenceContract;
 import ch.cordalo.corda.common.contracts.StateVerifier;
 import com.cordalo.template.states.ServiceState;
 import kotlin.Pair;
 import net.corda.core.contracts.CommandData;
 import net.corda.core.contracts.Contract;
 import net.corda.core.serialization.ConstructorForDeserialization;
-import net.corda.core.serialization.CordaSerializable;
 import net.corda.core.transactions.LedgerTransaction;
 
 import static net.corda.core.contracts.ContractsDSL.requireThat;

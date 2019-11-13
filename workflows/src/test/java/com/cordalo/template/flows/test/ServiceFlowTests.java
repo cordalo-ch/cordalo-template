@@ -4,11 +4,9 @@ import ch.cordalo.corda.common.contracts.StateVerifier;
 import com.cordalo.template.flows.ServiceFlow;
 import com.cordalo.template.states.ServiceState;
 import net.corda.core.transactions.SignedTransaction;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
+@Ignore
 public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
 
     @Before

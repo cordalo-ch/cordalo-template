@@ -3,10 +3,8 @@ package com.cordalo.template.client.webserver;
 import ch.cordalo.corda.common.client.webserver.StateAndLinks;
 import ch.cordalo.corda.common.client.webserver.StateBuilder;
 import ch.cordalo.corda.common.contracts.StateVerifier;
-import com.cordalo.template.contracts.StateMachine;
-import com.cordalo.template.flows.ChatMessageFlow;
-import com.cordalo.template.states.ChatMessageState;
-import com.cordalo.template.states.ServiceState;
+import com.cordalo.template.flows.E178EventFlow;
+import com.cordalo.template.states.E178EventState;
 import net.corda.core.contracts.UniqueIdentifier;
 import net.corda.core.identity.Party;
 import net.corda.core.messaging.FlowProgressHandle;
@@ -31,30 +29,28 @@ import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequestMapping("/api/v1/cordalo/template") // The paths for HTTP requests are relative to this base path.
-public class ControllerMessages extends CordaloController {
+public class ControllerE178 extends CordaloController {
 
-    private final static Logger logger = LoggerFactory.getLogger(ControllerMessages.class);
+    private final static Logger logger = LoggerFactory.getLogger(ControllerE178.class);
 
     private final static String MAPPING_PATH = "/api/v1/cordalo/template";
-    private final static String BASE_PATH = "/messages";
+    private final static String BASE_PATH = "/e178";
 
-    public ControllerMessages() {
+    public ControllerE178() {
         super();
-        StateMachine.State.values();
-        StateMachine.StateTransition.values();
     }
 
 
-    private ResponseEntity<StateAndLinks<ChatMessageState>> getResponse(HttpServletRequest request, ChatMessageState message, HttpStatus status) throws URISyntaxException {
+    private ResponseEntity<StateAndLinks<E178EventState>> getResponse(HttpServletRequest request, E178EventState e178, HttpStatus status) throws URISyntaxException {
         String[] actions = { "reply" };
-        return new StateBuilder<>(message, ResponseEntity.status(HttpStatus.OK))
+        return new StateBuilder<>(e178, ResponseEntity.status(HttpStatus.OK))
                 .stateMapping(MAPPING_PATH, BASE_PATH, request)
                 .self()
                 .links(actions)
                 .build();
     }
 
-    private ResponseEntity<List<StateAndLinks<ChatMessageState>>> getResponses(HttpServletRequest request, List<ChatMessageState> list, HttpStatus status) throws URISyntaxException {
+    private ResponseEntity<List<StateAndLinks<E178EventState>>> getResponses(HttpServletRequest request, List<E178EventState> list, HttpStatus status) throws URISyntaxException {
         String[] actions = { "reply" };
         return new StateBuilder<>(list, ResponseEntity.status(HttpStatus.OK))
                 .stateMapping(MAPPING_PATH, BASE_PATH, request)
@@ -63,7 +59,7 @@ public class ControllerMessages extends CordaloController {
                 .buildList();
     }
     /**
-     * returns all unconsumed services that exist in the node's vault.
+     * returns all unconsumed e178 that exist in the node's vault.
      */
     @RequestMapping(
             value = BASE_PATH,
@@ -71,18 +67,18 @@ public class ControllerMessages extends CordaloController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @ResponseBody
-    public ResponseEntity<List<StateAndLinks<ChatMessageState>>> getMessages(
+    public ResponseEntity<List<StateAndLinks<E178EventState>>> getE178(
             HttpServletRequest request) throws URISyntaxException {
-        List<ChatMessageState> list = this.getProxy().vaultQuery(ChatMessageState.class).getStates()
+        List<E178EventState> list = this.getProxy().vaultQuery(E178EventState.class).getStates()
                 .stream().map(state -> state.getState().getData()).collect(toList());
         return this.getResponses(request, list, HttpStatus.OK);
     }
 
     /**
-     * create a new chat message with from sender to receiver
+     * create a new e178 with from retail to leasing
      * @param request is the original http request to calculate links in response
-     * @param to string repesenting a party
-     * @param message optional - string message of chat, if empty german joke is choosen
+     * @param leasing leasing part to issue the e178
+     * @param state state of car to be registered at
      */
     @RequestMapping(
             value = BASE_PATH,
@@ -90,33 +86,33 @@ public class ControllerMessages extends CordaloController {
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<StateAndLinks<ChatMessageState>> sendMessage(
+    public ResponseEntity<StateAndLinks<E178EventState>> requestE178(
             HttpServletRequest request,
-            @RequestParam(value = "to", required = true) String to,
-            @RequestParam(name = "message", required = false) String message) {
-        Party receiverParty = this.partyFromString(to);
-        if (receiverParty == null){
-            return this.buildResponseFromException(HttpStatus.BAD_REQUEST, "receiver not a valid peer.");
+            @RequestParam(value = "leasing", required = true) String leasing,
+            @RequestParam(name = "state", required = false) String state) {
+        Party leasingParty = this.partyFromString(leasing);
+        if (leasingParty == null){
+            return this.buildResponseFromException(HttpStatus.BAD_REQUEST, "leasing not a valid peer.");
         }
         try {
             SignedTransaction signedTx= null;
-            if (message != null && !message.isEmpty()) {
-                FlowProgressHandle<SignedTransaction> tFlowProgressHandle = this.getProxy()
-                        .startTrackedFlowDynamic(ChatMessageFlow.Send.class,
-                                receiverParty,
-                                message);
-                signedTx = tFlowProgressHandle.getReturnValue().get();
+            if (state != null && !state.isEmpty()) {
+                signedTx = this.getProxy()
+                        .startTrackedFlowDynamic(E178EventFlow.Request.class,
+                                leasingParty, state)
+                        .getReturnValue()
+                        .get();
             } else {
                 signedTx = this.getProxy()
-                        .startTrackedFlowDynamic(ChatMessageFlow.Send.class,
-                                receiverParty)
+                        .startTrackedFlowDynamic(E178EventFlow.Request.class,
+                                leasingParty)
                         .getReturnValue()
                         .get();
             }
 
             StateVerifier verifier = StateVerifier.fromTransaction(signedTx, null);
-            ChatMessageState chatMessage = verifier.output().one(ChatMessageState.class).object();
-            return this.getResponse(request, chatMessage, HttpStatus.CREATED);
+            E178EventState e178 = verifier.output().one(E178EventState.class).object();
+            return this.getResponse(request, e178, HttpStatus.CREATED);
 
         } catch (Throwable ex) {
             logger.error(ex.getMessage(), ex);
@@ -124,9 +120,8 @@ public class ControllerMessages extends CordaloController {
         }
     }
 
-
     /**
-     * receives a unconsumed service with a given ID from the node's vault.
+     * receives a unconsumed E178 with a given ID from the node's vault.
      * @param id unique identifier as UUID for service
      */
     @RequestMapping(
@@ -135,7 +130,7 @@ public class ControllerMessages extends CordaloController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @ResponseBody
-    public ResponseEntity<StateAndLinks<ChatMessageState>> getMessage(
+    public ResponseEntity<StateAndLinks<E178EventState>> getE178(
             HttpServletRequest request,
             @PathVariable("id") String id) throws URISyntaxException {
         UniqueIdentifier uid = new UniqueIdentifier(null, UUID.fromString(id));
@@ -144,19 +139,18 @@ public class ControllerMessages extends CordaloController {
                 Collections.singletonList(uid),
                 Vault.StateStatus.UNCONSUMED,
                 null);
-        List<ChatMessageState> messages = this.getProxy().vaultQueryByCriteria(queryCriteria, ChatMessageState.class)
+        List<E178EventState> e178list = this.getProxy().vaultQueryByCriteria(queryCriteria, E178EventState.class)
                 .getStates().stream().map(state -> state.getState().getData()).collect(toList());
-        if (messages.isEmpty()) {
+        if (e178list.isEmpty()) {
             return null;
         } else {
-            ChatMessageState message = messages.get(messages.size()-1);
-            return this.getResponse(request, message, HttpStatus.OK);
+            E178EventState e178 = e178list.get(e178list.size()-1);
+            return this.getResponse(request, e178, HttpStatus.OK);
         }
     }
 
-
     /**
-     * deletes an unconsumed message with a given ID from the node's vault.
+     * deletes an unconsumed e178 with a given ID from the node's vault.
      * @param id unique identifier as UUID for service
      */
     @RequestMapping(
@@ -165,12 +159,12 @@ public class ControllerMessages extends CordaloController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @ResponseBody
-    public ResponseEntity<StateAndLinks<ServiceState>> deleteMessageById(
+    public ResponseEntity<StateAndLinks<E178EventState>> deleteE178(
             @PathVariable("id") String id) {
         UniqueIdentifier uid = new UniqueIdentifier(null, UUID.fromString(id));
         try {
             final SignedTransaction signedTx = this.getProxy()
-                    .startTrackedFlowDynamic(ChatMessageFlow.Delete.class, uid)
+                    .startTrackedFlowDynamic(E178EventFlow.Delete.class, uid)
                     .getReturnValue()
                     .get();
             //this.messagingTemplate.convertAndSend("/topic/vaultChanged/cordalo/template/service", "");

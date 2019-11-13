@@ -8,7 +8,7 @@ import net.corda.core.flows.FlowLogic;
 
 import java.util.List;
 
-public abstract class E178BaseTests extends CordaloBaseTests {
+public class E178BaseTests extends CordaloBaseTests {
 
     protected CordaTestNetwork network;
 
@@ -24,7 +24,7 @@ public abstract class E178BaseTests extends CordaloBaseTests {
         );
     }
 
-    public void setup(boolean withNodes, Class<? extends FlowLogic> ...responderClasses) {
+    public CordaTestNetwork setup(boolean withNodes, Class<? extends FlowLogic> ...responderClasses) {
         this.network = new CordaTestNetwork(
                 withNodes,
             this.getCordappPackageNames(),
@@ -35,6 +35,12 @@ public abstract class E178BaseTests extends CordaloBaseTests {
         this.leasing = network.startEnv("Company-C", "O=Company-C,L=Zug,ST=ZG,C=CH");
         this.insurer = network.startEnv("Company-D", "O=Company-D,L=Zurich,ST=ZH,C=CH");
         this.network.startNodes();
+        return this.network;
+    }
+
+    @Override
+    public CordaTestNetwork getNetwork() {
+        return this.network;
     }
 
     public void tearDown() {
