@@ -63,20 +63,22 @@ function show_e178(tagName, result) {
 
         fields: [
             {
-                title: "Chat", name: "state", type: "text", itemTemplate: function (value, item) {
+                title: "StammNr", name: "state", type: "text", itemTemplate: function (value, item) {
                     i = i + 1;
-                    var chat = "";
-                    var align="";
-                    if (value.senderX500 == cordaloEnv.ME("X500")) {
-                        chat = "-> "+X500toO(value.receiverX500);
-                        align="right";
-                    } else {
-                        chat = "<- " + X500toO(value.senderX500);
-                        align="left";
-                    }
-                    var msg = value.message.replace("\n", "<br>");
-                    chat = msg +"<br>("+chat+")";
-                    return "<span style=\"width:100%;text-align:"+align+"\">"+strongS(i) + chat + strongE(i)+"</span>";
+                    return strongS(i) + "xxx.xxx.xxx" + strongE(i);
+                }
+            },
+            {
+                title: "Partners", name: "state", type: "text", itemTemplate: function (value, item) {
+                    i = i + 1;
+                    var x500_O = participantsWithoutMe(item.state.participantsX500).map(x => X500toO(x));
+                    return strongS(i) + x500_O.join(",") + strongE(i);
+                }
+            },
+            {
+                title: "State", name: "state.state", type: "text", itemTemplate: function (value, item) {
+                    i = i + 1;
+                    return strongS(i) + value + "<br>" + makeOptions(item.state.id.id, item.links, "Action", "onServiceSelectionChanged") + strongE(i);
                 }
             },
             {

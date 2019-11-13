@@ -1,5 +1,6 @@
 package com.cordalo.template.client.webserver;
 
+import ch.cordalo.corda.common.client.webserver.CordaRpcProxy;
 import ch.cordalo.corda.common.client.webserver.RpcConnection;
 import ch.cordalo.corda.common.client.webserver.StateAndLinks;
 import ch.cordalo.corda.ext.CordaProxy;
@@ -9,6 +10,7 @@ import net.corda.core.identity.Party;
 import net.corda.core.messaging.CordaRPCOps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -19,10 +21,19 @@ import java.util.List;
 public abstract class CordaloController {
 
     private final CordaProxy rpc;
+
+    @Autowired
+    private RpcConnection rpcConnection;
+
     private final static Logger logger = LoggerFactory.getLogger(CordaloController.class);
 
     public CordaloController() {
-        this.rpc = CordaProxy.getInstance();
+        if (CordaProxy.getInstance() == null) {
+            CordaProxy.register(new CordaRpcProxy(rpcConnection));
+            this.rpc = CordaProxy.getInstance();
+        } else {
+            this.rpc = CordaProxy.getInstance();
+        }
         if (rpc == null || !rpc.isValid()) {
             logger.error("NodeRPC connection + proxy is not initialized (null)");
             return;
