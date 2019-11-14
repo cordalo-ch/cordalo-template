@@ -7,6 +7,7 @@ import com.cordalo.template.contracts.E178StateMachine;
 import com.cordalo.template.flows.E178EventFlow;
 import com.cordalo.template.states.E178EventState;
 import net.corda.core.concurrent.CordaFuture;
+import net.corda.core.contracts.LinearState;
 import net.corda.core.flows.FlowLogic;
 import net.corda.core.transactions.SignedTransaction;
 import org.junit.After;
@@ -71,72 +72,72 @@ public class E178EventFlowTests extends E178BaseTests {
 
     @Test
     public void test_e178_request() throws Exception {
-        E178EventState e178 = verifyAndGet(this.newRequestE178(this.retailer, this.leasing, "ZH"));
+        E178EventState e178 = verifyAndGet(E178EventState.class, this.newRequestE178(this.retailer, this.leasing, "ZH"));
         Assert.assertEquals("state must be ZH", "ZH", e178.getState());
     }
 
     @Test
     public void test_e178_issue() throws Exception {
-        E178EventState e178 = verifyAndGet(this.newRequestE178(this.retailer, this.leasing, "ZH"));
+        E178EventState e178 = verifyAndGet(E178EventState.class, this.newRequestE178(this.retailer, this.leasing, "ZH"));
         Assert.assertEquals("state must be ZH", "ZH", e178.getState());
 
-        E178EventState e178_2 = verifyAndGet(this.newIssueE178(e178, this.leasing, "AG", this.regulator));
-        Assert.assertEquals("state must be AG", "AG", e178_2.getState());
+        e178 = verifyAndGet(E178EventState.class, this.newIssueE178(e178, this.leasing, "AG", this.regulator));
+        Assert.assertEquals("state must be AG", "AG", e178.getState());
     }
 
     @Test
     public void test_e178_request_insurance() throws Exception {
-        E178EventState e178 = verifyAndGet(this.newRequestE178(this.retailer, this.leasing, "ZH"));
+        E178EventState e178 = verifyAndGet(E178EventState.class, this.newRequestE178(this.retailer, this.leasing, "ZH"));
         Assert.assertEquals("state must be ZH", "ZH", e178.getState());
 
-        E178EventState e178_2 = verifyAndGet(this.newIssueE178(e178, this.leasing, "AG", this.regulator));
-        Assert.assertEquals("state must be AG", "AG", e178_2.getState());
+        e178 = verifyAndGet(E178EventState.class, this.newIssueE178(e178, this.leasing, "AG", this.regulator));
+        Assert.assertEquals("state must be AG", "AG", e178.getState());
 
-        E178EventState e178_3 = verifyAndGet(this.newRequestInsuranceE178(e178_2, this.retailer, this.insurer1));
-        Assert.assertTrue("insurer is set", e178_3.getInsurer().equals(this.insurer1.party));
+        e178 = verifyAndGet(E178EventState.class, this.newRequestInsuranceE178(e178, this.retailer, this.insurer1));
+        Assert.assertTrue("insurer is set", e178.getInsurer().equals(this.insurer1.party));
     }
 
-    private E178EventState verifyAndGet(SignedTransaction tx) {
+    private <T extends LinearState> T verifyAndGet(Class<T> stateClass, SignedTransaction tx) {
         StateVerifier verifier = StateVerifier.fromTransaction(tx, this.retailer.ledgerServices);
         return verifier
                 .output().one()
-                .one(E178EventState.class)
+                .one(stateClass)
                 .object();
     }
 
 
     @Test
     public void test_e178_insurance() throws Exception {
-        E178EventState e178 = verifyAndGet(this.newRequestE178(this.retailer, this.leasing, "ZH"));
+        E178EventState e178 = verifyAndGet(E178EventState.class, this.newRequestE178(this.retailer, this.leasing, "ZH"));
         Assert.assertEquals("state must be ZH", "ZH", e178.getState());
 
-        E178EventState e178_2 = verifyAndGet(this.newIssueE178(e178, this.leasing, "AG", this.regulator));
-        Assert.assertEquals("state must be AG", "AG", e178_2.getState());
+        e178 = verifyAndGet(E178EventState.class, this.newIssueE178(e178, this.leasing, "AG", this.regulator));
+        Assert.assertEquals("state must be AG", "AG", e178.getState());
 
-        E178EventState e178_3 = verifyAndGet(this.newRequestInsuranceE178(e178_2, this.retailer, this.insurer1));
-        Assert.assertTrue("insurer is set", e178_3.getInsurer().equals(this.insurer1.party));
+        e178 = verifyAndGet(E178EventState.class, this.newRequestInsuranceE178(e178, this.retailer, this.insurer1));
+        Assert.assertTrue("insurer is set", e178.getInsurer().equals(this.insurer1.party));
 
-        E178EventState e178_4 = verifyAndGet(this.newInsureE178(e178_3, this.insurer1));
-        Assert.assertTrue("e178 is insured", e178_3.getStatus().equals(E178StateMachine.State.INSURED));
+        e178 = verifyAndGet(E178EventState.class, this.newInsureE178(e178, this.insurer1));
+        Assert.assertTrue("e178 is insured", e178.getStatus().equals(E178StateMachine.State.INSURED));
     }
 
 
     @Test
     public void test_e178_register() throws Exception {
-        E178EventState e178 = verifyAndGet(this.newRequestE178(this.retailer, this.leasing, "ZH"));
+        E178EventState e178 = verifyAndGet(E178EventState.class, this.newRequestE178(this.retailer, this.leasing, "ZH"));
         Assert.assertEquals("state must be ZH", "ZH", e178.getState());
 
-        E178EventState e178_2 = verifyAndGet(this.newIssueE178(e178, this.leasing, "AG", this.regulator));
-        Assert.assertEquals("state must be AG", "AG", e178_2.getState());
+        e178 = verifyAndGet(E178EventState.class, this.newIssueE178(e178, this.leasing, "AG", this.regulator));
+        Assert.assertEquals("state must be AG", "AG", e178.getState());
 
-        E178EventState e178_3 = verifyAndGet(this.newRequestInsuranceE178(e178_2, this.retailer, this.insurer1));
-        Assert.assertTrue("insurer is set", e178_3.getInsurer().equals(this.insurer1.party));
+        e178 = verifyAndGet(E178EventState.class, this.newRequestInsuranceE178(e178, this.retailer, this.insurer1));
+        Assert.assertTrue("insurer is set", e178.getInsurer().equals(this.insurer1.party));
 
-        E178EventState e178_4 = verifyAndGet(this.newInsureE178(e178_3, this.insurer1));
-        Assert.assertTrue("e178 is insured", e178_3.getStatus().equals(E178StateMachine.State.INSURED));
+        e178 = verifyAndGet(E178EventState.class, this.newInsureE178(e178, this.insurer1));
+        Assert.assertTrue("e178 is insured", e178.getStatus().equals(E178StateMachine.State.INSURED));
 
-        E178EventState e178_5 = verifyAndGet(this.newRegisterE178(e178_4, this.regulator));
-        Assert.assertTrue("e178 is insured", e178_3.getStatus().equals(E178StateMachine.State.INSURED));
+        e178 = verifyAndGet(E178EventState.class, this.newRegisterE178(e178, this.regulator));
+        Assert.assertTrue("e178 is registered", e178.getStatus().equals(E178StateMachine.State.REGISTERED));
     }
 
 
