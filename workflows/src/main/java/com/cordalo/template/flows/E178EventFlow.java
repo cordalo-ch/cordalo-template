@@ -101,6 +101,49 @@ public class E178EventFlow {
 
     @InitiatingFlow(version = 2)
     @StartableByRPC
+    public static class RequestInsurance extends BaseFlow {
+
+        private final UniqueIdentifier id;
+        private final Party insurer;
+
+        public RequestInsurance(UniqueIdentifier id, Party insurer) {
+            this.id = id;
+            this.insurer = insurer;
+        }
+
+
+        @Override
+        public ProgressTracker getProgressTracker() {
+            return super.progressTracker_sync;
+        }
+
+        @Suspendable
+        @Override
+        public SignedTransaction call() throws FlowException {
+            Party me = getOurIdentity();
+
+            getProgressTracker().setCurrentStep(PREPARATION);
+            StateAndRef<E178EventState> e178StateRef = this.getLastStateByLinearId(E178EventState.class, this.id);
+            E178EventState e178 = this.getStateByRef(e178StateRef);
+            if (!e178.getRetailer().equals(me)) {
+                throw new FlowException("issue e178 must be done by a retailer company");
+            }
+            E178EventState insuranceRequestedE178 = e178.requestInsurance(this.insurer);
+
+            getProgressTracker().setCurrentStep(BUILDING);
+            TransactionBuilder transactionBuilder = getTransactionBuilderSignedByParticipants(
+                    insuranceRequestedE178,
+                    new E178EventContract.Commands.RequestInsurance());
+            transactionBuilder.addInputState(e178StateRef);
+            transactionBuilder.addOutputState(insuranceRequestedE178);
+            return signSyncCollectAndFinalize(insuranceRequestedE178.getParticipants(), transactionBuilder);
+        }
+    }
+
+
+
+    @InitiatingFlow(version = 2)
+    @StartableByRPC
     public static class Delete extends BaseFlow {
 
         private final UniqueIdentifier id;
@@ -160,6 +203,19 @@ public class E178EventFlow {
         }
     }
 
+
+    @InitiatedBy(E178EventFlow.RequestInsurance.class)
+    public static class RequestInsuranceResponder extends ResponderBaseFlow<E178EventState> {
+        public RequestInsuranceResponder(FlowSession otherFlow) {
+            super(otherFlow);
+        }
+        @Suspendable
+        @Override
+        public Unit call() throws FlowException {
+            return this.receiveIdentitiesCounterpartiesNoTxChecking();
+        }
+    }
+
     @InitiatedBy(E178EventFlow.Delete.class)
     public static class DeleteResponder extends ResponderBaseFlow<E178EventState> {
         public DeleteResponder(FlowSession otherFlow) {
@@ -171,5 +227,6 @@ public class E178EventFlow {
             return this.receiveIdentitiesCounterpartiesNoTxChecking();
         }
     }
+
 
 }

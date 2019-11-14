@@ -15,7 +15,9 @@ public class E178BaseTests extends CordaloBaseTests {
     protected CordaNodeEnvironment retailer;
     protected CordaNodeEnvironment regulator;
     protected CordaNodeEnvironment leasing;
-    protected CordaNodeEnvironment insurer;
+    protected CordaNodeEnvironment insurer1;
+    protected CordaNodeEnvironment insurer2;
+    protected CordaNodeEnvironment notary;
 
     public List<String> getCordappPackageNames() {
         return ImmutableList.of(
@@ -30,10 +32,12 @@ public class E178BaseTests extends CordaloBaseTests {
             this.getCordappPackageNames(),
             responderClasses
         );
+        this.notary = network.startNotaryEnv("Notary", "O=Notary,L=Zurich,ST=ZH,C=CH");
         this.retailer = network.startEnv("Company-A", "O=Company-A,L=Zurich,ST=ZH,C=CH");
         this.regulator = network.startEnv("Company-B", "O=Company-B,L=Winterthur,ST=ZH,C=CH");
         this.leasing = network.startEnv("Company-C", "O=Company-C,L=Zug,ST=ZG,C=CH");
-        this.insurer = network.startEnv("Company-D", "O=Company-D,L=Zurich,ST=ZH,C=CH");
+        this.insurer1 = network.startEnv("Company-D", "O=Company-D,L=Zurich,ST=ZH,C=CH");
+        this.insurer2 = network.startEnv("Company-E", "O=Company-E,L=Zurich,ST=ZH,C=CH");
         this.network.startNodes();
         return this.network;
     }

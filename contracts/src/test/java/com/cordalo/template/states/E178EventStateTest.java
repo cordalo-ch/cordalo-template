@@ -1,6 +1,5 @@
 package com.cordalo.template.states;
 
-import ch.cordalo.corda.common.test.CordaTestNetwork;
 import com.cordalo.template.E178BaseTests;
 import com.cordalo.template.contracts.E178StateMachine;
 import net.corda.core.contracts.UniqueIdentifier;
@@ -31,7 +30,7 @@ public class E178EventStateTest extends E178BaseTests {
                 new UniqueIdentifier(),
                 this.retailer.party,
                 this.leasing.party,
-                this.insurer.party,
+                this.insurer1.party,
                 this.regulator.party,
                 "ZH",
                 E178StateMachine.State.REQUESTED
@@ -44,7 +43,7 @@ public class E178EventStateTest extends E178BaseTests {
         assertThat(e178EventState.getRegulator(), is(this.regulator.party));
         assertThat(e178EventState.getRetailer(), is(this.retailer.party));
         assertThat(e178EventState.getLeasing(), is(this.leasing.party));
-        assertThat(e178EventState.getInsurer(), is(this.insurer.party));
+        assertThat(e178EventState.getInsurer(), is(this.insurer1.party));
         assertThat(e178EventState.getStatus(), is(E178StateMachine.State.REQUESTED));
     }
 
