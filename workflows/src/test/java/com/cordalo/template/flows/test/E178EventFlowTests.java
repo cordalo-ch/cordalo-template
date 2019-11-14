@@ -23,7 +23,8 @@ public class E178EventFlowTests extends E178BaseTests {
                 E178EventFlow.RequestResponder.class,
                 E178EventFlow.IssueResponder.class,
                 E178EventFlow.RequestInsuranceResponder.class,
-                E178EventFlow.DeleteResponder.class
+                E178EventFlow.DeleteResponder.class,
+                E178EventFlow.RequestInsuranceResponder.class
         );
     }
 

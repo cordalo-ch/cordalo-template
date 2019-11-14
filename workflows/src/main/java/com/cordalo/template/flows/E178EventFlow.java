@@ -141,6 +141,45 @@ public class E178EventFlow {
     }
 
 
+    @InitiatingFlow(version = 2)
+    @StartableByRPC
+    public static class Insure extends BaseFlow {
+
+        private final UniqueIdentifier id;
+
+        public Insure(UniqueIdentifier id) {
+            this.id = id;
+        }
+
+
+        @Override
+        public ProgressTracker getProgressTracker() {
+            return super.progressTracker_sync;
+        }
+
+        @Suspendable
+        @Override
+        public SignedTransaction call() throws FlowException {
+            Party me = getOurIdentity();
+
+            getProgressTracker().setCurrentStep(PREPARATION);
+            StateAndRef<E178EventState> e178StateRef = this.getLastStateByLinearId(E178EventState.class, this.id);
+            E178EventState e178 = this.getStateByRef(e178StateRef);
+            if (!e178.getInsurer().equals(me)) {
+                throw new FlowException("issue e178 must be done by an insurance company");
+            }
+            E178EventState insuredE178 = e178.insure();
+
+            getProgressTracker().setCurrentStep(BUILDING);
+            TransactionBuilder transactionBuilder = getTransactionBuilderSignedByParticipants(
+                    insuredE178,
+                    new E178EventContract.Commands.Insure());
+            transactionBuilder.addInputState(e178StateRef);
+            transactionBuilder.addOutputState(insuredE178);
+            return signSyncCollectAndFinalize(insuredE178.getParticipants(), transactionBuilder);
+        }
+    }
+
 
     @InitiatingFlow(version = 2)
     @StartableByRPC
@@ -207,6 +246,19 @@ public class E178EventFlow {
     @InitiatedBy(E178EventFlow.RequestInsurance.class)
     public static class RequestInsuranceResponder extends ResponderBaseFlow<E178EventState> {
         public RequestInsuranceResponder(FlowSession otherFlow) {
+            super(otherFlow);
+        }
+        @Suspendable
+        @Override
+        public Unit call() throws FlowException {
+            return this.receiveIdentitiesCounterpartiesNoTxChecking();
+        }
+    }
+
+
+    @InitiatedBy(E178EventFlow.Insure.class)
+    public static class InsureResponder extends ResponderBaseFlow<E178EventState> {
+        public InsureResponder(FlowSession otherFlow) {
             super(otherFlow);
         }
         @Suspendable
