@@ -38,6 +38,9 @@ function connectWebSocket() {
             if (changes.headers.destination == "/topic/vaultChanged/serviceState") {
                 get_services();
             }
+            if (changes.headers.destination == "/topic/vaultChanged/e178") {
+                get_e178();
+            }
         });
     });
 }

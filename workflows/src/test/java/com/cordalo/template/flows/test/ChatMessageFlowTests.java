@@ -10,13 +10,10 @@ import net.corda.core.concurrent.CordaFuture;
 import net.corda.core.contracts.UniqueIdentifier;
 import net.corda.core.flows.FlowLogic;
 import net.corda.core.transactions.SignedTransaction;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 import java.util.concurrent.ExecutionException;
-
+@Ignore
 public class ChatMessageFlowTests extends CordaloTemplateBaseFlowTests {
 
     @Before
