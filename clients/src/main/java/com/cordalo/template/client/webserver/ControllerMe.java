@@ -27,8 +27,8 @@ public class ControllerMe extends CordaloController {
     private final static String MAPPING_PATH = "/api/v1/network";
     private final static String BASE_PATH = "";
 
-    public ControllerMe() {
-        super();
+    public ControllerMe(RpcConnection rpcConnection) {
+        super(rpcConnection);
         StateMachine.State.values();
         StateMachine.StateTransition.values();
     }

@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class ChatMessageState implements LinearState {
 
     @NotNull
-    private UniqueIdentifier id;
+    private UniqueIdentifier linearId;
 
     @JsonIgnore
     @NotNull
@@ -38,21 +38,21 @@ public class ChatMessageState implements LinearState {
 
 
     @ConstructorForDeserialization
-    public ChatMessageState(@NotNull UniqueIdentifier id, @NotNull Party sender, @NotNull Party receiver, @NotNull String message, UniqueIdentifier baseMessageId) {
-        this.id = id;
+    public ChatMessageState(@NotNull UniqueIdentifier linearId, @NotNull Party sender, @NotNull Party receiver, @NotNull String message, UniqueIdentifier baseMessageId) {
+        this.linearId = linearId;
         this.sender = sender;
         this.receiver = receiver;
         this.message = message;
         this.baseMessageId = baseMessageId;
     }
-    public ChatMessageState(@NotNull UniqueIdentifier id, @NotNull Party sender, @NotNull Party receiver, @NotNull String message) {
-        this(id, sender, receiver, message, null);
+    public ChatMessageState(@NotNull UniqueIdentifier linearId, @NotNull Party sender, @NotNull Party receiver, @NotNull String message) {
+        this(linearId, sender, receiver, message, null);
     }
 
     @NotNull
     @Override
     public UniqueIdentifier getLinearId() {
-        return this.id;
+        return this.linearId;
     }
 
     @NotNull
@@ -100,7 +100,7 @@ public class ChatMessageState implements LinearState {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChatMessageState that = (ChatMessageState) o;
-        return id.equals(that.id) &&
+        return this.getLinearId().equals(that.getLinearId()) &&
                 getSender().equals(that.getSender()) &&
                 getReceiver().equals(that.getReceiver()) &&
                 getMessage().equals(that.getMessage()) &&
@@ -109,7 +109,7 @@ public class ChatMessageState implements LinearState {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, getSender(), getReceiver(), getMessage(), getBaseMessageId());
+        return Objects.hash(this.getLinearId(), getSender(), getReceiver(), getMessage(), getBaseMessageId());
     }
     public String getSenderX500() {
         return this.sender.getName().getX500Principal().getName();

@@ -8,10 +8,12 @@ import net.corda.core.contracts.UniqueIdentifier;
 import net.corda.core.identity.Party;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static net.corda.testing.node.NodeTestUtils.transaction;
 
+@Ignore
 public class ServiceContractTests extends CordaloTemplateBaseTests {
 
     @Before

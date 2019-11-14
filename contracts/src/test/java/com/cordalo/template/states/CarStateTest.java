@@ -6,6 +6,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -26,11 +28,12 @@ public class CarStateTest extends E178BaseTests {
         // Arrange
         CarState carState = new CarState(
                 new UniqueIdentifier(),
+                this.retailer.party,
                 "Mercedes",
                 "SLS",
                 "v8 bi-turbo",
-                "1234356789"
-        );
+                "1234356789",
+                new ArrayList<>());
 
         // Assert
         assertThat(carState, is(notNullValue()));

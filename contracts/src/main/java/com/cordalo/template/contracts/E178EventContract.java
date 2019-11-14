@@ -36,10 +36,9 @@ public class E178EventContract implements Contract {
                             .isNotEmpty(E178EventState::getLeasing, "leasing must be provided")
                             .isNotEmpty(E178EventState::getState, "state cannot be empty")
                             .isNotEmpty(E178EventState::getStatus, "status cannot be empty")
-                            // TODO check status
-//                            .isEqual(E178EventState::getStatus, E178EventState.E178StatusType.INITIAL)
-                            .isNotEqual(E178EventState::getRetailer, E178EventState::getLeasing, "retailer can not be leasing")
+                            .isNotEqual(E178EventState::getRetailer, E178EventState::getLeasing, "retailer can not be same than leasing")
                             .object();
+                    req.using("state must be REQUESTED", message.getStatus().equals(E178EventState.E178StatusType.REQUESTED));
                     return null;
                 });
             }
@@ -63,6 +62,22 @@ public class E178EventContract implements Contract {
                             // TODO check status
 //                            .isEqual(E178EventState::getStatus, E178EventState.E178StatusType.I)
                             .isNotEqual(E178EventState::getLeasing, E178EventState::getRegulator, "leasing can not be regulator")
+                            .object();
+                    return null;
+                });
+            }
+        }
+
+        class Delete implements E178EventContract.Commands {
+            @Override
+            public void verify(LedgerTransaction tx, StateVerifier verifier) throws IllegalArgumentException {
+                requireThat(req -> {
+                    verifier.output().empty("output must be empty");
+                    E178EventState e178 = verifier
+                            .input()
+                            .one()
+                            .one(E178EventState.class)
+                            .isNotEmpty(E178EventState::getLinearId, "id must be provided")
                             .object();
                     return null;
                 });

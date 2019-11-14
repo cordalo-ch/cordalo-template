@@ -21,26 +21,53 @@ public class E178EventContractTest extends E178BaseTests {
         super.tearDown();
     }
 
-    private E178EventState newE178EventState(Party regulator, Party retailer, Party leasing, Party insurer) {
-        return new E178EventState(
-                new UniqueIdentifier(),
-                regulator,
-                retailer,
-                leasing,
-                insurer,
-                "ZH",
-                E178EventState.E178StatusType.INITIAL);
+    private E178EventState newE178EventState(Party retailer, Party leasing, String state) {
+        return E178EventState.request(retailer, leasing, state);
     }
 
     @Test
     public void test_request_fail_retailer_is_leasing() {
         transaction(regulator.ledgerServices, tx -> {
-            Party leasingParty = this.retailer.party; // will fail
-
-            E178EventState e178EventState = newE178EventState(this.regulator.party, this.retailer.party, leasingParty, this.insurer.party);
+            E178EventState e178EventState = newE178EventState(this.retailer.party, this.retailer.party, "ZH");
             tx.output(E178EventContract.ID, e178EventState);
             tx.command(e178EventState.getParticipantKeys(), new E178EventContract.Commands.Request());
             tx.fails();
+            return null;
+        });
+    }
+
+    @Test
+    public void test_request_fail_empty_state() {
+        transaction(regulator.ledgerServices, tx -> {
+            E178EventState e178EventState = newE178EventState(this.retailer.party, this.leasing.party, "");
+            tx.output(E178EventContract.ID, e178EventState);
+            tx.command(e178EventState.getParticipantKeys(), new E178EventContract.Commands.Request());
+            tx.fails();
+            return null;
+        });
+    }
+
+    @Test
+    public void test_request_OK() {
+        transaction(regulator.ledgerServices, tx -> {
+            E178EventState e178EventState = newE178EventState(this.retailer.party, this.leasing.party, "SG");
+            tx.output(E178EventContract.ID, e178EventState);
+            tx.command(e178EventState.getParticipantKeys(), new E178EventContract.Commands.Request());
+            tx.verifies();
+            return null;
+        });
+    }
+
+
+    @Test
+    public void test_issue_correct() {
+        transaction(regulator.ledgerServices, tx -> {
+            E178EventState e178EventState = newE178EventState(this.retailer.party, this.leasing.party, "SG");
+            E178EventState issuedE178 = e178EventState.issue("ZH", this.regulator.party);
+            tx.input(E178EventContract.ID, e178EventState);
+            tx.output(E178EventContract.ID, issuedE178);
+            tx.command(e178EventState.getParticipantKeys(), new E178EventContract.Commands.Issue());
+            tx.verifies();
             return null;
         });
     }
