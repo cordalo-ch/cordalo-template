@@ -24,20 +24,27 @@ public abstract class E178BaseTests extends CordaloBaseTests {
         );
     }
 
-    public void setup(boolean withNodes, Class<? extends FlowLogic> ...responderClasses) {
+    @Override
+    public CordaTestNetwork setup(boolean withNodes, Class<? extends FlowLogic> ...responderClasses) {
         this.network = new CordaTestNetwork(
                 withNodes,
-            this.getCordappPackageNames(),
-            responderClasses
+                this.getCordappPackageNames(),
+                responderClasses
         );
         this.retailer = network.startEnv("Company-A", "O=Company-A,L=Zurich,ST=ZH,C=CH");
         this.regulator = network.startEnv("Company-B", "O=Company-B,L=Winterthur,ST=ZH,C=CH");
         this.leasing = network.startEnv("Company-C", "O=Company-C,L=Zug,ST=ZG,C=CH");
         this.insurer = network.startEnv("Company-D", "O=Company-D,L=Zurich,ST=ZH,C=CH");
         this.network.startNodes();
+        return this.network;
     }
 
     public void tearDown() {
         if (network != null) network.stopNodes();
     };
+
+    @Override
+    public CordaTestNetwork getNetwork() {
+        return network;
+    }
 }
