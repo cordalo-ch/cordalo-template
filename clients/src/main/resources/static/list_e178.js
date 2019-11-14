@@ -105,17 +105,17 @@ function onE178StatusChange(select) {
         animationOn();
 
         var data = "";
-        if (action == "REQUESTED") {
+        if (action == "REQUEST") {
             data = "retail=" + encodeURI("O=Company-A,L=Zurich,ST=ZH,C=CH") + "&leasing=" + encodeURI("O=Company-B,L=Winterthur,ST=ZH,C=CH") + "&state=" + encodeURI("ZH");
-        } else if (action == "ISSUED") {
+        } else if (action == "ISSUE") {
             data = "regulator=" + encodeURI("O=Company-C,L=Zug,ST=ZG,C=CH");
-        } else if (action == "INSURANCE_REQUESTED") {
+        } else if (action == "REQUEST_INSURANCE") {
             data = "insurer=" + encodeURI(this.getRandomInsurer());
-        } else if (action == "INSURED") {
+        } else if (action == "INSURE") {
             data = "";
-        } else if (action == "REGISTERED") {
+        } else if (action == "REGISTER") {
             data = "";
-        } else if (action == "CANCELED") {
+        } else if (action == "CANCEL") {
             data = "";
         }
 
