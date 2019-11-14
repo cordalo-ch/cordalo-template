@@ -126,7 +126,7 @@ public class E178EventFlow {
             StateAndRef<E178EventState> e178StateRef = this.getLastStateByLinearId(E178EventState.class, this.id);
             E178EventState e178 = this.getStateByRef(e178StateRef);
             if (!e178.getRetailer().equals(me)) {
-                throw new FlowException("issue e178 must be done by a retailer company");
+                throw new FlowException("requestion insurance of e178 must be done by a retailer company");
             }
             E178EventState insuranceRequestedE178 = e178.requestInsurance(this.insurer);
 
@@ -166,7 +166,7 @@ public class E178EventFlow {
             StateAndRef<E178EventState> e178StateRef = this.getLastStateByLinearId(E178EventState.class, this.id);
             E178EventState e178 = this.getStateByRef(e178StateRef);
             if (!e178.getInsurer().equals(me)) {
-                throw new FlowException("issue e178 must be done by an insurance company");
+                throw new FlowException("insure e178 must be done by an insurance company");
             }
             E178EventState insuredE178 = e178.insure();
 
@@ -177,6 +177,46 @@ public class E178EventFlow {
             transactionBuilder.addInputState(e178StateRef);
             transactionBuilder.addOutputState(insuredE178);
             return signSyncCollectAndFinalize(insuredE178.getParticipants(), transactionBuilder);
+        }
+    }
+
+
+    @InitiatingFlow(version = 2)
+    @StartableByRPC
+    public static class Register extends BaseFlow {
+
+        private final UniqueIdentifier id;
+
+        public Register(UniqueIdentifier id) {
+            this.id = id;
+        }
+
+
+        @Override
+        public ProgressTracker getProgressTracker() {
+            return super.progressTracker_sync;
+        }
+
+        @Suspendable
+        @Override
+        public SignedTransaction call() throws FlowException {
+            Party me = getOurIdentity();
+
+            getProgressTracker().setCurrentStep(PREPARATION);
+            StateAndRef<E178EventState> e178StateRef = this.getLastStateByLinearId(E178EventState.class, this.id);
+            E178EventState e178 = this.getStateByRef(e178StateRef);
+            if (!e178.getRegulator().equals(me)) {
+                throw new FlowException("register e178 must be done by a regulator company");
+            }
+            E178EventState registeredE178 = e178.registered();
+
+            getProgressTracker().setCurrentStep(BUILDING);
+            TransactionBuilder transactionBuilder = getTransactionBuilderSignedByParticipants(
+                    registeredE178,
+                    new E178EventContract.Commands.Register());
+            transactionBuilder.addInputState(e178StateRef);
+            transactionBuilder.addOutputState(registeredE178);
+            return signSyncCollectAndFinalize(registeredE178.getParticipants(), transactionBuilder);
         }
     }
 
@@ -259,6 +299,19 @@ public class E178EventFlow {
     @InitiatedBy(E178EventFlow.Insure.class)
     public static class InsureResponder extends ResponderBaseFlow<E178EventState> {
         public InsureResponder(FlowSession otherFlow) {
+            super(otherFlow);
+        }
+        @Suspendable
+        @Override
+        public Unit call() throws FlowException {
+            return this.receiveIdentitiesCounterpartiesNoTxChecking();
+        }
+    }
+
+
+    @InitiatedBy(E178EventFlow.Register.class)
+    public static class RegisterResponder extends ResponderBaseFlow<E178EventState> {
+        public RegisterResponder(FlowSession otherFlow) {
             super(otherFlow);
         }
         @Suspendable
