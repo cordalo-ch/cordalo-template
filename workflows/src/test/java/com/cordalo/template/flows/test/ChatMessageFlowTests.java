@@ -73,6 +73,7 @@ public class ChatMessageFlowTests extends CordaloTemplateBaseFlowTests {
         Assert.assertNotNull("message text", message.getMessage());
     }
 
+
     @Test
     public void reply_message() throws Exception {
         SignedTransaction tx = this.newMessageFlow(companyA, companyB,"hello");
@@ -87,7 +88,7 @@ public class ChatMessageFlowTests extends CordaloTemplateBaseFlowTests {
         StateVerifier verifier2 = StateVerifier.fromTransaction(tx2, this.companyB.ledgerServices);
         ChatMessageState replyMessage = verifier2
                 .output()
-                .moreThan(2)
+                .moreThanOne(2)
                 .filterWhere(
                         x -> message.getLinearId().equals(((ChatMessageState)x).getBaseMessageId()))
                 .one(ChatMessageState.class)
