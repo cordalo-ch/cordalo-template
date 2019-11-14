@@ -63,15 +63,15 @@ function show_e178(tagName, result) {
 
         fields: [
             {
-                title: "State", name: "state.state", type: "text", itemTemplate: function (value, item) {
+                title: "State", name: "state.state", type: "text", width: 30, itemTemplate: function (value, item) {
                     i = i + 1;
                     return strongS(i) + item.state.state + strongE(i);
                 }
             },
             {
-                title: "Partners", name: "state", type: "text", itemTemplate: function (value, item) {
+                title: "Partners", name: "state", type: "text", width: 120, itemTemplate: function (value, item) {
                     i = i + 1;
-                    var x500_O = participantsWithoutMe(item.state.participantsX500).map(x => X500toO(x));
+                    var x500_O = participantsWithoutMe(item.state.participantsX500).map(x => X500toO(mapX500(x)));
                     return strongS(i) + x500_O.join(",") + strongE(i);
                 }
             },
