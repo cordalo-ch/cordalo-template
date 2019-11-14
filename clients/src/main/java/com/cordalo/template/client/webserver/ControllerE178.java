@@ -123,6 +123,45 @@ public class ControllerE178 extends CordaloController {
         }
     }
 
+
+    /**
+     * execute action ISSUE
+     * @param request is the original http request to calculate links in response
+     * @param regulator regulator part to issue the e178
+     */
+    @RequestMapping(
+            value = BASE_PATH + "/{id}/ISSUE",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<StateAndLinks<E178EventState>> issueE178(
+            HttpServletRequest request,
+            @PathVariable("id") String id,
+            @RequestParam(value = "regulator", required = true) String regulator) {
+        Party regulatorParty = this.partyFromString(regulator);
+        if (regulatorParty == null){
+            return this.buildResponseFromException(HttpStatus.BAD_REQUEST, "regulator not a valid peer.");
+        }
+        try {
+            SignedTransaction signedTx= null;
+            signedTx = this.getProxy()
+                    .startTrackedFlowDynamic(E178EventFlow.Issue.class,
+                            regulator)
+                    .getReturnValue()
+                    .get();
+
+            StateVerifier verifier = StateVerifier.fromTransaction(signedTx, null);
+            E178EventState e178 = verifier.output().one(E178EventState.class).object();
+            return this.getResponse(request, e178, HttpStatus.OK);
+
+        } catch (Throwable ex) {
+            logger.error(ex.getMessage(), ex);
+            return this.buildResponseFromException(HttpStatus.EXPECTATION_FAILED, ex);
+        }
+    }
+
+
     /**
      * receives a unconsumed E178 with a given ID from the node's vault.
      * @param id unique identifier as UUID for service

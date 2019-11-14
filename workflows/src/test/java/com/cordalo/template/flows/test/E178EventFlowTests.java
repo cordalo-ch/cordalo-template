@@ -74,7 +74,6 @@ public class E178EventFlowTests extends E178BaseTests {
                 .one(E178EventState.class)
                 .object();
 
-
         Assert.assertEquals("state must be ZH", "ZH", e178.getState());
         Assert.assertEquals("state must be AG", "AG", e178_2.getState());
     }
