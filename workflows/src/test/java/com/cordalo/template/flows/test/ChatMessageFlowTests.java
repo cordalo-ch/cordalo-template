@@ -88,7 +88,7 @@ public class ChatMessageFlowTests extends CordaloTemplateBaseFlowTests {
         StateVerifier verifier2 = StateVerifier.fromTransaction(tx2, this.companyB.ledgerServices);
         ChatMessageState replyMessage = verifier2
                 .output()
-                .moreThanOne(2)
+                .moreThan(2)
                 .filterWhere(
                         x -> message.getLinearId().equals(((ChatMessageState)x).getBaseMessageId()))
                 .one(ChatMessageState.class)
