@@ -16,7 +16,7 @@ function createNewE178(self, stammNr, state) {
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"
             },
-            data: "leasing=" + encodeURI(get_random_peer()) + "&state=" + encodeURI(state)
+            data: "leasing=" + encodeURI("O=Company-B,L=Winterthur,ST=ZH,C=CH") + "&state=" + encodeURI(state)
         }
     ).done(function (result) {
     }).fail(function (jqXHR, textStatus) {
