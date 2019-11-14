@@ -147,6 +147,7 @@ public class ControllerE178 extends CordaloController {
             SignedTransaction signedTx= null;
             signedTx = this.getProxy()
                     .startTrackedFlowDynamic(E178EventFlow.Issue.class,
+                            id,
                             regulator)
                     .getReturnValue()
                     .get();
@@ -161,6 +162,95 @@ public class ControllerE178 extends CordaloController {
         }
     }
 
+    /**
+     * execute action CANCEL
+     * @param request is the original http request to calculate links in response
+     */
+    @RequestMapping(
+            value = BASE_PATH + "/{id}/CANCEL",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<StateAndLinks<E178EventState>> cancelE178(
+            HttpServletRequest request,
+            @PathVariable("id") String id) {
+        try {
+            SignedTransaction signedTx= null;
+            signedTx = this.getProxy()
+                    .startTrackedFlowDynamic(E178EventFlow.Cancel.class, id)
+                    .getReturnValue()
+                    .get();
+
+            StateVerifier verifier = StateVerifier.fromTransaction(signedTx, null);
+            E178EventState e178 = verifier.output().one(E178EventState.class).object();
+            return this.getResponse(request, e178, HttpStatus.OK);
+
+        } catch (Throwable ex) {
+            logger.error(ex.getMessage(), ex);
+            return this.buildResponseFromException(HttpStatus.EXPECTATION_FAILED, ex);
+        }
+    }
+
+    /**
+     * execute action REGISTER
+     * @param request is the original http request to calculate links in response
+     */
+    @RequestMapping(
+            value = BASE_PATH + "/{id}/REGISTER",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<StateAndLinks<E178EventState>> registerE178(
+            HttpServletRequest request,
+            @PathVariable("id") String id) {
+        try {
+            SignedTransaction signedTx= null;
+            signedTx = this.getProxy()
+                    .startTrackedFlowDynamic(E178EventFlow.Register.class, id)
+                    .getReturnValue()
+                    .get();
+
+            StateVerifier verifier = StateVerifier.fromTransaction(signedTx, null);
+            E178EventState e178 = verifier.output().one(E178EventState.class).object();
+            return this.getResponse(request, e178, HttpStatus.OK);
+
+        } catch (Throwable ex) {
+            logger.error(ex.getMessage(), ex);
+            return this.buildResponseFromException(HttpStatus.EXPECTATION_FAILED, ex);
+        }
+    }
+
+    /**
+     * execute action INSURE
+     * @param request is the original http request to calculate links in response
+     */
+    @RequestMapping(
+            value = BASE_PATH + "/{id}/INSURE",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<StateAndLinks<E178EventState>> insureE178(
+            HttpServletRequest request,
+            @PathVariable("id") String id) {
+        try {
+            SignedTransaction signedTx= null;
+            signedTx = this.getProxy()
+                    .startTrackedFlowDynamic(E178EventFlow.Insure.class, id)
+                    .getReturnValue()
+                    .get();
+
+            StateVerifier verifier = StateVerifier.fromTransaction(signedTx, null);
+            E178EventState e178 = verifier.output().one(E178EventState.class).object();
+            return this.getResponse(request, e178, HttpStatus.OK);
+
+        } catch (Throwable ex) {
+            logger.error(ex.getMessage(), ex);
+            return this.buildResponseFromException(HttpStatus.EXPECTATION_FAILED, ex);
+        }
+    }
 
     /**
      * receives a unconsumed E178 with a given ID from the node's vault.
