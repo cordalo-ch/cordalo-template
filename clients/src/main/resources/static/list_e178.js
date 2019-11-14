@@ -103,6 +103,22 @@ function onE178StatusChange(select) {
         var url = $(select).val();
         var action = url.split("/").reverse()[0];
         animationOn();
+
+        var data = "";
+        if (action == "REQUESTED") {
+            data = "retail=" + encodeURI("O=Company-A,L=Zurich,ST=ZH,C=CH") + "&leasing=" + encodeURI("O=Company-B,L=Winterthur,ST=ZH,C=CH") + "&state=" + encodeURI("ZH");
+        } else if (action == "ISSUED") {
+            data = "regulator=" + encodeURI("O=Company-C,L=Zug,ST=ZG,C=CH");
+        } else if (action == "INSURANCE_REQUESTED") {
+            data = "insurer=" + encodeURI(this.getRandomInsurer());
+        } else if (action == "INSURED") {
+            data = "";
+        } else if (action == "REGISTERED") {
+            data = "";
+        } else if (action == "CANCELED") {
+            data = "";
+        }
+
         $.ajax(
             {
                 url: url,
@@ -110,7 +126,7 @@ function onE178StatusChange(select) {
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded"
                 },
-                data: ""
+                data: data
             }
         ).done(function (result) {
 
@@ -119,6 +135,11 @@ function onE178StatusChange(select) {
         });
     }
 };
+
+function getRandomInsurer() {
+    var peers = ["O=Company-D,L=Geneva,ST=ZH,C=CH", "O=Company-E,L=Uster,ST=ZH,C=CH"];
+    return peers[getRandomInt(peers.length)];
+}
 
 function get_e178() {
     $get({
