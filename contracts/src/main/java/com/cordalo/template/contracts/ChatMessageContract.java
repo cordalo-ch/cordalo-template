@@ -66,7 +66,7 @@ public class ChatMessageContract implements Contract {
                             .object();
                     ChatMessageState origMessage = verifier
                             .output()
-                            .moreThanOne(2)
+                            .moreThan(2)
                             .filterWhere(
                                 x -> ((ChatMessageState)x).getLinearId().equals(message.getLinearId()))
                             .one(ChatMessageState.class)
@@ -75,7 +75,7 @@ public class ChatMessageContract implements Contract {
 
                     ChatMessageState reply = verifier
                             .output()
-                            .moreThanOne(2)
+                            .moreThan(2)
                             .filterWhere(
                                     x -> message.getLinearId().equals(((ChatMessageState)x).getBaseMessageId()))
                             .one(ChatMessageState.class)
