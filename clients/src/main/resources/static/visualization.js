@@ -53,6 +53,7 @@ $(document).ready(function () {
 
     get_services();
     get_messages();
+    get_e178();
 
     connectWebSocket();
 });

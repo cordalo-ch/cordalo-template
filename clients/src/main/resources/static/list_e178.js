@@ -78,7 +78,7 @@ function show_e178(tagName, result) {
             {
                 title: "Status", name: "state.status", type: "text", itemTemplate: function (value, item) {
                     i = i + 1;
-                    return strongS(i) + value + "<br>" + makeOptions(item.status.id.id, item.links, "Action", "onE178StatusChange") + strongE(i);
+                    return strongS(i) + value + "<br>" + makeOptions(item.state.linearId.id, item.links, "Action", "onE178StatusChange") + strongE(i);
                 }
             },
             {

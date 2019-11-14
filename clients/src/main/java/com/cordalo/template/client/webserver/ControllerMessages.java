@@ -41,8 +41,6 @@ public class ControllerMessages extends CordaloController {
 
     public ControllerMessages(RpcConnection rpcConnection) {
         super(rpcConnection);
-        StateMachine.State.values();
-        StateMachine.StateTransition.values();
     }
 
 

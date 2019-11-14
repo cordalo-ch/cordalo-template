@@ -29,8 +29,6 @@ public class ControllerMe extends CordaloController {
 
     public ControllerMe(RpcConnection rpcConnection) {
         super(rpcConnection);
-        StateMachine.State.values();
-        StateMachine.StateTransition.values();
     }
 
     /**

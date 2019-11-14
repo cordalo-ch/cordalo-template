@@ -2,6 +2,7 @@ package com.cordalo.template.states;
 
 import ch.cordalo.corda.common.test.CordaTestNetwork;
 import com.cordalo.template.E178BaseTests;
+import com.cordalo.template.contracts.E178StateMachine;
 import net.corda.core.contracts.UniqueIdentifier;
 import org.junit.After;
 import org.junit.Before;
@@ -33,7 +34,7 @@ public class E178EventStateTest extends E178BaseTests {
                 this.insurer.party,
                 this.regulator.party,
                 "ZH",
-                E178EventState.E178StatusType.REQUESTED
+                E178StateMachine.State.REQUESTED
         );
 
         // Assert
@@ -44,7 +45,7 @@ public class E178EventStateTest extends E178BaseTests {
         assertThat(e178EventState.getRetailer(), is(this.retailer.party));
         assertThat(e178EventState.getLeasing(), is(this.leasing.party));
         assertThat(e178EventState.getInsurer(), is(this.insurer.party));
-        assertThat(e178EventState.getStatus(), is(E178EventState.E178StatusType.REQUESTED));
+        assertThat(e178EventState.getStatus(), is(E178StateMachine.State.REQUESTED));
     }
 
 }

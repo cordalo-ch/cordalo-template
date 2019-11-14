@@ -4,11 +4,11 @@ import ch.cordalo.corda.common.client.webserver.RpcConnection;
 import ch.cordalo.corda.common.client.webserver.StateAndLinks;
 import ch.cordalo.corda.common.client.webserver.StateBuilder;
 import ch.cordalo.corda.common.contracts.StateVerifier;
+import com.cordalo.template.contracts.E178StateMachine;
 import com.cordalo.template.flows.E178EventFlow;
 import com.cordalo.template.states.E178EventState;
 import net.corda.core.contracts.UniqueIdentifier;
 import net.corda.core.identity.Party;
-import net.corda.core.messaging.FlowProgressHandle;
 import net.corda.core.node.services.Vault;
 import net.corda.core.node.services.vault.QueryCriteria;
 import net.corda.core.transactions.SignedTransaction;
@@ -40,24 +40,25 @@ public class ControllerE178 extends CordaloController {
 
     public ControllerE178(RpcConnection rpcConnection) {
         super(rpcConnection);
+        E178StateMachine.State.values();
+        E178StateMachine.StateTransition.values();
+
     }
 
 
     private ResponseEntity<StateAndLinks<E178EventState>> getResponse(HttpServletRequest request, E178EventState e178, HttpStatus status) throws URISyntaxException {
-        String[] actions = { "reply" };
         return new StateBuilder<>(e178, ResponseEntity.status(HttpStatus.OK))
                 .stateMapping(MAPPING_PATH, BASE_PATH, request)
                 .self()
-                .links(actions)
+                .links(x -> x.getStatus().getNextActions())
                 .build();
     }
 
     private ResponseEntity<List<StateAndLinks<E178EventState>>> getResponses(HttpServletRequest request, List<E178EventState> list, HttpStatus status) throws URISyntaxException {
-        String[] actions = { "reply" };
         return new StateBuilder<>(list, ResponseEntity.status(HttpStatus.OK))
                 .stateMapping(MAPPING_PATH, BASE_PATH, request)
                 .self()
-                .links(actions)
+                .links(x -> x.getStatus().getNextActions())
                 .buildList();
     }
     /**

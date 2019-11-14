@@ -41,7 +41,7 @@ public class E178EventContract implements Contract {
                             .isNotEmpty(E178EventState::getState, "state cannot be empty")
                             .isNotEmpty(E178EventState::getStatus, "status cannot be empty")
                             .isNotEqual(E178EventState::getRetailer, E178EventState::getLeasing, "retailer can not be same than leasing")
-                            .isEqual(E178EventState::getStatus, x -> E178EventState.E178StatusType.REQUESTED, "state must be requested")
+                            .isEqual(E178EventState::getStatus, x -> E178StateMachine.State.REQUESTED, "state must be requested")
                             .object();
                     return null;
                 });
@@ -58,7 +58,7 @@ public class E178EventContract implements Contract {
                             .input()
                             .one()
                             .one(E178EventState.class)
-                            .isEqual(E178EventState::getStatus, x -> E178EventState.E178StatusType.REQUESTED)
+                            .isEqual(E178EventState::getStatus, x -> E178StateMachine.State.REQUESTED)
                             .object();
                     E178EventState e178 = verifier
                             .output()
@@ -66,7 +66,7 @@ public class E178EventContract implements Contract {
                             .one(E178EventState.class)
                             .isNotEqual(E178EventState::getLeasing, E178EventState::getRegulator, "leasing can not be regulator")
                             .isNotEqual(E178EventState::getRetailer, E178EventState::getRegulator, "retailer can not be regulator")
-                            .isEqual(E178EventState::getStatus, x -> E178EventState.E178StatusType.ISSUED)
+                            .isEqual(E178EventState::getStatus, x -> E178StateMachine.State.ISSUED)
                             .object();
 
                     // validate 1 input and 1 output - simple update for same or different values
@@ -103,7 +103,7 @@ public class E178EventContract implements Contract {
                             .input()
                             .one()
                             .one(E178EventState.class)
-                            .isEqual(E178EventState::getStatus, x -> E178EventState.E178StatusType.ISSUED)
+                            .isEqual(E178EventState::getStatus, x -> E178StateMachine.State.ISSUED)
                             .object();
                     E178EventState e178 = verifier
                             .output()
@@ -112,7 +112,7 @@ public class E178EventContract implements Contract {
                             .isNotEqual(E178EventState::getLeasing, E178EventState::getInsurer, "leasing can not be insurer")
                             .isNotEqual(E178EventState::getRetailer, E178EventState::getInsurer, "retailer can not be insurer")
                             .isNotEqual(E178EventState::getRegulator, E178EventState::getInsurer, "retailer can not be insurer")
-                            .isEqual(E178EventState::getStatus, x -> E178EventState.E178StatusType.INSURANCE_REQUESTED)
+                            .isEqual(E178EventState::getStatus, x -> E178StateMachine.State.INSURANCE_REQUESTED)
                             .object();
 
                     // validate 1 input and 1 output - simple update for same or different values
@@ -150,13 +150,13 @@ public class E178EventContract implements Contract {
                             .input()
                             .one()
                             .one(E178EventState.class)
-                            .isEqual(E178EventState::getStatus, x -> E178EventState.E178StatusType.INSURANCE_REQUESTED)
+                            .isEqual(E178EventState::getStatus, x -> E178StateMachine.State.INSURANCE_REQUESTED)
                             .object();
                     E178EventState e178 = verifier
                             .output()
                             .one()
                             .one(E178EventState.class)
-                            .isEqual(E178EventState::getStatus, x -> E178EventState.E178StatusType.INSURED)
+                            .isEqual(E178EventState::getStatus, x -> E178StateMachine.State.INSURED)
                             .object();
 
                     // validate 1 input and 1 output - simple update for same or different values
@@ -197,13 +197,13 @@ public class E178EventContract implements Contract {
                             .input()
                             .one()
                             .one(E178EventState.class)
-                            .isEqual(E178EventState::getStatus, x -> E178EventState.E178StatusType.INSURED)
+                            .isEqual(E178EventState::getStatus, x -> E178StateMachine.State.INSURED)
                             .object();
                     E178EventState e178 = verifier
                             .output()
                             .one()
                             .one(E178EventState.class)
-                            .isEqual(E178EventState::getStatus, x -> E178EventState.E178StatusType.REGISTERED)
+                            .isEqual(E178EventState::getStatus, x -> E178StateMachine.State.REGISTERED)
                             .object();
 
                     // validate 1 input and 1 output - simple update for same or different values
@@ -244,13 +244,13 @@ public class E178EventContract implements Contract {
                             .input()
                             .one()
                             .one(E178EventState.class)
-                            .isNotEqual(E178EventState::getStatus, x -> E178EventState.E178StatusType.CANCELED)
+                            .isNotEqual(E178EventState::getStatus, x -> E178StateMachine.State.CANCELED)
                             .object();
                     E178EventState e178 = verifier
                             .output()
                             .one()
                             .one(E178EventState.class)
-                            .isEqual(E178EventState::getStatus, x -> E178EventState.E178StatusType.CANCELED)
+                            .isEqual(E178EventState::getStatus, x -> E178StateMachine.State.CANCELED)
                             .object();
 
                     // validate 1 input and 1 output - simple update for same or different values
