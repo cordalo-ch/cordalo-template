@@ -1,7 +1,10 @@
 package com.cordalo.template.contracts;
 
+import ch.cordalo.corda.common.contracts.CommandVerifier;
 import ch.cordalo.corda.common.contracts.StateVerifier;
+import ch.cordalo.corda.common.contracts.test.TestState;
 import com.cordalo.template.states.E178EventState;
+import kotlin.Pair;
 import net.corda.core.contracts.CommandData;
 import net.corda.core.contracts.Contract;
 import net.corda.core.transactions.LedgerTransaction;
@@ -27,7 +30,7 @@ public class E178EventContract implements Contract {
             public void verify(LedgerTransaction tx, StateVerifier verifier) throws IllegalArgumentException {
                 requireThat(req -> {
                     verifier.input().empty("input must be empty");
-                    E178EventState message = verifier
+                    E178EventState e178 = verifier
                             .output()
                             .one()
                             .one(E178EventState.class)
@@ -38,7 +41,7 @@ public class E178EventContract implements Contract {
                             .isNotEmpty(E178EventState::getStatus, "status cannot be empty")
                             .isNotEqual(E178EventState::getRetailer, E178EventState::getLeasing, "retailer can not be same than leasing")
                             .object();
-                    req.using("state must be REQUESTED", message.getStatus().equals(E178EventState.E178StatusType.REQUESTED));
+                    req.using("state must be REQUESTED", e178.getStatus().equals(E178EventState.E178StatusType.REQUESTED));
                     return null;
                 });
             }
@@ -49,20 +52,34 @@ public class E178EventContract implements Contract {
             @Override
             public void verify(LedgerTransaction tx, StateVerifier verifier) throws IllegalArgumentException {
                 requireThat(req -> {
-                    verifier.input().notEmpty("input must not be empty");
-                    E178EventState message = verifier
-                            .output()
+                    E178EventState requestedE178 = verifier
+                            .input()
                             .one()
                             .one(E178EventState.class)
                             .isNotEmpty(E178EventState::getLinearId, "id must be provided")
                             .isNotEmpty(E178EventState::getLeasing, "leasing must be provided")
-                            .isNotEmpty(E178EventState::getRegulator, "regulator must be provided")
+                            .isNotEmpty(E178EventState::getLeasing, "regulator must be provided")
                             .isNotEmpty(E178EventState::getState, "state cannot be empty")
-                            .isNotEmpty(E178EventState::getStatus, "status cannot be empty")
-                            // TODO check status
-//                            .isEqual(E178EventState::getStatus, E178EventState.E178StatusType.I)
-                            .isNotEqual(E178EventState::getLeasing, E178EventState::getRegulator, "leasing can not be regulator")
+                            .isEqual(E178EventState::getStatus, x -> E178EventState.E178StatusType.REQUESTED)
                             .object();
+                    E178EventState message = verifier
+                            .output()
+                            .one()
+                            .one(E178EventState.class)
+                            .isNotEqual(E178EventState::getLeasing, E178EventState::getRegulator, "leasing can not be regulator")
+                            .isEqual(E178EventState::getStatus, x -> E178EventState.E178StatusType.ISSUED)
+                            .object();
+
+                    CommandVerifier.Parameters<E178EventState> params = new CommandVerifier.Parameters<>();
+                    params.equal(
+                            E178EventState::getLinearId,
+                            E178EventState::getLeasing,
+                            E178EventState::getLeasing);
+                    params.notEqual(E178EventState::getStatus);
+
+                    Pair<E178EventState, E178EventState> pair = new CommandVerifier(verifier)
+                            .verify_update1(E178EventState.class, params);
+
                     return null;
                 });
             }
