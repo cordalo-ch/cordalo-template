@@ -26,6 +26,7 @@ public class E178EventFlowTests extends E178BaseTests {
                 E178EventFlow.IssueResponder.class,
                 E178EventFlow.RequestInsuranceResponder.class,
                 E178EventFlow.DeleteResponder.class,
+                E178EventFlow.CancelResponder.class,
                 E178EventFlow.RequestInsuranceResponder.class,
                 E178EventFlow.InsureResponder.class,
                 E178EventFlow.RegisterResponder.class
@@ -121,6 +122,40 @@ public class E178EventFlowTests extends E178BaseTests {
         Assert.assertTrue("e178 is insured", e178.getStatus().equals(E178StateMachine.State.INSURED));
     }
 
+    @Test
+    public void test_retailer_cancelE178_success() throws Exception {
+        CordaNodeEnvironment node = this.retailer;
+        createE178AndCancelOnNodeEnvironment(node);
+    }
+
+    @Test
+    public void test_regulator_cancelE178_success() throws Exception {
+        CordaNodeEnvironment node = this.regulator;
+        createE178AndCancelOnNodeEnvironment(node);
+    }
+
+    @Test
+    public void test_insurer1_cancelE178_success() throws Exception {
+        CordaNodeEnvironment node = this.insurer1;
+        createE178AndCancelOnNodeEnvironment(node);
+    }
+
+    @Test
+    public void test_insurer2_cancelE178_success() throws Exception {
+        CordaNodeEnvironment node = this.insurer2;
+        createE178AndCancelOnNodeEnvironment(node);
+    }
+
+    private void createE178AndCancelOnNodeEnvironment(CordaNodeEnvironment retailer) throws ExecutionException, InterruptedException {
+        E178EventState e178 = verifyAndGet(E178EventState.class, this.newRequestE178(retailer, this.leasing, "ZH"));
+
+        FlowLogic<SignedTransaction> flow = new E178EventFlow.Cancel(e178.getLinearId());
+        CordaFuture<SignedTransaction> future = retailer.node.startFlow(flow);
+        network.runNetwork();
+        SignedTransaction signedTransaction = future.get();
+        E178EventState e178EventState = verifyAndGet(E178EventState.class, signedTransaction);
+        Assert.assertTrue("e178 is cancelled", e178EventState.getStatus().equals(E178StateMachine.State.CANCELED));
+    }
 
     @Test
     public void test_e178_register() throws Exception {

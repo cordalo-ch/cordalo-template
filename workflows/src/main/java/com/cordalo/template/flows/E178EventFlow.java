@@ -367,5 +367,16 @@ public class E178EventFlow {
         }
     }
 
+    @InitiatedBy(E178EventFlow.Cancel.class)
+    public static class CancelResponder extends ResponderBaseFlow<E178EventState> {
+        public CancelResponder(FlowSession otherFlow) {
+            super(otherFlow);
+        }
+        @Suspendable
+        @Override
+        public Unit call() throws FlowException {
+            return this.receiveIdentitiesCounterpartiesNoTxChecking();
+        }
+    }
 
 }
