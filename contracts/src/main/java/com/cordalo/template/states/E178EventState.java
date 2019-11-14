@@ -171,7 +171,7 @@ public class E178EventState implements LinearState {
         return new E178EventState(this.getLinearId(), this.getRetailer(), this.getLeasing(), insurer, this.getRegulator(), this.getState(), E178StatusType.INSURANCE_REQUESTED);
     }
     public E178EventState insure() {
-        return new E178EventState(this.getLinearId(), this.getRetailer(), this.getLeasing(), this.getInsurer(), this.getRegulator(), this.getState(), E178StatusType.INSURED);
+        return this.changeState(E178StatusType.INSURED);
     }
     public E178EventState registered() {
         return this.changeState(E178StatusType.REGISTERED);

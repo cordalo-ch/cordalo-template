@@ -41,8 +41,8 @@ public class E178EventContract implements Contract {
                             .isNotEmpty(E178EventState::getState, "state cannot be empty")
                             .isNotEmpty(E178EventState::getStatus, "status cannot be empty")
                             .isNotEqual(E178EventState::getRetailer, E178EventState::getLeasing, "retailer can not be same than leasing")
+                            .isEqual(E178EventState::getStatus, x -> E178EventState.E178StatusType.REQUESTED, "state must be requested")
                             .object();
-                    req.using("state must be REQUESTED", e178.getStatus().equals(E178EventState.E178StatusType.REQUESTED));
                     return null;
                 });
             }
@@ -50,7 +50,6 @@ public class E178EventContract implements Contract {
 
         // Leasing  --> update same e178
         //      add Regulator, status must be updated to issued
-        //      state is updated to issued
         class Issue implements E178EventContract.Commands {
             @Override
             public void verify(LedgerTransaction tx, StateVerifier verifier) throws IllegalArgumentException {
@@ -284,7 +283,6 @@ public class E178EventContract implements Contract {
                     verifier.output().empty("output must be empty");
                     E178EventState e178 = verifier
                             .input()
-                            .one()
                             .one(E178EventState.class)
                             .isNotEmpty(E178EventState::getLinearId, "id must be provided")
                             .object();
