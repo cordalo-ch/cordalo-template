@@ -180,6 +180,40 @@ public class E178EventFlow {
         }
     }
 
+    @InitiatingFlow(version = 2)
+    @StartableByRPC
+    public static class Cancel extends BaseFlow {
+
+        private final UniqueIdentifier id;
+
+        public Cancel(UniqueIdentifier id) {
+            this.id = id;
+        }
+
+        @Override
+        public ProgressTracker getProgressTracker() {
+            return super.progressTracker_sync;
+        }
+
+        @Suspendable
+        @Override
+        public SignedTransaction call() throws FlowException {
+            getProgressTracker().setCurrentStep(PREPARATION);
+            StateAndRef<E178EventState> e178StateRef = this.getLastStateByLinearId(E178EventState.class, this.id);
+            E178EventState e178 = this.getStateByRef(e178StateRef);
+
+            E178EventState cancelledE178 = e178.cancel();
+
+            getProgressTracker().setCurrentStep(BUILDING);
+            TransactionBuilder transactionBuilder = getTransactionBuilderSignedByParticipants(
+                    cancelledE178,
+                    new E178EventContract.Commands.Cancel());
+            transactionBuilder.addInputState(e178StateRef);
+            transactionBuilder.addOutputState(cancelledE178);
+            return signSyncCollectAndFinalize(cancelledE178.getParticipants(), transactionBuilder);
+        }
+    }
+
 
     @InitiatingFlow(version = 2)
     @StartableByRPC
