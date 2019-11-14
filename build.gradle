@@ -109,6 +109,7 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
         cordapp project(':contracts')
         cordapp project(':workflows')
         cordapps = [
+            "ch.cordalo:corda-ext:$cordalo_version",
             "ch.cordalo:corda-common-contracts:$cordalo_version",
             "ch.cordalo:corda-common-workflows:$cordalo_version"
         ]
