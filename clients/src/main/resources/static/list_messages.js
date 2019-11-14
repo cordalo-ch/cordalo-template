@@ -45,48 +45,6 @@ function deleteMessage(message) {
     }
 }
 
-
-function onMessageSelectionChanged(select) {
-    if ($(select).val() !== '') {
-        var url = $(select).val();
-        var action = url.split("/").reverse()[0];
-        if (action !== "SHARE") {
-            animationOn();
-            $.ajax(
-                {
-                    url: url,
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded"
-                    },
-                    data: ""
-                }
-            ).done(function (result) {
-
-            }).fail(function (jqXHR, textStatus) {
-                alert(jqXHR.responseText);
-            });
-        } else {
-            animationOn();
-            $.ajax(
-                {
-                    url: url,
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded"
-                    },
-                    data: "service-provider=" + encodeURI(this.get_random_peer())
-                }
-            ).done(function (result) {
-
-            }).fail(function (jqXHR, textStatus) {
-                alert(jqXHR.responseText);
-            });
-        }
-    }
-};
-
-
 function show_messages(tagName, result) {
     var i = 0;
     $(tagName).jsGrid({

@@ -63,9 +63,9 @@ function show_e178(tagName, result) {
 
         fields: [
             {
-                title: "StammNr", name: "state", type: "text", itemTemplate: function (value, item) {
+                title: "State", name: "state.state", type: "text", itemTemplate: function (value, item) {
                     i = i + 1;
-                    return strongS(i) + "xxx.xxx.xxx" + strongE(i);
+                    return strongS(i) + item.state.state + strongE(i);
                 }
             },
             {
@@ -76,9 +76,9 @@ function show_e178(tagName, result) {
                 }
             },
             {
-                title: "State", name: "state.state", type: "text", itemTemplate: function (value, item) {
+                title: "Status", name: "state.status", type: "text", itemTemplate: function (value, item) {
                     i = i + 1;
-                    return strongS(i) + value + "<br>" + makeOptions(item.state.id.id, item.links, "Action", "onServiceSelectionChanged") + strongE(i);
+                    return strongS(i) + value + "<br>" + makeOptions(item.status.id.id, item.links, "Action", "onE178StatusChange") + strongE(i);
                 }
             },
             {
@@ -97,6 +97,28 @@ function show_e178(tagName, result) {
         ]
     });
 }
+
+function onE178StatusChange(select) {
+    if ($(select).val() !== '') {
+        var url = $(select).val();
+        var action = url.split("/").reverse()[0];
+        animationOn();
+        $.ajax(
+            {
+                url: url,
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                data: ""
+            }
+        ).done(function (result) {
+
+        }).fail(function (jqXHR, textStatus) {
+            alert(jqXHR.responseText);
+        });
+    }
+};
 
 function get_e178() {
     $get({
