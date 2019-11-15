@@ -91,27 +91,26 @@ public class ControllerE178 extends CordaloController {
     @ResponseBody
     public ResponseEntity<StateAndLinks<E178EventState>> requestE178(
             HttpServletRequest request,
+            @RequestParam(value = "stammNr", required = true) String stammNr,
             @RequestParam(value = "leasing", required = true) String leasing,
             @RequestParam(name = "state", required = false) String state) {
         Party leasingParty = this.partyFromString(leasing);
         if (leasingParty == null){
             return this.buildResponseFromException(HttpStatus.BAD_REQUEST, "leasing not a valid peer.");
         }
+        if (stammNr != null && !stammNr.isEmpty()){
+            return this.buildResponseFromException(HttpStatus.BAD_REQUEST, "stammNr cannot be empty.");
+        }
+        if (state != null && !state.isEmpty()){
+            return this.buildResponseFromException(HttpStatus.BAD_REQUEST, "state cannot be empty.");
+        }
         try {
             SignedTransaction signedTx= null;
-            if (state != null && !state.isEmpty()) {
-                signedTx = this.getProxy()
-                        .startTrackedFlowDynamic(E178EventFlow.Request.class,
-                                leasingParty, state)
-                        .getReturnValue()
-                        .get();
-            } else {
-                signedTx = this.getProxy()
-                        .startTrackedFlowDynamic(E178EventFlow.Request.class,
-                                leasingParty)
-                        .getReturnValue()
-                        .get();
-            }
+            signedTx = this.getProxy()
+                    .startTrackedFlowDynamic(E178EventFlow.Request.class,
+                            stammNr, leasingParty, state)
+                    .getReturnValue()
+                    .get();
 
             StateVerifier verifier = StateVerifier.fromTransaction(signedTx, null);
             E178EventState e178 = verifier.output().one(E178EventState.class).object();

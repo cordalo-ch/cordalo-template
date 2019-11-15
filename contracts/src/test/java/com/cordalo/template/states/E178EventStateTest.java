@@ -12,6 +12,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
 public class E178EventStateTest extends E178BaseTests {
+    private final static String STAMM_NR = "123.456.786";
 
     @Before
     public void setup() {
@@ -28,6 +29,7 @@ public class E178EventStateTest extends E178BaseTests {
         // Arrange
         E178EventState e178EventState = new E178EventState(
                 new UniqueIdentifier(),
+                STAMM_NR,
                 this.retailer.party,
                 this.leasing.party,
                 this.insurer1.party,

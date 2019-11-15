@@ -17,7 +17,7 @@ function createNewService(self, service, spShort, price) {
         }
     ).done(function (result) {
     }).fail(function (jqXHR, textStatus) {
-        alert(jqXHR.responseText);
+        display_error(jqXHR);
     });
 }
 
@@ -38,7 +38,7 @@ function deleteService(service) {
             get_services();
             animationOff();
         }).fail(function (jqXHR, textStatus) {
-            alert(jqXHR.responseText);
+            display_error(jqXHR);
         });
     }
 }
@@ -68,7 +68,7 @@ function onServiceSelectionChanged(select) {
         ).done(function (result) {
 
         }).fail(function (jqXHR, textStatus) {
-            alert(jqXHR.responseText);
+            display_error(jqXHR);
         });
     }
 };

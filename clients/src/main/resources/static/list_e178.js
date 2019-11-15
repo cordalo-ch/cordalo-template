@@ -7,21 +7,26 @@ if (cordaloEnv) {
 function createNewE178(self, stammNr, state) {
     animationOn();
     if (!state) {
-        state = "";
+        state = "AG";
     }
-    $.ajax(
-        {
-            url: cordaloEnv.API_URL("/api/v1/cordalo/template/e178/"),
-            method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-            data: "leasing=" + encodeURI("O=Company-B,L=Winterthur,ST=ZH,C=CH") + "&state=" + encodeURI(state)
-        }
-    ).done(function (result) {
-    }).fail(function (jqXHR, textStatus) {
-        alert(jqXHR.responseText);
-    });
+    var stammNr = prompt("Please enter a valid stamm number xxx.xxx.xxx?", stammNr );
+    if (stammNr != null) {
+        $.ajax(
+            {
+                url: cordaloEnv.API_URL("/api/v1/cordalo/template/e178/"),
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                data: "stammNr="+encodeURI(stammNr)+"&leasing=" + encodeURI("O=Company-B,L=Winterthur,ST=ZH,C=CH") + "&state=" + encodeURI(state)
+            }
+        ).done(function (result) {
+        }).fail(function (jqXHR, textStatus) {
+            display_error(jqXHR);
+        });
+    } else {
+        animationOff();
+    }
 }
 
 function deleteE178(e178) {
@@ -40,7 +45,7 @@ function deleteE178(e178) {
         ).done(function (result) {
             animationOff();
         }).fail(function (jqXHR, textStatus) {
-            alert(jqXHR.responseText);
+            display_error(jqXHR);
         });
     }
 }
@@ -63,9 +68,9 @@ function show_e178(tagName, result) {
 
         fields: [
             {
-                title: "State", name: "state.state", type: "text", width: 30, itemTemplate: function (value, item) {
+                title: "Car", name: "state", type: "text", width: 30, itemTemplate: function (value, item) {
                     i = i + 1;
-                    return strongS(i) + item.state.state + strongE(i);
+                    return strongS(i) + item.state.stammNr+"<br>"+item.state.state+" ..." + strongE(i);
                 }
             },
             {
@@ -131,7 +136,7 @@ function onE178StatusChange(select) {
         ).done(function (result) {
 
         }).fail(function (jqXHR, textStatus) {
-            alert(jqXHR.responseText);
+            display_error(jqXHR);
         });
     }
 };

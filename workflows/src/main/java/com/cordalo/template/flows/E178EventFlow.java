@@ -20,10 +20,12 @@ public class E178EventFlow {
     @StartableByRPC
     public static class Request extends BaseFlow {
 
+        private final String stammNr;
         private final Party leasing;
         private final String state;
 
-        public Request(Party leasing, String state) {
+        public Request(String stammNr, Party leasing, String state) {
+            this.stammNr = stammNr;
             this.leasing = leasing;
             this.state = state;
         }
@@ -39,7 +41,7 @@ public class E178EventFlow {
             Party me = getOurIdentity();
 
             getProgressTracker().setCurrentStep(PREPARATION);
-            E178EventState e178 = E178EventState.request(me, this.leasing, this.state);
+            E178EventState e178 = E178EventState.request(this.stammNr, me, this.leasing, this.state);
 
             getProgressTracker().setCurrentStep(BUILDING);
             TransactionBuilder transactionBuilder = getTransactionBuilderSignedByParticipants(

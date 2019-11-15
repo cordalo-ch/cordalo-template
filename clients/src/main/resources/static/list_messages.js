@@ -20,7 +20,7 @@ function createNewMessage(self, message) {
         }
     ).done(function (result) {
     }).fail(function (jqXHR, textStatus) {
-        alert(jqXHR.responseText);
+        display_error(jqXHR);
     });
 }
 
@@ -40,7 +40,7 @@ function deleteMessage(message) {
         ).done(function (result) {
             animationOff();
         }).fail(function (jqXHR, textStatus) {
-            alert(jqXHR.responseText);
+            display_error(jqXHR);
         });
     }
 }

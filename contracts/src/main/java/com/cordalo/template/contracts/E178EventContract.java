@@ -2,7 +2,6 @@ package com.cordalo.template.contracts;
 
 import ch.cordalo.corda.common.contracts.CommandVerifier;
 import ch.cordalo.corda.common.contracts.StateVerifier;
-import ch.cordalo.corda.common.contracts.test.TestState;
 import com.cordalo.template.states.E178EventState;
 import kotlin.Pair;
 import net.corda.core.contracts.CommandData;
@@ -36,6 +35,7 @@ public class E178EventContract implements Contract {
                             .one()
                             .one(E178EventState.class)
                             .isNotEmpty(E178EventState::getLinearId, "id must be provided")
+                            .isNotEmpty(E178EventState::getStammNr, "stammNr must be provided")
                             .isNotEmpty(E178EventState::getRetailer, "retailer must be provided")
                             .isNotEmpty(E178EventState::getLeasing, "leasing must be provided")
                             .isNotEmpty(E178EventState::getState, "state cannot be empty")
@@ -73,11 +73,13 @@ public class E178EventContract implements Contract {
                     CommandVerifier.Parameters<E178EventState> params = new CommandVerifier.Parameters<>();
                     params.notEmpty(
                             E178EventState::getLinearId,
+                            E178EventState::getStammNr,
                             E178EventState::getLeasing,
                             E178EventState::getRetailer,
                             E178EventState::getState);
                     params.equal(
                             E178EventState::getLinearId,
+                            E178EventState::getStammNr,
                             E178EventState::getLeasing,
                             E178EventState::getRetailer);
                     params.notEqual(
@@ -119,12 +121,14 @@ public class E178EventContract implements Contract {
                     CommandVerifier.Parameters<E178EventState> params = new CommandVerifier.Parameters<>();
                     params.notEmpty(
                             E178EventState::getLinearId,
+                            E178EventState::getStammNr,
                             E178EventState::getLeasing,
                             E178EventState::getRetailer,
                             E178EventState::getRegulator,
                             E178EventState::getState);
                     params.equal(
                             E178EventState::getLinearId,
+                            E178EventState::getStammNr,
                             E178EventState::getLeasing,
                             E178EventState::getRetailer,
                             E178EventState::getRegulator);
@@ -163,6 +167,7 @@ public class E178EventContract implements Contract {
                     CommandVerifier.Parameters<E178EventState> params = new CommandVerifier.Parameters<>();
                     params.notEmpty(
                             E178EventState::getLinearId,
+                            E178EventState::getStammNr,
                             E178EventState::getLeasing,
                             E178EventState::getRetailer,
                             E178EventState::getRegulator,
@@ -170,6 +175,7 @@ public class E178EventContract implements Contract {
                             E178EventState::getState);
                     params.equal(
                             E178EventState::getLinearId,
+                            E178EventState::getStammNr,
                             E178EventState::getLeasing,
                             E178EventState::getRetailer,
                             E178EventState::getRegulator,
@@ -210,6 +216,7 @@ public class E178EventContract implements Contract {
                     CommandVerifier.Parameters<E178EventState> params = new CommandVerifier.Parameters<>();
                     params.notEmpty(
                             E178EventState::getLinearId,
+                            E178EventState::getStammNr,
                             E178EventState::getLeasing,
                             E178EventState::getRetailer,
                             E178EventState::getRegulator,
@@ -217,6 +224,7 @@ public class E178EventContract implements Contract {
                             E178EventState::getState);
                     params.equal(
                             E178EventState::getLinearId,
+                            E178EventState::getStammNr,
                             E178EventState::getLeasing,
                             E178EventState::getRetailer,
                             E178EventState::getRegulator,
@@ -257,11 +265,13 @@ public class E178EventContract implements Contract {
                     CommandVerifier.Parameters<E178EventState> params = new CommandVerifier.Parameters<>();
                     params.notEmpty(
                             E178EventState::getLinearId,
+                            E178EventState::getStammNr,
                             E178EventState::getLeasing,
                             E178EventState::getRetailer,
                             E178EventState::getState);
                     params.equal(
                             E178EventState::getLinearId,
+                            E178EventState::getStammNr,
                             E178EventState::getLeasing,
                             E178EventState::getRetailer);
                     params.notEqual(

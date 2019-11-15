@@ -44,6 +44,9 @@ public class E178EventState implements LinearState {
     private final String state;
 
     @NotNull
+    private final String stammNr;
+
+    @NotNull
     private final E178StateMachine.State status;
 
     @NotNull
@@ -65,13 +68,14 @@ public class E178EventState implements LinearState {
     }
 
     @ConstructorForDeserialization
-    public E178EventState(@NotNull UniqueIdentifier id,
+    public E178EventState(@NotNull UniqueIdentifier id, String stammNr,
                           @Nullable Party retailer,
                           @Nullable Party leasing,
                           @Nullable Party insurer,
                           @Nullable Party regulator,
                           @NotNull String state, @NotNull E178StateMachine.State status) {
         this.id = id;
+        this.stammNr = stammNr;
         this.retailer = retailer;
         this.leasing = leasing;
         this.insurer = insurer;
@@ -120,6 +124,11 @@ public class E178EventState implements LinearState {
     }
 
     @NotNull
+    public String getStammNr() {
+        return stammNr;
+    }
+
+    @NotNull
     public E178StateMachine.State getStatus() {
         return status;
     }
@@ -130,6 +139,7 @@ public class E178EventState implements LinearState {
         if (o == null || getClass() != o.getClass()) return false;
         E178EventState that = (E178EventState) o;
         return id.equals(that.id) &&
+                getStammNr().equals(that.getStammNr()) &&
                 Objects.equals(getRegulator(), that.getRegulator()) &&
                 Objects.equals(getRetailer(), that.getRetailer()) &&
                 Objects.equals(getLeasing(), that.getLeasing()) &&
@@ -140,26 +150,26 @@ public class E178EventState implements LinearState {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, getRegulator(), getRetailer(), getLeasing(), getInsurer(), getState(), getStatus());
+        return Objects.hash(id, getStammNr(), getRegulator(), getRetailer(), getLeasing(), getInsurer(), getState(), getStatus());
     }
 
     /* action */
 
     protected E178EventState changeState(E178StateMachine.State status){
-        return new E178EventState(this.getLinearId(), this.getRetailer(), this.getLeasing(), this.getInsurer(), this.getRegulator(), this.getState(), status);
+        return new E178EventState(this.getLinearId(), this.getStammNr(), this.getRetailer(), this.getLeasing(), this.getInsurer(), this.getRegulator(), this.getState(), status);
     }
-    public static E178EventState request(Party retail, Party leasing, String state) {
-        return new E178EventState(new UniqueIdentifier(), retail, leasing, null, null, state, E178StateMachine.State.REQUESTED);
+    public static E178EventState request(String stammNr, Party retail, Party leasing, String state) {
+        return new E178EventState(new UniqueIdentifier(), stammNr, retail, leasing, null, null, state, E178StateMachine.State.REQUESTED);
     }
     public E178EventState issue(String state, Party regulator) {
-        return new E178EventState(this.getLinearId(), this.getRetailer(), this.getLeasing(), this.getInsurer(), regulator, state, E178StateMachine.State.ISSUED);
+        return new E178EventState(this.getLinearId(), this.getStammNr(), this.getRetailer(), this.getLeasing(), this.getInsurer(), regulator, state, E178StateMachine.State.ISSUED);
     }
     public E178EventState issue(Party regulator) {
-        return new E178EventState(this.getLinearId(), this.getRetailer(), this.getLeasing(), this.getInsurer(), regulator, this.getState(), E178StateMachine.State.ISSUED);
+        return new E178EventState(this.getLinearId(), this.getStammNr(), this.getRetailer(), this.getLeasing(), this.getInsurer(), regulator, this.getState(), E178StateMachine.State.ISSUED);
     }
 
     public E178EventState requestInsurance(Party insurer) {
-        return new E178EventState(this.getLinearId(), this.getRetailer(), this.getLeasing(), insurer, this.getRegulator(), this.getState(), E178StateMachine.State.INSURANCE_REQUESTED);
+        return new E178EventState(this.getLinearId(), this.getStammNr(), this.getRetailer(), this.getLeasing(), insurer, this.getRegulator(), this.getState(), E178StateMachine.State.INSURANCE_REQUESTED);
     }
     public E178EventState insure() {
         return this.changeState(E178StateMachine.State.INSURED);

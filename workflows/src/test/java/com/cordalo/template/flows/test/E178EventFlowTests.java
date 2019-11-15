@@ -18,7 +18,7 @@ import org.junit.Test;
 import java.util.concurrent.ExecutionException;
 
 public class E178EventFlowTests extends E178BaseTests {
-
+    private final static String STAMM_NR = "123.456.786";
     @Before
     public void setup() {
         this.setup(true,
@@ -40,8 +40,8 @@ public class E178EventFlowTests extends E178BaseTests {
     }
 
 
-    protected SignedTransaction newRequestE178(CordaNodeEnvironment retail, CordaNodeEnvironment leasing, String state) throws ExecutionException, InterruptedException {
-        FlowLogic<SignedTransaction> flow = new E178EventFlow.Request(leasing.party, state);
+    protected SignedTransaction newRequestE178(String stammNr, CordaNodeEnvironment retail, CordaNodeEnvironment leasing, String state) throws ExecutionException, InterruptedException {
+        FlowLogic<SignedTransaction> flow = new E178EventFlow.Request(stammNr, leasing.party, state);
         CordaFuture<SignedTransaction> future = retail.node.startFlow(flow);
         network.runNetwork();
         return future.get();
@@ -73,13 +73,13 @@ public class E178EventFlowTests extends E178BaseTests {
 
     @Test
     public void test_e178_request() throws Exception {
-        E178EventState e178 = verifyAndGet(E178EventState.class, this.newRequestE178(this.retailer, this.leasing, "ZH"));
+        E178EventState e178 = verifyAndGet(E178EventState.class, this.newRequestE178(STAMM_NR, this.retailer, this.leasing, "ZH"));
         Assert.assertEquals("state must be ZH", "ZH", e178.getState());
     }
 
     @Test
     public void test_e178_issue() throws Exception {
-        E178EventState e178 = verifyAndGet(E178EventState.class, this.newRequestE178(this.retailer, this.leasing, "ZH"));
+        E178EventState e178 = verifyAndGet(E178EventState.class, this.newRequestE178(STAMM_NR, this.retailer, this.leasing, "ZH"));
         Assert.assertEquals("state must be ZH", "ZH", e178.getState());
 
         e178 = verifyAndGet(E178EventState.class, this.newIssueE178(e178, this.leasing, "AG", this.regulator));
@@ -88,7 +88,7 @@ public class E178EventFlowTests extends E178BaseTests {
 
     @Test
     public void test_e178_request_insurance() throws Exception {
-        E178EventState e178 = verifyAndGet(E178EventState.class, this.newRequestE178(this.retailer, this.leasing, "ZH"));
+        E178EventState e178 = verifyAndGet(E178EventState.class, this.newRequestE178(STAMM_NR, this.retailer, this.leasing, "ZH"));
         Assert.assertEquals("state must be ZH", "ZH", e178.getState());
 
         e178 = verifyAndGet(E178EventState.class, this.newIssueE178(e178, this.leasing, "AG", this.regulator));
@@ -109,7 +109,7 @@ public class E178EventFlowTests extends E178BaseTests {
 
     @Test
     public void test_e178_insurance() throws Exception {
-        E178EventState e178 = verifyAndGet(E178EventState.class, this.newRequestE178(this.retailer, this.leasing, "ZH"));
+        E178EventState e178 = verifyAndGet(E178EventState.class, this.newRequestE178(STAMM_NR, this.retailer, this.leasing, "ZH"));
         Assert.assertEquals("state must be ZH", "ZH", e178.getState());
 
         e178 = verifyAndGet(E178EventState.class, this.newIssueE178(e178, this.leasing, "AG", this.regulator));
@@ -147,7 +147,7 @@ public class E178EventFlowTests extends E178BaseTests {
     }
 
     private void createE178AndCancelOnNodeEnvironment(CordaNodeEnvironment retailer) throws ExecutionException, InterruptedException {
-        E178EventState e178 = verifyAndGet(E178EventState.class, this.newRequestE178(retailer, this.leasing, "ZH"));
+        E178EventState e178 = verifyAndGet(E178EventState.class, this.newRequestE178(STAMM_NR, retailer, this.leasing, "ZH"));
 
         FlowLogic<SignedTransaction> flow = new E178EventFlow.Cancel(e178.getLinearId());
         CordaFuture<SignedTransaction> future = retailer.node.startFlow(flow);
@@ -159,7 +159,7 @@ public class E178EventFlowTests extends E178BaseTests {
 
     @Test
     public void test_e178_register() throws Exception {
-        E178EventState e178 = verifyAndGet(E178EventState.class, this.newRequestE178(this.retailer, this.leasing, "ZH"));
+        E178EventState e178 = verifyAndGet(E178EventState.class, this.newRequestE178(STAMM_NR, this.retailer, this.leasing, "ZH"));
         Assert.assertEquals("state must be ZH", "ZH", e178.getState());
 
         e178 = verifyAndGet(E178EventState.class, this.newIssueE178(e178, this.leasing, "AG", this.regulator));
