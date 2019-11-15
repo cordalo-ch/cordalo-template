@@ -1,10 +1,18 @@
 .jsgrid-cell {
-    padding: .1em;
+    padding: .3em;
     vertical-align: top;
+    background-color: azure;
+}
+.jsgrid-header-row>.jsgrid-header-cell {
+    background-color: lightcyan;
+}
+
+.jsgrid-row>.jsgrid-cell {
+    background-color: azure;
 }
 
 .jsgrid-header-cell {
-    padding: .1em;
+    padding: .3em .1em;
 }
 
 .jsgrid-edit-row input {

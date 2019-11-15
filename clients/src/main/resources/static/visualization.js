@@ -52,7 +52,7 @@ $(document).ready(function () {
     get_peers();
 
     get_services();
-    //get_messages();
+    get_messages();
     get_e178();
 
     connectWebSocket();
