@@ -67,12 +67,6 @@ task runWebserver2(type: JavaExec, dependsOn: assemble) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'com.cordalo.template.client.webserver.Starter'
     args '--server.port=10802', '--config.rpc.host=localhost', '--config.rpc.port=10009', '--config.rpc.username=user1', '--config.rpc.password=test'
-    debugOptions {
-        enabled = true
-        port = 6002
-        server = true
-        suspend = false
-    }
 }
 
 task runWebserver3(type: JavaExec, dependsOn: assemble) {
