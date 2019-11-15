@@ -98,10 +98,10 @@ public class ControllerE178 extends CordaloController {
         if (leasingParty == null){
             return this.buildResponseFromException(HttpStatus.BAD_REQUEST, "leasing not a valid peer.");
         }
-        if (stammNr != null && !stammNr.isEmpty()){
+        if (stammNr == null || stammNr.isEmpty()){
             return this.buildResponseFromException(HttpStatus.BAD_REQUEST, "stammNr cannot be empty.");
         }
-        if (state != null && !state.isEmpty()){
+        if (state == null || state.isEmpty()){
             return this.buildResponseFromException(HttpStatus.BAD_REQUEST, "state cannot be empty.");
         }
         try {
