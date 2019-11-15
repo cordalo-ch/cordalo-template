@@ -66,18 +66,20 @@ public class ChatMessageContract implements Contract {
                             .object();
                     ChatMessageState origMessage = verifier
                             .output()
-                            .moreThan(2)
+                            .count(2)
                             .filterWhere(
                                 x -> ((ChatMessageState)x).getLinearId().equals(message.getLinearId()))
+                            .one()
                             .one(ChatMessageState.class)
                             .object();
                     req.using("input and output original message must identical", message.equals(origMessage));
 
                     ChatMessageState reply = verifier
                             .output()
-                            .moreThan(2)
+                            .count(2)
                             .filterWhere(
                                     x -> message.getLinearId().equals(((ChatMessageState)x).getBaseMessageId()))
+                            .one()
                             .one(ChatMessageState.class)
                             .isNotEmpty(ChatMessageState::getLinearId, "id must be provided")
                             .isNotEmpty(ChatMessageState::getSender, "sender must be provided")
