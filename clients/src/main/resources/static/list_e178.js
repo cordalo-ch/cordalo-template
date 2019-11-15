@@ -68,20 +68,20 @@ function show_e178(tagName, result) {
 
         fields: [
             {
-                title: "Car", name: "state", type: "text", width: 30, itemTemplate: function (value, item) {
+                title: "Car", name: "state", type: "text", width: 70, itemTemplate: function (value, item) {
                     i = i + 1;
                     return strongS(i) + item.state.stammNr+"<br>"+item.state.state+" ..." + strongE(i);
                 }
             },
             {
-                title: "Partners", name: "state", type: "text", width: 80, itemTemplate: function (value, item) {
+                title: "Partners", name: "state", type: "text", itemTemplate: function (value, item) {
                     i = i + 1;
                     var x500_O = participantsWithoutMe(item.state.participantsX500).map(x => X500toO(mapX500(x)));
                     return strongS(i) + x500_O.join(",<br>") + strongE(i);
                 }
             },
             {
-                title: "Status", name: "state.status", type: "text", itemTemplate: function (value, item) {
+                title: "Status", name: "state.status", type: "text", width: 80, itemTemplate: function (value, item) {
                     i = i + 1;
                     return strongS(i) + value.replace("_", " ") + "<br>" + makeOptions(item.state.linearId.id, item.links, "Action", "onE178StatusChange") + strongE(i);
                 }
