@@ -54,34 +54,34 @@ springBoot {
 task runWebserver_development(type: JavaExec, dependsOn: assemble) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'com.cordalo.template.client.webserver.Starter'
-    args '--server.port=10901', '--config.rpc.host=localhost', '--config.rpc.port=10006', '--config.rpc.username=user1', '--config.rpc.password=test'
+    args '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=6000','--server.port=10901', '--config.rpc.host=localhost', '--config.rpc.port=10006', '--config.rpc.username=user1', '--config.rpc.password=test'
 }
 
 task runWebserver1(type: JavaExec, dependsOn: assemble) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'com.cordalo.template.client.webserver.Starter'
-    args '--server.port=10801', '--config.rpc.host=localhost', '--config.rpc.port=10006', '--config.rpc.username=user1', '--config.rpc.password=test'
+    args '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=6001','--server.port=10801', '--config.rpc.host=localhost', '--config.rpc.port=10006', '--config.rpc.username=user1', '--config.rpc.password=test'
 }
 
 task runWebserver2(type: JavaExec, dependsOn: assemble) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'com.cordalo.template.client.webserver.Starter'
-    args '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=6002 --server.port=10802', '--config.rpc.host=localhost', '--config.rpc.port=10009', '--config.rpc.username=user1', '--config.rpc.password=test'
+    args '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=6002', '--server.port=10802', '--config.rpc.host=localhost', '--config.rpc.port=10009', '--config.rpc.username=user1', '--config.rpc.password=test'
 }
 
 task runWebserver3(type: JavaExec, dependsOn: assemble) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'com.cordalo.template.client.webserver.Starter'
-    args '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=6003 --server.port=10803', '--config.rpc.host=localhost', '--config.rpc.port=10012', '--config.rpc.username=user1', '--config.rpc.password=test'
+    args '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=6003','--server.port=10803', '--config.rpc.host=localhost', '--config.rpc.port=10012', '--config.rpc.username=user1', '--config.rpc.password=test'
 }
 
 task runWebserver4(type: JavaExec, dependsOn: assemble) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'com.cordalo.template.client.webserver.Starter'
-    args '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=6004 --server.port=10804', '--config.rpc.host=localhost', '--config.rpc.port=10015', '--config.rpc.username=user1', '--config.rpc.password=test'
+    args '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=6004','--server.port=10804', '--config.rpc.host=localhost', '--config.rpc.port=10015', '--config.rpc.username=user1', '--config.rpc.password=test'
 }
 task runWebserver5(type: JavaExec, dependsOn: assemble) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'com.cordalo.template.client.webserver.Starter'
-    args '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=6005 --server.port=10805', '--config.rpc.host=localhost', '--config.rpc.port=10018', '--config.rpc.username=user1', '--config.rpc.password=test'
+    args '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=6005','--server.port=10805', '--config.rpc.host=localhost', '--config.rpc.port=10018', '--config.rpc.username=user1', '--config.rpc.password=test'
 }
