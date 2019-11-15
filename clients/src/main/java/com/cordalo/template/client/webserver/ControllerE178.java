@@ -143,11 +143,12 @@ public class ControllerE178 extends CordaloController {
         if (regulatorParty == null){
             return this.buildResponseFromException(HttpStatus.BAD_REQUEST, "regulator not a valid peer.");
         }
+        UniqueIdentifier uid = new UniqueIdentifier(null, UUID.fromString(id));
         try {
             SignedTransaction signedTx= null;
             signedTx = this.getProxy()
                     .startTrackedFlowDynamic(E178EventFlow.Issue.class,
-                            id,
+                            uid,
                             regulatorParty)
                     .getReturnValue()
                     .get();
@@ -176,9 +177,10 @@ public class ControllerE178 extends CordaloController {
             HttpServletRequest request,
             @PathVariable("id") String id) {
         try {
+            UniqueIdentifier uid = new UniqueIdentifier(null, UUID.fromString(id));
             SignedTransaction signedTx= null;
             signedTx = this.getProxy()
-                    .startTrackedFlowDynamic(E178EventFlow.Cancel.class, id)
+                    .startTrackedFlowDynamic(E178EventFlow.Cancel.class, uid)
                     .getReturnValue()
                     .get();
 
@@ -206,9 +208,10 @@ public class ControllerE178 extends CordaloController {
             HttpServletRequest request,
             @PathVariable("id") String id) {
         try {
+            UniqueIdentifier uid = new UniqueIdentifier(null, UUID.fromString(id));
             SignedTransaction signedTx= null;
             signedTx = this.getProxy()
-                    .startTrackedFlowDynamic(E178EventFlow.Register.class, id)
+                    .startTrackedFlowDynamic(E178EventFlow.Register.class, uid)
                     .getReturnValue()
                     .get();
 
@@ -243,10 +246,11 @@ public class ControllerE178 extends CordaloController {
             return this.buildResponseFromException(HttpStatus.BAD_REQUEST, "insurer not a valid peer.");
         }
         try {
+            UniqueIdentifier uid = new UniqueIdentifier(null, UUID.fromString(id));
             SignedTransaction signedTx= null;
             signedTx = this.getProxy()
                     .startTrackedFlowDynamic(E178EventFlow.RequestInsurance.class,
-                            id,
+                            uid,
                             insurerParty)
                     .getReturnValue()
                     .get();
@@ -277,9 +281,10 @@ public class ControllerE178 extends CordaloController {
             HttpServletRequest request,
             @PathVariable("id") String id) {
         try {
+            UniqueIdentifier uid = new UniqueIdentifier(null, UUID.fromString(id));
             SignedTransaction signedTx= null;
             signedTx = this.getProxy()
-                    .startTrackedFlowDynamic(E178EventFlow.Insure.class, id)
+                    .startTrackedFlowDynamic(E178EventFlow.Insure.class, uid)
                     .getReturnValue()
                     .get();
 
