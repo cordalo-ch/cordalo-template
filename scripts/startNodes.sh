@@ -51,7 +51,8 @@ if [ "$retval" -eq $max_nof ]; then
 	exit 0
 fi
 
-$CORDA_HOME/build/nodes/runnodes
+#$CORDA_HOME/build/nodes/runnodes
+$BASEDIR/startNodes-native.sh
 
 get_sshd
 if [ "$retval" -eq 0 ]; then
@@ -59,8 +60,8 @@ if [ "$retval" -eq 0 ]; then
 	max_time=20
 fi
 
-echo "Wait 20s to spin up first log files"
-sleep 20s
+echo "Wait 40s to spin up first log files"
+sleep 40s
 wait_until_all_started
 if [ "$retval" -lt $max_nof ]; then
 	echo "kill unstarted nodes"

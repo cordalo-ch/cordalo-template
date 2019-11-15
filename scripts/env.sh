@@ -12,3 +12,7 @@ export NodeWebPorts=`grep server.port ../clients/build.gradle | awk -F "'" '{pri
 export NodeWebPorts=`echo $NodeWebPorts | awk '{gsub(" ","|"); print}'`
 
 export NodeSSHPortStart=`echo $NodeSSHPorts | awk -F "|" '{print $1}'`
+
+export NodeDebugPortStart=5005
+export NodeJolokiaPortStart=7005
+
