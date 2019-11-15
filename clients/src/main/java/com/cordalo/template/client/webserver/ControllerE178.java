@@ -148,7 +148,7 @@ public class ControllerE178 extends CordaloController {
             signedTx = this.getProxy()
                     .startTrackedFlowDynamic(E178EventFlow.Issue.class,
                             id,
-                            regulator)
+                            regulatorParty)
                     .getReturnValue()
                     .get();
 
@@ -221,6 +221,47 @@ public class ControllerE178 extends CordaloController {
             return this.buildResponseFromException(HttpStatus.EXPECTATION_FAILED, ex);
         }
     }
+
+
+    /**
+     * execute action REQUEST INSURANCE
+     * @param request is the original http request to calculate links in response
+     * @param insurer regulator part to issue the e178
+     */
+    @RequestMapping(
+            value = BASE_PATH + "/{id}/REQUEST_INSURANCE",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<StateAndLinks<E178EventState>> requestInsuranceE178(
+            HttpServletRequest request,
+            @PathVariable("id") String id,
+            @RequestParam(value = "insurer", required = true) String insurer) {
+        Party insurerParty = this.partyFromString(insurer);
+        if (insurerParty == null){
+            return this.buildResponseFromException(HttpStatus.BAD_REQUEST, "insurer not a valid peer.");
+        }
+        try {
+            SignedTransaction signedTx= null;
+            signedTx = this.getProxy()
+                    .startTrackedFlowDynamic(E178EventFlow.RequestInsurance.class,
+                            id,
+                            insurerParty)
+                    .getReturnValue()
+                    .get();
+
+            StateVerifier verifier = StateVerifier.fromTransaction(signedTx, null);
+            E178EventState e178 = verifier.output().one(E178EventState.class).object();
+            return this.getResponse(request, e178, HttpStatus.OK);
+
+        } catch (Throwable ex) {
+            logger.error(ex.getMessage(), ex);
+            return this.buildResponseFromException(HttpStatus.EXPECTATION_FAILED, ex);
+        }
+    }
+
+
 
     /**
      * execute action INSURE
