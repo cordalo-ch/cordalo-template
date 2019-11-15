@@ -51,8 +51,8 @@ if [ "$retval" -eq $max_nof ]; then
 	exit 0
 fi
 
-#$CORDA_HOME/build/nodes/runnodes
-$BASEDIR/startNodes-native.sh
+$CORDA_HOME/build/nodes/runnodes
+##$BASEDIR/startNodes-native.sh
 
 get_sshd
 if [ "$retval" -eq 0 ]; then
