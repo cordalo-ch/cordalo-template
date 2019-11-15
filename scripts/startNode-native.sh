@@ -16,6 +16,6 @@ JOLOKIA_PORT=$3
 NODE_NAME=$1
 NODE_DIR=${CORDA_HOME}/build/nodes
 cd ${NODE_DIR}/${NODE_NAME}
-echo java -Dcapsule.jvm.args="-Xmx:1500M -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${DEBUG_PORT} -javaagent:drivers/jolokia-jvm-1.6.0-agent.jar=port=${JOLOKIA_PORT},logHandlerClass=net.corda.node.JolokiaSlf4jAdapter" -Dname=${NODE_NAME} -jar ${NODE_DIR}/${NODE_NAME}/corda.jar
-java -Dcapsule.jvm.args="-Xmx:1500M -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${DEBUG_PORT} -javaagent:drivers/jolokia-jvm-1.6.0-agent.jar=port=${JOLOKIA_PORT},logHandlerClass=net.corda.node.JolokiaSlf4jAdapter" -Dname=${NODE_NAME} -jar ${NODE_DIR}/${NODE_NAME}/corda.jar >> ${NODE_DIR}/${NODE_NAME}/logs/node.log &
+echo java -Dcapsule.jvm.args="-Xmx1G -XX:+UseG1GC -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${DEBUG_PORT} -javaagent:drivers/jolokia-jvm-1.6.0-agent.jar=port=${JOLOKIA_PORT},logHandlerClass=net.corda.node.JolokiaSlf4jAdapter" -Dname=${NODE_NAME} -jar ${NODE_DIR}/${NODE_NAME}/corda.jar
+java -Dcapsule.jvm.args="-Xmx1G -XX:+UseG1GC -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${DEBUG_PORT} -javaagent:drivers/jolokia-jvm-1.6.0-agent.jar=port=${JOLOKIA_PORT},logHandlerClass=net.corda.node.JolokiaSlf4jAdapter" -Dname=${NODE_NAME} -jar ${NODE_DIR}/${NODE_NAME}/corda.jar >> ${NODE_DIR}/${NODE_NAME}/logs/node.log &
 
