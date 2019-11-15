@@ -69,16 +69,16 @@ function show_e178(tagName, result) {
                 }
             },
             {
-                title: "Partners", name: "state", type: "text", width: 120, itemTemplate: function (value, item) {
+                title: "Partners", name: "state", type: "text", width: 80, itemTemplate: function (value, item) {
                     i = i + 1;
                     var x500_O = participantsWithoutMe(item.state.participantsX500).map(x => X500toO(mapX500(x)));
-                    return strongS(i) + x500_O.join(",") + strongE(i);
+                    return strongS(i) + x500_O.join(",<br>") + strongE(i);
                 }
             },
             {
                 title: "Status", name: "state.status", type: "text", itemTemplate: function (value, item) {
                     i = i + 1;
-                    return strongS(i) + value + "<br>" + makeOptions(item.state.linearId.id, item.links, "Action", "onE178StatusChange") + strongE(i);
+                    return strongS(i) + value.replace("_", " ") + "<br>" + makeOptions(item.state.linearId.id, item.links, "Action", "onE178StatusChange") + strongE(i);
                 }
             },
             {
