@@ -64,7 +64,7 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
         Assert.assertEquals("addOn must be false", "false", service.getData("flags.addOn"));
 
         StateVerifier verifier2 = StateVerifier.fromTransaction(
-                this.newServiceUpdateFlow(service.getId(), dataUpdateJSONString(), 42),
+                this.newServiceUpdateFlow(service.getLinearId(), dataUpdateJSONString(), 42),
                 this.companyA.ledgerServices);
         ServiceState service2 = verifier2
                 .output().one()
@@ -87,7 +87,7 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
         Assert.assertEquals("addOn must be false", "false", service.getData("flags.addOn"));
 
         StateVerifier verifier2 = StateVerifier.fromTransaction(
-                this.newServiceDeleteFlow(service.getId()),
+                this.newServiceDeleteFlow(service.getLinearId()),
                 this.companyA.ledgerServices);
         verifier2.output().empty();
     }
@@ -105,7 +105,7 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
                 .object();
 
         StateVerifier verifier2 = StateVerifier.fromTransaction(
-                this.newServiceShareFlow(service.getId(), this.companyB.party),
+                this.newServiceShareFlow(service.getLinearId(), this.companyB.party),
                 this.companyA.ledgerServices);
         ServiceState sharedService = verifier2
                 .output().one()
@@ -127,7 +127,7 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
                 .object();
 
         StateVerifier verifier2 = StateVerifier.fromTransaction(
-                this.newServiceShareFlow(service.getId(), this.companyB.party),
+                this.newServiceShareFlow(service.getLinearId(), this.companyB.party),
                 this.companyA.ledgerServices);
         ServiceState sharedService = verifier2
                 .output().one()
@@ -136,7 +136,7 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
 
         Assert.assertEquals("addOn be false", "false", sharedService.getData("flags.addOn"));
         StateVerifier verifier3 = StateVerifier.fromTransaction(
-                this.newServiceDeleteFlow(sharedService.getId()),
+                this.newServiceDeleteFlow(sharedService.getLinearId()),
                 this.companyA.ledgerServices);
         verifier3.output().empty();
     }
@@ -152,7 +152,7 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
                 .object();
 
         StateVerifier verifierS = StateVerifier.fromTransaction(
-                this.newServiceShareFlow(service.getId(), companyB.party),
+                this.newServiceShareFlow(service.getLinearId(), companyB.party),
                 this.companyA.ledgerServices);
         ServiceState serviceS = verifierS
                 .output().one()
@@ -161,7 +161,7 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
         Assert.assertEquals("state is SHARED", "SHARED", serviceS.getState().toString());
 
         StateVerifier verifierA = StateVerifier.fromTransaction(
-                this.newServiceActionFlow(serviceS.getId(), "ACCEPT"),
+                this.newServiceActionFlow(serviceS.getLinearId(), "ACCEPT"),
                 this.companyA.ledgerServices);
         ServiceState serviceA = verifierA
                 .output().one()
@@ -186,7 +186,7 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
                 .object();
 
         StateVerifier verifierS = StateVerifier.fromTransaction(
-                this.newServiceShareFlow(service.getId(), companyB.party),
+                this.newServiceShareFlow(service.getLinearId(), companyB.party),
                 this.companyA.ledgerServices);
         ServiceState serviceS = verifierS
                 .output().one()
@@ -195,7 +195,7 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
         Assert.assertEquals("state is SHARED", "SHARED", serviceS.getState().toString());
 
         StateVerifier verifierA = StateVerifier.fromTransaction(
-                this.newServiceActionFlowBy(serviceS.getId(), "ACCEPT", companyB.node),
+                this.newServiceActionFlowBy(serviceS.getLinearId(), "ACCEPT", companyB.node),
                 this.companyA.ledgerServices);
         ServiceState serviceA = verifierA
                 .output().one()
@@ -219,7 +219,7 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
                 .object();
 
         StateVerifier verifier1 = StateVerifier.fromTransaction(
-                this.newServiceActionFlow(service.getId(), "INFORM"),
+                this.newServiceActionFlow(service.getLinearId(), "INFORM"),
                 this.companyA.ledgerServices);
         ServiceState service1 = verifier1
                 .output().one()
@@ -227,7 +227,7 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
                 .object();
 
         StateVerifier verifier2 = StateVerifier.fromTransaction(
-                this.newServiceActionFlow(service1.getId(), "CONFIRM"),
+                this.newServiceActionFlow(service1.getLinearId(), "CONFIRM"),
                 this.companyA.ledgerServices);
         ServiceState service2 = verifier2
                 .output().one()

@@ -46,7 +46,7 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
 
     private ServiceState setInvalidState(ServiceState serviceState, StateMachine.State newState) {
         return new ServiceState(
-                serviceState.getId(),
+                serviceState.getLinearId(),
                 serviceState.getServiceName(),
                 serviceState.getInitiator(),
                 newState,
@@ -56,7 +56,7 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
     }
     private ServiceState setInvalidStateProvider(ServiceState serviceState, StateMachine.State newState, Party newProvider) {
         return new ServiceState(
-                serviceState.getId(),
+                serviceState.getLinearId(),
                 serviceState.getServiceName(),
                 serviceState.getInitiator(),
                 newState,

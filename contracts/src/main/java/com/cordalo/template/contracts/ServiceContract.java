@@ -31,9 +31,9 @@ public class ServiceContract implements Contract {
 
                     CommandVerifier.Parameters<ServiceState> params = new CommandVerifier.Parameters<>();
                     params.notEmpty(
-                            ServiceState::getId, ServiceState::getState,
+                            ServiceState::getLinearId, ServiceState::getState,
                             ServiceState::getInitiator, ServiceState::getServiceName);
-                    params.equal(ServiceState::getId, ServiceState::getInitiator);
+                    params.equal(ServiceState::getLinearId, ServiceState::getInitiator);
                     new CommandVerifier(verifier).verify_update1(ServiceState.class, params);
 
 
@@ -42,7 +42,7 @@ public class ServiceContract implements Contract {
                             .output().notEmpty().one(ServiceState.class)
                             .object();
                     req.using("ID must be the same",
-                            service1.getId().equals(service2.getId()));
+                            service1.getLinearId().equals(service2.getLinearId()));
                     req.using("initiator must be the same",
                             service1.getInitiator().equals(service2.getInitiator()));
                     return new Pair<>(service1, service2);
