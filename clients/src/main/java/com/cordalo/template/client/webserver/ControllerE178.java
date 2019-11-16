@@ -1,5 +1,6 @@
 package com.cordalo.template.client.webserver;
 
+import ch.cordalo.corda.common.client.webserver.CordaloController;
 import ch.cordalo.corda.common.client.webserver.RpcConnection;
 import ch.cordalo.corda.common.client.webserver.StateAndLinks;
 import ch.cordalo.corda.common.client.webserver.StateBuilder;
@@ -105,12 +106,9 @@ public class ControllerE178 extends CordaloController {
             return this.buildResponseFromException(HttpStatus.BAD_REQUEST, "state cannot be empty.");
         }
         try {
-            SignedTransaction signedTx= null;
-            signedTx = this.getProxy()
-                    .startTrackedFlowDynamic(E178EventFlow.Request.class,
-                            stammNr, leasingParty, state)
-                    .getReturnValue()
-                    .get();
+            SignedTransaction signedTx = this.startFlow(
+                    E178EventFlow.Request.class,
+                    stammNr, leasingParty, state);
 
             StateVerifier verifier = StateVerifier.fromTransaction(signedTx, null);
             E178EventState e178 = verifier.output().one(E178EventState.class).object();
@@ -145,12 +143,10 @@ public class ControllerE178 extends CordaloController {
         UniqueIdentifier uid = new UniqueIdentifier(null, UUID.fromString(id));
         try {
             SignedTransaction signedTx= null;
-            signedTx = this.getProxy()
-                    .startTrackedFlowDynamic(E178EventFlow.Issue.class,
-                            uid,
-                            regulatorParty)
-                    .getReturnValue()
-                    .get();
+            signedTx = this.startFlow(
+                    E178EventFlow.Issue.class,
+                    uid,
+                    regulatorParty);
 
             StateVerifier verifier = StateVerifier.fromTransaction(signedTx, null);
             E178EventState e178 = verifier.output().one(E178EventState.class).object();
@@ -178,10 +174,7 @@ public class ControllerE178 extends CordaloController {
         try {
             UniqueIdentifier uid = new UniqueIdentifier(null, UUID.fromString(id));
             SignedTransaction signedTx= null;
-            signedTx = this.getProxy()
-                    .startTrackedFlowDynamic(E178EventFlow.Cancel.class, uid)
-                    .getReturnValue()
-                    .get();
+            signedTx = this.startFlow(E178EventFlow.Cancel.class, uid);
 
             StateVerifier verifier = StateVerifier.fromTransaction(signedTx, null);
             E178EventState e178 = verifier.output().one(E178EventState.class).object();
@@ -209,10 +202,7 @@ public class ControllerE178 extends CordaloController {
         try {
             UniqueIdentifier uid = new UniqueIdentifier(null, UUID.fromString(id));
             SignedTransaction signedTx= null;
-            signedTx = this.getProxy()
-                    .startTrackedFlowDynamic(E178EventFlow.Register.class, uid)
-                    .getReturnValue()
-                    .get();
+            signedTx = this.startFlow(E178EventFlow.Register.class, uid);
 
             StateVerifier verifier = StateVerifier.fromTransaction(signedTx, null);
             E178EventState e178 = verifier.output().one(E178EventState.class).object();
@@ -247,12 +237,10 @@ public class ControllerE178 extends CordaloController {
         try {
             UniqueIdentifier uid = new UniqueIdentifier(null, UUID.fromString(id));
             SignedTransaction signedTx= null;
-            signedTx = this.getProxy()
-                    .startTrackedFlowDynamic(E178EventFlow.RequestInsurance.class,
-                            uid,
-                            insurerParty)
-                    .getReturnValue()
-                    .get();
+            signedTx = this.startFlow(
+                    E178EventFlow.RequestInsurance.class,
+                    uid,
+                    insurerParty);
 
             StateVerifier verifier = StateVerifier.fromTransaction(signedTx, null);
             E178EventState e178 = verifier.output().one(E178EventState.class).object();
@@ -282,10 +270,7 @@ public class ControllerE178 extends CordaloController {
         try {
             UniqueIdentifier uid = new UniqueIdentifier(null, UUID.fromString(id));
             SignedTransaction signedTx= null;
-            signedTx = this.getProxy()
-                    .startTrackedFlowDynamic(E178EventFlow.Insure.class, uid)
-                    .getReturnValue()
-                    .get();
+            signedTx = this.startFlow(E178EventFlow.Insure.class, uid);
 
             StateVerifier verifier = StateVerifier.fromTransaction(signedTx, null);
             E178EventState e178 = verifier.output().one(E178EventState.class).object();
@@ -340,10 +325,8 @@ public class ControllerE178 extends CordaloController {
             @PathVariable("id") String id) {
         UniqueIdentifier uid = new UniqueIdentifier(null, UUID.fromString(id));
         try {
-            final SignedTransaction signedTx = this.getProxy()
-                    .startTrackedFlowDynamic(E178EventFlow.Delete.class, uid)
-                    .getReturnValue()
-                    .get();
+            final SignedTransaction signedTx = this.startFlow(
+                    E178EventFlow.Delete.class, uid);
             //this.messagingTemplate.convertAndSend("/topic/vaultChanged/cordalo/template/service", "");
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         } catch (Throwable ex) {

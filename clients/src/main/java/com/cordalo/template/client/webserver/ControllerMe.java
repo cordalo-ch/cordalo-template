@@ -1,5 +1,6 @@
 package com.cordalo.template.client.webserver;
 
+import ch.cordalo.corda.common.client.webserver.CordaloController;
 import ch.cordalo.corda.common.client.webserver.RpcConnection;
 import com.cordalo.template.contracts.StateMachine;
 import com.google.common.collect.ImmutableMap;

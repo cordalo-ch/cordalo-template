@@ -1,5 +1,6 @@
 package com.cordalo.template.client.webserver;
 
+import ch.cordalo.corda.common.client.webserver.CordaloController;
 import ch.cordalo.corda.common.client.webserver.RpcConnection;
 import ch.cordalo.corda.common.client.webserver.StateAndLinks;
 import ch.cordalo.corda.common.client.webserver.StateBuilder;
@@ -120,10 +121,8 @@ public class ControllerServices extends CordaloController {
             @PathVariable("id") String id) {
         UniqueIdentifier uid = new UniqueIdentifier(null, UUID.fromString(id));
         try {
-            final SignedTransaction signedTx = this.getProxy()
-                    .startTrackedFlowDynamic(ServiceFlow.Delete.class, uid)
-                    .getReturnValue()
-                    .get();
+            final SignedTransaction signedTx = this.startFlow(
+                    ServiceFlow.Delete.class, uid);
             //this.messagingTemplate.convertAndSend("/topic/vaultChanged/cordalo/template/service", "");
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 
@@ -162,13 +161,11 @@ public class ControllerServices extends CordaloController {
             return this.buildResponseFromException(HttpStatus.BAD_REQUEST, ex);
         }
         try {
-            final SignedTransaction signedTx = this.getProxy()
-                    .startTrackedFlowDynamic(ServiceFlow.Create.class,
+            final SignedTransaction signedTx = this.startFlow(
+                    ServiceFlow.Create.class,
                             serviceName,
                             data,
-                            price)
-                    .getReturnValue()
-                    .get();
+                            price);
 
             StateVerifier verifier = StateVerifier.fromTransaction(signedTx, null);
             ServiceState service = verifier.output().one(ServiceState.class).object();
@@ -197,39 +194,34 @@ public class ControllerServices extends CordaloController {
             @RequestParam(value = "service-provider", required = false) String serviceProvider,
             @PathVariable("id") String id,
             @PathVariable("action") String action) {
-
+        UniqueIdentifier uid = new UniqueIdentifier(null, UUID.fromString(id));
         StateMachine.State state = StateMachine.StateTransition.valueOf(action).getNextState();
         if (state == null) {
             return this.buildResponseFromException(HttpStatus.METHOD_NOT_ALLOWED, "illegal action <"+action+">. Method not allowed");
         }
-        UniqueIdentifier uid = new UniqueIdentifier(null, UUID.fromString(id));
         try {
             if (state.equals(StateMachine.State.SHARED)) {
                 if (serviceProvider == null || serviceProvider.isEmpty()) {
                     return this.buildResponseFromException(HttpStatus.BAD_REQUEST, "service-provider not specified in post");
                 }
-                Party serviceProviderParty = this.getProxy().wellKnownPartyFromX500Name(CordaX500Name.parse(serviceProvider));
+                Party serviceProviderParty = this.partyFromString(serviceProvider);
                 if (serviceProviderParty == null){
                     return this.buildResponseFromException(HttpStatus.BAD_REQUEST, "service-provider not a valid peer.");
                 }
-                final SignedTransaction signedTx = this.getProxy()
-                        .startTrackedFlowDynamic(ServiceFlow.Share.class,
-                                uid,
-                                serviceProviderParty)
-                        .getReturnValue()
-                        .get();
+                final SignedTransaction signedTx = this.startFlow(
+                        ServiceFlow.Share.class,
+                        uid,
+                        serviceProviderParty);
 
                 StateVerifier verifier = StateVerifier.fromTransaction(signedTx, null);
                 ServiceState service = verifier.output().one(ServiceState.class).object();
                 return this.getResponses(request, service, HttpStatus.OK);
 
             } else {
-                final SignedTransaction signedTx = this.getProxy()
-                        .startTrackedFlowDynamic(ServiceFlow.Action.class,
-                                uid,
-                                action)
-                        .getReturnValue()
-                        .get();
+                final SignedTransaction signedTx = this.startFlow(
+                        ServiceFlow.Action.class,
+                        uid,
+                        action);
 
                 StateVerifier verifier = StateVerifier.fromTransaction(signedTx, null);
                 ServiceState service = verifier.output().one(ServiceState.class).object();
