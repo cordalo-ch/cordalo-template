@@ -1,11 +1,10 @@
 package com.cordalo.template.states;
 
 import ch.cordalo.corda.common.contracts.JsonHelper;
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import ch.cordalo.corda.ext.Participants;
 import com.cordalo.template.contracts.ServiceContract;
 import com.cordalo.template.contracts.StateMachine;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.corda.core.contracts.BelongsToContract;
 import net.corda.core.contracts.LinearState;
 import net.corda.core.contracts.UniqueIdentifier;
@@ -23,7 +22,7 @@ public class ServiceState implements LinearState {
 
 
     @NotNull
-    private final UniqueIdentifier id;
+    private final UniqueIdentifier linearId;
     @NotNull
     private final StateMachine.State state;
     @NotNull
@@ -42,8 +41,8 @@ public class ServiceState implements LinearState {
     private final Integer price;
 
     @ConstructorForDeserialization
-    public ServiceState(@NotNull UniqueIdentifier id, @NotNull String serviceName, @NotNull Party initiator, @NotNull StateMachine.State state, Map<String, Object> serviceData, Party serviceProvider, Integer price) {
-        this.id = id;
+    public ServiceState(@NotNull UniqueIdentifier linearId, @NotNull String serviceName, @NotNull Party initiator, @NotNull StateMachine.State state, Map<String, Object> serviceData, Party serviceProvider, Integer price) {
+        this.linearId = linearId;
         this.state = state;
         this.serviceName = serviceName;
         this.initiator = initiator;
@@ -55,29 +54,22 @@ public class ServiceState implements LinearState {
     @NotNull
     @Override
     public UniqueIdentifier getLinearId() {
-        return this.id;
+        return this.linearId;
     }
 
     @NotNull
     @JsonIgnore
     @Override
     public List<AbstractParty> getParticipants() {
-        List<AbstractParty> list = new ArrayList<>();
-        list.add(this.initiator);
-        if (this.serviceProvider != null) list.add(this.serviceProvider);
-        return list;
+        return new Participants(this.initiator, this.serviceProvider).getParties();
     }
 
     @NotNull
     @JsonIgnore
     public List<PublicKey> getParticipantKeys() {
-        return getParticipants().stream().map(AbstractParty::getOwningKey).collect(Collectors.toList());
+        return Participants.fromAbstractParties(this.getParticipants()).getPublicKeys();
     }
 
-    @NotNull
-    public UniqueIdentifier getId() {
-        return id;
-    }
     @NotNull
     public String getServiceName() {
         return serviceName;
@@ -122,8 +114,8 @@ public class ServiceState implements LinearState {
 
 
     /* actions CREATE */
-    public static ServiceState create(@NotNull UniqueIdentifier id, @NotNull String serviceName, @NotNull Party initiator, Map<String, Object> serviceData) {
-        return new ServiceState(id, serviceName, initiator, StateMachine.StateTransition.CREATE.getInitialState(), serviceData, null, null);
+    public static ServiceState create(@NotNull UniqueIdentifier linearId, @NotNull String serviceName, @NotNull Party initiator, Map<String, Object> serviceData) {
+        return new ServiceState(linearId, serviceName, initiator, StateMachine.StateTransition.CREATE.getInitialState(), serviceData, null, null);
     }
     /* actions UPDATE */
     public ServiceState update(Map<String, Object> newServiceData) {
@@ -131,20 +123,20 @@ public class ServiceState implements LinearState {
     }
     public ServiceState update(Map<String, Object> newServiceData, Integer newPrice) {
         StateMachine.State newState = StateMachine.StateTransition.UPDATE.getNextStateFrom(this.state);
-        return new ServiceState(this.id, this.serviceName, this.initiator, newState, newServiceData, this.serviceProvider, newPrice);
+        return new ServiceState(this.linearId, this.serviceName, this.initiator, newState, newServiceData, this.serviceProvider, newPrice);
     }
 
     /* actions SHARE */
     public ServiceState share(@NotNull Party newServiceProvider) {
         StateMachine.State newState = StateMachine.StateTransition.SHARE.getNextStateFrom(this.state);
-        return new ServiceState(this.id, this.serviceName, this.initiator, newState, this.serviceData, newServiceProvider, this.price);
+        return new ServiceState(this.linearId, this.serviceName, this.initiator, newState, this.serviceData, newServiceProvider, this.price);
     }
 
 
     /* actions any */
     public ServiceState withAction(StateMachine.StateTransition transition) {
         StateMachine.State newState = transition.getNextStateFrom(this.state);
-        return new ServiceState(this.id, this.serviceName, this.initiator, newState, this.serviceData, this.serviceProvider, this.price);
+        return new ServiceState(this.linearId, this.serviceName, this.initiator, newState, this.serviceData, this.serviceProvider, this.price);
     }
 
     public String getData(String keys) {

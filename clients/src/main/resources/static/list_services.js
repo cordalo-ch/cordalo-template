@@ -108,12 +108,12 @@ function show_services(tagName, result) {
             {
                 title: "State", name: "state.state", type: "text", itemTemplate: function (value, item) {
                     i = i + 1;
-                    return strongS(i) + value + "<br>" + makeOptions(item.state.id.id, item.links, "Action", "onServiceSelectionChanged") + strongE(i);
+                    return strongS(i) + value + "<br>" + makeOptions(item.state.linearId.id, item.links, "Action", "onServiceSelectionChanged") + strongE(i);
                 }
             },
             {
                 title: "Link",
-                name: "state.id",
+                name: "state.linearId",
                 type: "text",
                 align: "center",
                 width: 25,

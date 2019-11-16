@@ -3,10 +3,7 @@ package com.cordalo.template.states;
 import ch.cordalo.corda.ext.Participants;
 import com.cordalo.template.contracts.E178EventContract;
 import com.cordalo.template.contracts.E178StateMachine;
-import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import net.corda.core.contracts.BelongsToContract;
 import net.corda.core.contracts.LinearState;
 import net.corda.core.contracts.UniqueIdentifier;
@@ -24,23 +21,22 @@ import java.util.Objects;
 public class E178EventState implements LinearState {
 
     @NotNull
-    @JsonProperty
     private final UniqueIdentifier linearId;
 
+    @JsonIgnore
     @Nullable
-    @JsonProperty
     private final Party regulator;
 
+    @JsonIgnore
     @Nullable
-    @JsonProperty
     private final Party retailer ;
 
+    @JsonIgnore
     @Nullable
-    @JsonProperty
     private final Party leasing;
 
+    @JsonIgnore
     @Nullable
-    @JsonProperty
     private final Party insurer;
 
     @NotNull
@@ -59,8 +55,8 @@ public class E178EventState implements LinearState {
     }
 
     @NotNull
+    @JsonIgnore
     @Override
-    @JsonGetter
     public List<AbstractParty> getParticipants() {
         return new Participants(
                 this.retailer,
@@ -92,26 +88,34 @@ public class E178EventState implements LinearState {
     public List<PublicKey> getParticipantKeys() {
         return new Participants(this.getParticipants()).getPublicKeys();
     }
+    @NotNull
+    public List<String> getParticipantsX500() {
+        return new Participants(this.getParticipants()).getPartiesX500();
+    }
 
     @Nullable
     public Party getRegulator() {
         return regulator;
     }
+    public String getRegulatorX500() { return Participants.partyToX500(this.getRegulator());}
 
     @Nullable
     public Party getRetailer() {
         return retailer;
     }
+    public String getRetailerX500() { return Participants.partyToX500(this.getRetailer());}
 
     @Nullable
     public Party getLeasing() {
         return leasing;
     }
+    public String getLeasingX500() { return Participants.partyToX500(this.getLeasing());}
 
     @Nullable
     public Party getInsurer() {
         return insurer;
     }
+    public String getInsurerX500() { return Participants.partyToX500(this.getInsurer());}
 
     @NotNull
     public String getState() {
@@ -133,7 +137,7 @@ public class E178EventState implements LinearState {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         E178EventState that = (E178EventState) o;
-        return linearId.equals(that.linearId) &&
+        return this.getLinearId().equals(that.getLinearId()) &&
                 getStammNr().equals(that.getStammNr()) &&
                 Objects.equals(getRegulator(), that.getRegulator()) &&
                 Objects.equals(getRetailer(), that.getRetailer()) &&
@@ -145,7 +149,7 @@ public class E178EventState implements LinearState {
 
     @Override
     public int hashCode() {
-        return Objects.hash(linearId, getStammNr(), getRegulator(), getRetailer(), getLeasing(), getInsurer(), getState(), getStatus());
+        return Objects.hash(this.getLinearId(), getStammNr(), getRegulator(), getRetailer(), getLeasing(), getInsurer(), getState(), getStatus());
     }
 
     /* action */
