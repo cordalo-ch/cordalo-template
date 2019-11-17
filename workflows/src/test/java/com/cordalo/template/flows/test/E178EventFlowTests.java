@@ -22,14 +22,7 @@ public class E178EventFlowTests extends E178BaseTests {
     @Before
     public void setup() {
         this.setup(true,
-                E178EventFlow.RequestResponder.class,
-                E178EventFlow.IssueResponder.class,
-                E178EventFlow.RequestInsuranceResponder.class,
-                E178EventFlow.DeleteResponder.class,
-                E178EventFlow.CancelResponder.class,
-                E178EventFlow.RequestInsuranceResponder.class,
-                E178EventFlow.InsureResponder.class,
-                E178EventFlow.RegisterResponder.class
+                E178EventFlow.class
         );
     }
 

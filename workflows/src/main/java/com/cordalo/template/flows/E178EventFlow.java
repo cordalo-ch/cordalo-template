@@ -2,6 +2,8 @@ package com.cordalo.template.flows;
 
 import ch.cordalo.corda.common.flows.BaseFlow;
 import ch.cordalo.corda.common.flows.ResponderBaseFlow;
+import ch.cordalo.corda.common.flows.SimpleBaseFlow;
+import ch.cordalo.corda.common.flows.SimpleFlow;
 import co.paralleluniverse.fibers.Suspendable;
 import com.cordalo.template.contracts.E178EventContract;
 import com.cordalo.template.states.E178EventState;
@@ -18,7 +20,7 @@ public class E178EventFlow {
 
     @InitiatingFlow(version = 2)
     @StartableByRPC
-    public static class Request extends BaseFlow {
+    public static class Request extends SimpleBaseFlow implements SimpleFlow.Create<E178EventState> {
 
         private final String stammNr;
         private final Party leasing;
@@ -30,32 +32,22 @@ public class E178EventFlow {
             this.state = state;
         }
 
-        @Override
-        public ProgressTracker getProgressTracker() {
-            return super.progressTracker_sync;
-        }
-
         @Suspendable
         @Override
         public SignedTransaction call() throws FlowException {
-            Party me = getOurIdentity();
+            return this.simpleFlow_Create(this, new E178EventContract.Commands.Request());
+        }
 
-            getProgressTracker().setCurrentStep(PREPARATION);
-            E178EventState e178 = E178EventState.request(this.stammNr, me, this.leasing, this.state);
-
-            getProgressTracker().setCurrentStep(BUILDING);
-            TransactionBuilder transactionBuilder = getTransactionBuilderSignedByParticipants(
-                    e178,
-                    new E178EventContract.Commands.Request());
-            transactionBuilder.addOutputState(e178);
-
-            return signSyncCollectAndFinalize(e178.getParticipants(), transactionBuilder);
+        @Override
+        @Suspendable
+        public E178EventState create() throws FlowException {
+            return E178EventState.request(this.stammNr, this.getOurIdentity(), this.leasing, this.state);
         }
     }
 
     @InitiatingFlow(version = 2)
     @StartableByRPC
-    public static class Issue extends BaseFlow {
+    public static class Issue extends SimpleBaseFlow implements SimpleFlow.Update<E178EventState> {
 
         private final UniqueIdentifier id;
         private final String state;
@@ -70,40 +62,28 @@ public class E178EventFlow {
             this(id, null, regulator);
         }
 
-
-        @Override
-        public ProgressTracker getProgressTracker() {
-            return super.progressTracker_sync;
-        }
-
         @Suspendable
         @Override
         public SignedTransaction call() throws FlowException {
-            Party me = getOurIdentity();
+            return this.simpleFlow_Update(
+                    E178EventState.class, this.id, this, new E178EventContract.Commands.Issue());
+        }
 
-            getProgressTracker().setCurrentStep(PREPARATION);
-            StateAndRef<E178EventState> e178StateRef = this.getLastStateByLinearId(E178EventState.class, this.id);
-            E178EventState e178 = this.getStateByRef(e178StateRef);
-            if (!e178.getLeasing().equals(me)) {
+        @Override
+        @Suspendable
+        public E178EventState update(E178EventState state) throws FlowException {
+            if (!state.getLeasing().equals(this.getOurIdentity())) {
                 throw new FlowException("issue e178 must be done by leasing company");
             }
-            E178EventState issuedE178 = (this.state != null) ?
-                e178.issue(this.state, this.regulator)  : e178.issue(this.regulator);
-
-            getProgressTracker().setCurrentStep(BUILDING);
-            TransactionBuilder transactionBuilder = getTransactionBuilderSignedByParticipants(
-                    issuedE178,
-                    new E178EventContract.Commands.Issue());
-            transactionBuilder.addInputState(e178StateRef);
-            transactionBuilder.addOutputState(issuedE178);
-            return signSyncCollectAndFinalize(issuedE178.getParticipants(), transactionBuilder);
+            return (this.state != null) ?
+                    state.issue(this.state, this.regulator)  : state.issue(this.regulator);
         }
     }
 
 
     @InitiatingFlow(version = 2)
     @StartableByRPC
-    public static class RequestInsurance extends BaseFlow {
+    public static class RequestInsurance extends SimpleBaseFlow implements SimpleFlow.Update<E178EventState> {
 
         private final UniqueIdentifier id;
         private final Party insurer;
@@ -113,39 +93,26 @@ public class E178EventFlow {
             this.insurer = insurer;
         }
 
-
-        @Override
-        public ProgressTracker getProgressTracker() {
-            return super.progressTracker_sync;
-        }
-
         @Suspendable
         @Override
         public SignedTransaction call() throws FlowException {
-            Party me = getOurIdentity();
+            return this.simpleFlow_Update(E178EventState.class, this.id, this, new E178EventContract.Commands.RequestInsurance());
+        }
 
-            getProgressTracker().setCurrentStep(PREPARATION);
-            StateAndRef<E178EventState> e178StateRef = this.getLastStateByLinearId(E178EventState.class, this.id);
-            E178EventState e178 = this.getStateByRef(e178StateRef);
-            if (!e178.getRetailer().equals(me)) {
-                throw new FlowException("requestion insurance of e178 must be done by a retailer company");
+        @Override
+        @Suspendable
+        public E178EventState update(E178EventState e178) throws FlowException {
+            if (!e178.getRetailer().equals(this.getOurIdentity())) {
+                throw new FlowException("request insurance of e178 must be done by a retailer company");
             }
-            E178EventState insuranceRequestedE178 = e178.requestInsurance(this.insurer);
-
-            getProgressTracker().setCurrentStep(BUILDING);
-            TransactionBuilder transactionBuilder = getTransactionBuilderSignedByParticipants(
-                    insuranceRequestedE178,
-                    new E178EventContract.Commands.RequestInsurance());
-            transactionBuilder.addInputState(e178StateRef);
-            transactionBuilder.addOutputState(insuranceRequestedE178);
-            return signSyncCollectAndFinalize(insuranceRequestedE178.getParticipants(), transactionBuilder);
+            return e178.requestInsurance(this.insurer);
         }
     }
 
 
     @InitiatingFlow(version = 2)
     @StartableByRPC
-    public static class Insure extends BaseFlow {
+    public static class Insure extends SimpleBaseFlow implements SimpleFlow.Update<E178EventState> {
 
         private final UniqueIdentifier id;
 
@@ -153,38 +120,25 @@ public class E178EventFlow {
             this.id = id;
         }
 
-
-        @Override
-        public ProgressTracker getProgressTracker() {
-            return super.progressTracker_sync;
-        }
-
         @Suspendable
         @Override
         public SignedTransaction call() throws FlowException {
-            Party me = getOurIdentity();
+            return this.simpleFlow_Update(E178EventState.class, this.id, this, new E178EventContract.Commands.Insure());
+        }
 
-            getProgressTracker().setCurrentStep(PREPARATION);
-            StateAndRef<E178EventState> e178StateRef = this.getLastStateByLinearId(E178EventState.class, this.id);
-            E178EventState e178 = this.getStateByRef(e178StateRef);
-            if (!e178.getInsurer().equals(me)) {
+        @Override
+        @Suspendable
+        public E178EventState update(E178EventState e178) throws FlowException {
+            if (!e178.getInsurer().equals(this.getOurIdentity())) {
                 throw new FlowException("insure e178 must be done by an insurance company");
             }
-            E178EventState insuredE178 = e178.insure();
-
-            getProgressTracker().setCurrentStep(BUILDING);
-            TransactionBuilder transactionBuilder = getTransactionBuilderSignedByParticipants(
-                    insuredE178,
-                    new E178EventContract.Commands.Insure());
-            transactionBuilder.addInputState(e178StateRef);
-            transactionBuilder.addOutputState(insuredE178);
-            return signSyncCollectAndFinalize(insuredE178.getParticipants(), transactionBuilder);
+            return e178.insure();
         }
     }
 
     @InitiatingFlow(version = 2)
     @StartableByRPC
-    public static class Cancel extends BaseFlow {
+    public static class Cancel extends SimpleBaseFlow implements SimpleFlow.Update<E178EventState> {
 
         private final UniqueIdentifier id;
 
@@ -192,34 +146,23 @@ public class E178EventFlow {
             this.id = id;
         }
 
-        @Override
-        public ProgressTracker getProgressTracker() {
-            return super.progressTracker_sync;
-        }
-
         @Suspendable
         @Override
         public SignedTransaction call() throws FlowException {
-            getProgressTracker().setCurrentStep(PREPARATION);
-            StateAndRef<E178EventState> e178StateRef = this.getLastStateByLinearId(E178EventState.class, this.id);
-            E178EventState e178 = this.getStateByRef(e178StateRef);
+            return this.simpleFlow_Update(E178EventState.class, this.id, this, new E178EventContract.Commands.Cancel());
+        }
 
-            E178EventState cancelledE178 = e178.cancel();
-
-            getProgressTracker().setCurrentStep(BUILDING);
-            TransactionBuilder transactionBuilder = getTransactionBuilderSignedByParticipants(
-                    cancelledE178,
-                    new E178EventContract.Commands.Cancel());
-            transactionBuilder.addInputState(e178StateRef);
-            transactionBuilder.addOutputState(cancelledE178);
-            return signSyncCollectAndFinalize(cancelledE178.getParticipants(), transactionBuilder);
+        @Override
+        @Suspendable
+        public E178EventState update(E178EventState e178) throws FlowException {
+            return e178.cancel();
         }
     }
 
 
     @InitiatingFlow(version = 2)
     @StartableByRPC
-    public static class Register extends BaseFlow {
+    public static class Register extends SimpleBaseFlow implements SimpleFlow.Update<E178EventState> {
 
         private final UniqueIdentifier id;
 
@@ -227,39 +170,26 @@ public class E178EventFlow {
             this.id = id;
         }
 
-
-        @Override
-        public ProgressTracker getProgressTracker() {
-            return super.progressTracker_sync;
-        }
-
         @Suspendable
         @Override
         public SignedTransaction call() throws FlowException {
-            Party me = getOurIdentity();
+            return this.simpleFlow_Update(E178EventState.class, this.id, this, new E178EventContract.Commands.Register());
+        }
 
-            getProgressTracker().setCurrentStep(PREPARATION);
-            StateAndRef<E178EventState> e178StateRef = this.getLastStateByLinearId(E178EventState.class, this.id);
-            E178EventState e178 = this.getStateByRef(e178StateRef);
-            if (!e178.getRegulator().equals(me)) {
+        @Override
+        @Suspendable
+        public E178EventState update(E178EventState e178) throws FlowException {
+            if (!e178.getRegulator().equals(this.getOurIdentity())) {
                 throw new FlowException("register e178 must be done by a regulator company");
             }
-            E178EventState registeredE178 = e178.registered();
-
-            getProgressTracker().setCurrentStep(BUILDING);
-            TransactionBuilder transactionBuilder = getTransactionBuilderSignedByParticipants(
-                    registeredE178,
-                    new E178EventContract.Commands.Register());
-            transactionBuilder.addInputState(e178StateRef);
-            transactionBuilder.addOutputState(registeredE178);
-            return signSyncCollectAndFinalize(registeredE178.getParticipants(), transactionBuilder);
+            return e178.registered();
         }
     }
 
 
     @InitiatingFlow(version = 2)
     @StartableByRPC
-    public static class Delete extends BaseFlow {
+    public static class Delete extends SimpleBaseFlow implements SimpleFlow.Delete<E178EventState> {
 
         private final UniqueIdentifier id;
 
@@ -267,27 +197,16 @@ public class E178EventFlow {
             this.id = id;
         }
 
-        @Override
-        public ProgressTracker getProgressTracker() {
-            return super.progressTracker_sync;
-        }
-
         @Suspendable
         @Override
         public SignedTransaction call() throws FlowException {
-            Party me = getOurIdentity();
+            return this.simpleFlow_Delete(E178EventState.class, this.id, this, new E178EventContract.Commands.Delete());
+        }
 
-            getProgressTracker().setCurrentStep(PREPARATION);
-            StateAndRef<E178EventState> e178StateRef = this.getLastStateByLinearId(E178EventState.class, this.id);
-            E178EventState e178State = this.getStateByRef(e178StateRef);
+        @Override
+        @Suspendable
+        public void validateToDelete(E178EventState state) throws FlowException {
 
-            getProgressTracker().setCurrentStep(BUILDING);
-            TransactionBuilder transactionBuilder = getTransactionBuilderSignedByParticipants(
-                    e178State,
-                    new E178EventContract.Commands.Delete());
-            transactionBuilder.addInputState(e178StateRef);
-
-            return signSyncCollectAndFinalize(e178State.getParticipants(), transactionBuilder);
         }
     }
 
