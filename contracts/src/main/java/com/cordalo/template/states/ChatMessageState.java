@@ -1,7 +1,7 @@
 package com.cordalo.template.states;
 
 import ch.cordalo.corda.common.states.CordaloLinearState;
-import ch.cordalo.corda.ext.Parties;
+import ch.cordalo.corda.common.states.Parties;
 import com.cordalo.template.contracts.ChatMessageContract;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.corda.core.contracts.BelongsToContract;
