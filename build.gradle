@@ -104,7 +104,7 @@ dependencies {
 task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
     nodeDefaults {
         projectCordapp {
-            deploy = false
+            deploy = true
         }
         cordapp project(':contracts')
         cordapp project(':workflows')

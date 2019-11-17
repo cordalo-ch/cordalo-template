@@ -54,6 +54,9 @@ dependencies {
     testCompile project(":contracts").sourceSets.test.output
     
     // CorDapp dependencies.
+    cordapp "ch.cordalo:corda-ext:$cordalo_version"
+    cordapp "ch.cordalo:corda-common-contracts:$cordalo_version"
+    cordapp "ch.cordalo:corda-common-workflows:$cordalo_version"
     cordapp project(":contracts")
 
 }

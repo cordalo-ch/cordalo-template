@@ -22,6 +22,9 @@ dependencies {
     cordaCompile "ch.cordalo:corda-ext:$cordalo_version"
     cordaCompile "ch.cordalo:corda-common-contracts:$cordalo_version"
 
+    cordapp "ch.cordalo:corda-ext:$cordalo_version"
+    cordapp "ch.cordalo:corda-common-contracts:$cordalo_version"
+
     testCompile "$corda_release_group:corda-node-driver:$corda_release_version"
     testCompile "junit:junit:$junit_version"
     testCompile "ch.cordalo:corda-common-test:$cordalo_version"
