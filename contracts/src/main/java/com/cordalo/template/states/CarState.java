@@ -1,7 +1,7 @@
 package com.cordalo.template.states;
 
 import ch.cordalo.corda.common.states.CordaloLinearState;
-import ch.cordalo.corda.ext.Participants;
+import ch.cordalo.corda.ext.Parties;
 import com.cordalo.template.contracts.CarContract;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.corda.core.contracts.BelongsToContract;
@@ -37,8 +37,9 @@ public class CarState extends CordaloLinearState {
 
     @NotNull
     @Override
-    public Participants participants() {
-        return Participants.fromParties(this.creator).add(this.owners);
+    @JsonIgnore
+    protected Parties getParties() {
+        return Parties.fromParties(this.creator).add(this.owners);
     }
 
     @ConstructorForDeserialization
@@ -55,13 +56,13 @@ public class CarState extends CordaloLinearState {
     public Party getCreator() {
         return creator;
     }
-    public String getCreatorX500() { return Participants.partyToX500(this.creator); }
+    public String getCreatorX500() { return Parties.partyToX500(this.creator); }
 
     public List<Party> getOwners() {
         return owners;
     }
     public List<String> getOwnersX500() {
-        return Participants.fromParties(this.owners).getPartiesX500();
+        return Parties.fromParties(this.owners).getPartiesX500();
     }
 
     @NotNull

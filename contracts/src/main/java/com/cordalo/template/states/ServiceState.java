@@ -2,7 +2,7 @@ package com.cordalo.template.states;
 
 import ch.cordalo.corda.common.contracts.JsonHelper;
 import ch.cordalo.corda.common.states.CordaloLinearState;
-import ch.cordalo.corda.ext.Participants;
+import ch.cordalo.corda.ext.Parties;
 import com.cordalo.template.contracts.ServiceContract;
 import com.cordalo.template.contracts.StateMachine;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -49,8 +49,8 @@ public class ServiceState extends CordaloLinearState {
     @NotNull
     @JsonIgnore
     @Override
-    public Participants participants() {
-        return new Participants(this.initiator, this.serviceProvider);
+    protected Parties getParties() {
+        return new Parties(this.initiator, this.serviceProvider);
     }
 
     @NotNull
@@ -61,18 +61,18 @@ public class ServiceState extends CordaloLinearState {
     public Party getInitiator() {
         return initiator;
     }
-    public String getInitiatorX500() { return Participants.partyToX500(this.initiator); }
+    public String getInitiatorX500() { return Parties.partyToX500(this.initiator); }
     @NotNull
     public StateMachine.State getState() { return state; }
     public Party getServiceProvider() {
         return serviceProvider;
     }
     public String getServiceProviderX500() {
-        return Participants.partyToX500(this.serviceProvider);
+        return Parties.partyToX500(this.serviceProvider);
     }
 
     public List<String> getParticipantsX500() {
-        return this.participants().getPartiesX500();
+        return this.getParties().getPartiesX500();
     }
 
     public Integer getPrice() {

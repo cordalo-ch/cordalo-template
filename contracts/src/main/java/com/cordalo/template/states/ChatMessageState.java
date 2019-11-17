@@ -1,7 +1,7 @@
 package com.cordalo.template.states;
 
 import ch.cordalo.corda.common.states.CordaloLinearState;
-import ch.cordalo.corda.ext.Participants;
+import ch.cordalo.corda.ext.Parties;
 import com.cordalo.template.contracts.ChatMessageContract;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.corda.core.contracts.BelongsToContract;
@@ -45,8 +45,8 @@ public class ChatMessageState extends CordaloLinearState {
     @NotNull
     @JsonIgnore
     @Override
-    public Participants participants() {
-        return Participants.fromParties(this.sender, this.receiver);
+    protected Parties getParties() {
+        return Parties.fromParties(this.sender, this.receiver);
     }
 
     @NotNull

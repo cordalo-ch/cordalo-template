@@ -7,7 +7,7 @@
         <Property name="archive">${log-path}/archive</Property>
     </Properties>
 
-    <ThresholdFilter level="trace"/>
+    <ThresholdFilter level="error"/>
 
     <Appenders>
         <Console name="Console-Appender" target="SYSTEM_OUT">
@@ -46,11 +46,11 @@
     </Appenders>
 
     <Loggers>
-        <Root level="info">
+        <Root level="error">
             <AppenderRef ref="Console-Appender"/>
             <AppenderRef ref="RollingFile-Appender"/>
         </Root>
-        <Logger name="net.corda" level="info" additivity="false">
+        <Logger name="net.corda" level="error" additivity="false">
             <AppenderRef ref="Console-Appender"/>
             <AppenderRef ref="RollingFile-Appender"/>
         </Logger>

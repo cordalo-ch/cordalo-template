@@ -1,7 +1,7 @@
 package com.cordalo.template.states;
 
 import ch.cordalo.corda.common.states.CordaloLinearState;
-import ch.cordalo.corda.ext.Participants;
+import ch.cordalo.corda.ext.Parties;
 import com.cordalo.template.contracts.E178EventContract;
 import com.cordalo.template.contracts.E178StateMachine;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -45,8 +45,8 @@ public class E178EventState extends CordaloLinearState {
     @NotNull
     @JsonIgnore
     @Override
-    public Participants participants() {
-        return new Participants(
+    protected Parties getParties() {
+        return new Parties(
                 this.retailer,
                 this.leasing,
                 this.regulator,
@@ -75,25 +75,25 @@ public class E178EventState extends CordaloLinearState {
     public Party getRegulator() {
         return regulator;
     }
-    public String getRegulatorX500() { return Participants.partyToX500(this.getRegulator());}
+    public String getRegulatorX500() { return Parties.partyToX500(this.getRegulator());}
 
     @Nullable
     public Party getRetailer() {
         return retailer;
     }
-    public String getRetailerX500() { return Participants.partyToX500(this.getRetailer());}
+    public String getRetailerX500() { return Parties.partyToX500(this.getRetailer());}
 
     @Nullable
     public Party getLeasing() {
         return leasing;
     }
-    public String getLeasingX500() { return Participants.partyToX500(this.getLeasing());}
+    public String getLeasingX500() { return Parties.partyToX500(this.getLeasing());}
 
     @Nullable
     public Party getInsurer() {
         return insurer;
     }
-    public String getInsurerX500() { return Participants.partyToX500(this.getInsurer());}
+    public String getInsurerX500() { return Parties.partyToX500(this.getInsurer());}
 
     @NotNull
     public String getState() {
