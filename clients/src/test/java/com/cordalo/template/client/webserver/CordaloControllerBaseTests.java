@@ -1,6 +1,6 @@
-package com.cordalo.template.client.webserver;
+package ch.cordalo.template.client.webserver;
 
-import com.cordalo.template.CordaloTemplateBaseTests;
+import ch.cordalo.template.CordaloTemplateBaseTests;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;

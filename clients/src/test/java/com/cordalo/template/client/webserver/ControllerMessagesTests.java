@@ -1,9 +1,9 @@
-package com.cordalo.template.client.webserver;
+package ch.cordalo.template.client.webserver;
 
 import ch.cordalo.corda.common.test.CordaTestNetwork;
 import ch.cordalo.corda.common.test.MockCordaProxy;
 import ch.cordalo.corda.ext.CordaProxy;
-import com.cordalo.template.flows.ChatMessageFlow;
+import ch.cordalo.template.flows.ChatMessageFlow;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

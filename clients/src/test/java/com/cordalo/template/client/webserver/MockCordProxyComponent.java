@@ -1,4 +1,4 @@
-package com.cordalo.template.client.webserver;
+package ch.cordalo.template.client.webserver;
 
 import ch.cordalo.corda.common.test.CordaTestNetwork;
 import ch.cordalo.corda.common.test.MockCordaProxy;
