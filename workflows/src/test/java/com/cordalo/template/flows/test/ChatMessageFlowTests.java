@@ -8,20 +8,19 @@ import com.cordalo.template.flows.ChatMessageFlow;
 import com.cordalo.template.states.ChatMessageState;
 import net.corda.core.concurrent.CordaFuture;
 import net.corda.core.contracts.UniqueIdentifier;
+import net.corda.core.flows.FlowException;
 import net.corda.core.flows.FlowLogic;
 import net.corda.core.transactions.SignedTransaction;
 import org.junit.*;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
-@Ignore
+
 public class ChatMessageFlowTests extends CordaloTemplateBaseFlowTests {
 
     @Before
     public void setup() {
-        this.setup(true,
-                ChatMessageFlow.SendResponder.class,
-                ChatMessageFlow.ReplyResponder.class
-        );
+        this.setup(true, ChatMessageFlow.class);
     }
 
     @After
@@ -31,70 +30,43 @@ public class ChatMessageFlowTests extends CordaloTemplateBaseFlowTests {
     }
 
 
-    protected SignedTransaction newMessageFlow(CordaNodeEnvironment from, CordaNodeEnvironment to, String message) throws ExecutionException, InterruptedException {
+    protected ChatMessageState newMessageFlow(CordaNodeEnvironment from, CordaNodeEnvironment to, String message) throws  FlowException {
         FlowLogic<SignedTransaction> flow = new ChatMessageFlow.Send(to.party, message);
-        CordaFuture<SignedTransaction> future = from.node.startFlow(flow);
-        network.runNetwork();
-        return future.get();
+        return this.startFlowAndResult(from, flow, ChatMessageState.class);
     }
-    protected SignedTransaction newJokeMessageFlow(CordaNodeEnvironment from, CordaNodeEnvironment to) throws ExecutionException, InterruptedException {
+    protected ChatMessageState newJokeMessageFlow(CordaNodeEnvironment from, CordaNodeEnvironment to) throws FlowException {
         FlowLogic<SignedTransaction> flow = new ChatMessageFlow.Send(to.party);
-        CordaFuture<SignedTransaction> future = from.node.startFlow(flow);
-        network.runNetwork();
-        return future.get();
+        return this.startFlowAndResult(from, flow, ChatMessageState.class);
     }
-    protected SignedTransaction newReplyFlow(CordaNodeEnvironment from, UniqueIdentifier id, String message) throws ExecutionException, InterruptedException {
+    protected StateVerifier newReplyFlow(CordaNodeEnvironment from, UniqueIdentifier id, String message) throws FlowException {
         FlowLogic<SignedTransaction> flow = new ChatMessageFlow.Reply(id, message);
-        CordaFuture<SignedTransaction> future = from.node.startFlow(flow);
-        network.runNetwork();
-        return future.get();
+        return this.startFlow(from, flow);
     }
 
     @Test
     public void send_message() throws Exception {
-        SignedTransaction tx = this.newMessageFlow(companyA, companyB,"hello world");
-        StateVerifier verifier = StateVerifier.fromTransaction(tx, this.companyA.ledgerServices);
-        ChatMessageState message = verifier
-                .output().one()
-                .one(ChatMessageState.class)
-                .object();
-
+        ChatMessageState message = this.newMessageFlow(companyA, companyB,"hello world");
         Assert.assertEquals("message text", "hello world", message.getMessage());
     }
     @Test
     public void send_joke_message() throws Exception {
-        SignedTransaction tx = this.newJokeMessageFlow(companyA, companyB);
-        StateVerifier verifier = StateVerifier.fromTransaction(tx, this.companyA.ledgerServices);
-        ChatMessageState message = verifier
-                .output().one()
-                .one(ChatMessageState.class)
-                .object();
-
+        ChatMessageState message = this.newJokeMessageFlow(companyA, companyB);
         Assert.assertNotNull("message text", message.getMessage());
     }
 
 
     @Test
     public void reply_message() throws Exception {
-        SignedTransaction tx = this.newMessageFlow(companyA, companyB,"hello");
-        StateVerifier verifier = StateVerifier.fromTransaction(tx, this.companyA.ledgerServices);
-        ChatMessageState message = verifier
-                .output()
-                .one()
-                .one(ChatMessageState.class)
-                .object();
-
-        SignedTransaction tx2 = this.newReplyFlow(companyB, message.getLinearId(), "world");
-        StateVerifier verifier2 = StateVerifier.fromTransaction(tx2, this.companyB.ledgerServices);
-        ChatMessageState replyMessage = verifier2
-                .output()
-                .moreThan(2)
-                .filterWhere(
-                        x -> message.getLinearId().equals(((ChatMessageState)x).getBaseMessageId()))
-                .one(ChatMessageState.class)
-                .object();
-
+        ChatMessageState message = this.newMessageFlow(companyA, companyB,"hello");
         Assert.assertEquals("chat message", "hello", message.getMessage());
+
+        StateVerifier verifier = this.newReplyFlow(companyB, message.getLinearId(), "world");
+        ChatMessageState replyMessage = verifier
+                .output(ChatMessageState.class)
+                .notThis(message)
+                .one()
+                .object();
+
         Assert.assertEquals("chat message reply", "world", replyMessage.getMessage());
     }
 

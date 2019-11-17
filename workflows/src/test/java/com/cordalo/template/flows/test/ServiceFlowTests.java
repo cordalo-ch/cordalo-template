@@ -6,18 +6,11 @@ import com.cordalo.template.states.ServiceState;
 import net.corda.core.transactions.SignedTransaction;
 import org.junit.*;
 
-@Ignore
 public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
 
     @Before
     public void setup() {
-        this.setup(true,
-            ServiceFlow.CreateResponder.class,
-            ServiceFlow.UpdateResponder.class,
-            ServiceFlow.DeleteResponder.class,
-            ServiceFlow.ShareResponder.class,
-            ServiceFlow.ActionResponder.class
-        );
+        this.setup(true, ServiceFlow.class);
     }
 
     @After

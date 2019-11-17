@@ -1,27 +1,21 @@
 package com.cordalo.template.states;
 
+import ch.cordalo.corda.common.states.CordaloLinearState;
 import ch.cordalo.corda.ext.Participants;
 import com.cordalo.template.contracts.E178EventContract;
 import com.cordalo.template.contracts.E178StateMachine;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.corda.core.contracts.BelongsToContract;
-import net.corda.core.contracts.LinearState;
 import net.corda.core.contracts.UniqueIdentifier;
-import net.corda.core.identity.AbstractParty;
 import net.corda.core.identity.Party;
 import net.corda.core.serialization.ConstructorForDeserialization;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.security.PublicKey;
-import java.util.List;
 import java.util.Objects;
 
 @BelongsToContract(E178EventContract.class)
-public class E178EventState implements LinearState {
-
-    @NotNull
-    private final UniqueIdentifier linearId;
+public class E178EventState extends CordaloLinearState {
 
     @JsonIgnore
     @Nullable
@@ -49,21 +43,15 @@ public class E178EventState implements LinearState {
     private final E178StateMachine.State status;
 
     @NotNull
-    @Override
-    public UniqueIdentifier getLinearId() {
-        return linearId;
-    }
-
-    @NotNull
     @JsonIgnore
     @Override
-    public List<AbstractParty> getParticipants() {
+    public Participants participants() {
         return new Participants(
                 this.retailer,
                 this.leasing,
                 this.regulator,
                 this.insurer
-        ).getParties();
+        );
     }
 
     @ConstructorForDeserialization
@@ -73,7 +61,7 @@ public class E178EventState implements LinearState {
                           @Nullable Party insurer,
                           @Nullable Party regulator,
                           @NotNull String state, @NotNull E178StateMachine.State status) {
-        this.linearId = linearId;
+        super(linearId);
         this.stammNr = stammNr;
         this.retailer = retailer;
         this.leasing = leasing;
@@ -81,16 +69,6 @@ public class E178EventState implements LinearState {
         this.regulator = regulator;
         this.state = state;
         this.status = status;
-    }
-
-    @NotNull
-    @JsonIgnore
-    public List<PublicKey> getParticipantKeys() {
-        return new Participants(this.getParticipants()).getPublicKeys();
-    }
-    @NotNull
-    public List<String> getParticipantsX500() {
-        return new Participants(this.getParticipants()).getPartiesX500();
     }
 
     @Nullable

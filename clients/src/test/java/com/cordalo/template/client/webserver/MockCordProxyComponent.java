@@ -11,15 +11,14 @@ import javax.annotation.PostConstruct;
 @Component
 public class MockCordProxyComponent extends CordaloControllerBaseTests {
 
-    private MockCordaProxy mockProxy;
+    private CordaProxy mockProxy;
 
     public MockCordProxyComponent() {
     }
     @PostConstruct
     public void initialiseNodeRPCConnection() {
         CordaTestNetwork setup = this.setup(false);
-        this.mockProxy = new MockCordaProxy(setup.getEnv("Company-A"));
-        CordaProxy.register(this.mockProxy);
+        this.mockProxy = new MockCordaProxy(setup.getEnv("Company-A")).register();
     }
 
     @Test

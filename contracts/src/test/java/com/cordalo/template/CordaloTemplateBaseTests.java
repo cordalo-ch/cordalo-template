@@ -30,7 +30,7 @@ public abstract class CordaloTemplateBaseTests extends CordaloBaseTests {
     }
 
     @Override
-    public CordaTestNetwork setup(boolean withNodes, Class<? extends FlowLogic> ...responderClasses) {
+    public CordaTestNetwork setup(boolean withNodes, List<Class<? extends FlowLogic>> responderClasses) {
         this.network = new CordaTestNetwork(
                 withNodes,
             this.getCordappPackageNames(),

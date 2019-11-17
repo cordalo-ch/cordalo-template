@@ -2,10 +2,13 @@ package com.cordalo.template.flows;
 
 import ch.cordalo.corda.common.flows.BaseFlow;
 import ch.cordalo.corda.common.flows.ResponderBaseFlow;
+import ch.cordalo.corda.common.flows.SimpleBaseFlow;
+import ch.cordalo.corda.common.flows.SimpleFlow;
 import co.paralleluniverse.fibers.Suspendable;
 import com.cordalo.template.contracts.ChatMessageContract;
 import com.cordalo.template.states.ChatMessageState;
 import kotlin.Unit;
+import net.corda.core.contracts.ContractState;
 import net.corda.core.contracts.StateAndRef;
 import net.corda.core.contracts.UniqueIdentifier;
 import net.corda.core.flows.*;
@@ -21,7 +24,7 @@ public class ChatMessageFlow {
 
     @InitiatingFlow(version = 2)
     @StartableByRPC
-    public static class Send extends BaseFlow {
+    public static class Send extends SimpleBaseFlow implements SimpleFlow.Create<ChatMessageState> {
 
         private final Party to;
         private final String message;
@@ -34,11 +37,6 @@ public class ChatMessageFlow {
             this(to, ChatMessageFlow.randomMessage());
         }
 
-        @Override
-        public ProgressTracker getProgressTracker() {
-            return super.progressTracker_sync;
-        }
-
         @Suspendable
         @Override
         public SignedTransaction call() throws FlowException {
@@ -46,24 +44,20 @@ public class ChatMessageFlow {
             if (me.equals(this.to)) {
                 throw new FlowException("message sender and receiver must be different");
             }
+            return this.simpleFlow_Create(this, new ChatMessageContract.Commands.Send());
+        }
 
-            getProgressTracker().setCurrentStep(PREPARATION);
-            ChatMessageState message = new ChatMessageState(
-                    new UniqueIdentifier(), me,  this.to, this.message);
-
-            getProgressTracker().setCurrentStep(BUILDING);
-            TransactionBuilder transactionBuilder = getTransactionBuilderSignedByParticipants(
-                    message,
-                    new ChatMessageContract.Commands.Send());
-            transactionBuilder.addOutputState(message);
-
-            return signSyncCollectAndFinalize(message.getReceiver(), transactionBuilder);
+        @Override
+        @Suspendable
+        public ChatMessageState create() {
+            return new ChatMessageState(
+                    new UniqueIdentifier(), this.getOurIdentity(),  this.to, this.message);
         }
     }
 
     @InitiatingFlow(version = 2)
     @StartableByRPC
-    public static class Reply extends BaseFlow {
+    public static class Reply extends SimpleBaseFlow implements SimpleFlow.UpdateBuilder<ChatMessageState> {
 
         private final UniqueIdentifier id;
         private final String message;
@@ -77,68 +71,55 @@ public class ChatMessageFlow {
         }
 
 
-        @Override
-        public ProgressTracker getProgressTracker() {
-            return super.progressTracker_sync;
-        }
-
         @Suspendable
         @Override
         public SignedTransaction call() throws FlowException {
-            Party me = getOurIdentity();
+            return this.simpleFlow_UpdateBuilder(
+                    ChatMessageState.class,
+                    this.id,
+                    this,
+                    new ChatMessageContract.Commands.Reply());
+        }
 
-            getProgressTracker().setCurrentStep(PREPARATION);
-            StateAndRef<ChatMessageState> messageStateRef = this.getLastStateByLinearId(ChatMessageState.class, this.id);
-            ChatMessageState messageState = this.getStateByRef(messageStateRef);
-            if (!messageState.getReceiver().equals(me)) {
+        @Override
+        @Suspendable
+        public ChatMessageState update(ChatMessageState state) throws FlowException {
+            if (!state.getReceiver().equals(this.getOurIdentity())) {
                 throw new FlowException("reply message must be send from message receiver");
             }
-            ChatMessageState replyMessage = messageState.reply(this.message);
+            return state.reply(this.message);
+        }
 
-            getProgressTracker().setCurrentStep(BUILDING);
-            TransactionBuilder transactionBuilder = getTransactionBuilderSignedByParticipants(
-                    replyMessage,
-                    new ChatMessageContract.Commands.Reply());
-            transactionBuilder.addInputState(messageStateRef);
-            transactionBuilder.addOutputState(messageState);
-            transactionBuilder.addOutputState(replyMessage);
-
-            return signSyncCollectAndFinalize(replyMessage.getParticipants(), transactionBuilder);
+        @Override
+        public void updateBuilder(TransactionBuilder transactionBuilder, StateAndRef<ChatMessageState> stateRef, ChatMessageState state, ChatMessageState newState) throws FlowException {
+            transactionBuilder.addInputState(stateRef);
+            transactionBuilder.addOutputState(state);
+            transactionBuilder.addOutputState(newState);
         }
     }
 
 
     @InitiatingFlow(version = 2)
     @StartableByRPC
-    public static class Delete extends BaseFlow {
+    public static class Delete extends SimpleBaseFlow implements SimpleFlow.Delete<ChatMessageState> {
 
         private final UniqueIdentifier id;
-
         public Delete(UniqueIdentifier id) {
             this.id = id;
-        }
-
-        @Override
-        public ProgressTracker getProgressTracker() {
-            return super.progressTracker_sync;
         }
 
         @Suspendable
         @Override
         public SignedTransaction call() throws FlowException {
-            Party me = getOurIdentity();
-
-            getProgressTracker().setCurrentStep(PREPARATION);
-            StateAndRef<ChatMessageState> messageStateRef = this.getLastStateByLinearId(ChatMessageState.class, this.id);
-            ChatMessageState messageState = this.getStateByRef(messageStateRef);
-
-            getProgressTracker().setCurrentStep(BUILDING);
-            TransactionBuilder transactionBuilder = getTransactionBuilderSignedByParticipants(
-                    messageState,
+            return this.simpleFlow_Delete(
+                    ChatMessageState.class, this.id,
+                    this,
                     new ChatMessageContract.Commands.Delete());
-            transactionBuilder.addInputState(messageStateRef);
+        }
 
-            return signSyncCollectAndFinalize(messageState.getParticipants(), transactionBuilder);
+        @Override
+        public void validateToDelete(ChatMessageState state) throws FlowException {
+
         }
     }
 

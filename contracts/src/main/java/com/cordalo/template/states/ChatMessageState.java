@@ -1,26 +1,19 @@
 package com.cordalo.template.states;
 
+import ch.cordalo.corda.common.states.CordaloLinearState;
+import ch.cordalo.corda.ext.Participants;
 import com.cordalo.template.contracts.ChatMessageContract;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.corda.core.contracts.BelongsToContract;
-import net.corda.core.contracts.LinearState;
 import net.corda.core.contracts.UniqueIdentifier;
-import net.corda.core.identity.AbstractParty;
 import net.corda.core.identity.Party;
 import net.corda.core.serialization.ConstructorForDeserialization;
 import org.jetbrains.annotations.NotNull;
 
-import java.security.PublicKey;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @BelongsToContract(ChatMessageContract.class)
-public class ChatMessageState implements LinearState {
-
-    @NotNull
-    private UniqueIdentifier linearId;
+public class ChatMessageState extends CordaloLinearState {
 
     @JsonIgnore
     @NotNull
@@ -39,7 +32,7 @@ public class ChatMessageState implements LinearState {
 
     @ConstructorForDeserialization
     public ChatMessageState(@NotNull UniqueIdentifier linearId, @NotNull Party sender, @NotNull Party receiver, @NotNull String message, UniqueIdentifier baseMessageId) {
-        this.linearId = linearId;
+        super(linearId);
         this.sender = sender;
         this.receiver = receiver;
         this.message = message;
@@ -50,35 +43,26 @@ public class ChatMessageState implements LinearState {
     }
 
     @NotNull
-    @Override
-    public UniqueIdentifier getLinearId() {
-        return this.linearId;
-    }
-
-    @NotNull
     @JsonIgnore
     @Override
-    public List<AbstractParty> getParticipants() {
-        List<AbstractParty> list = new ArrayList<>();
-        list.add(this.sender);
-        list.add(this.receiver);
-        return list;
-    }
-
-    @NotNull
-    @JsonIgnore
-    public List<PublicKey> getParticipantKeys() {
-        return getParticipants().stream().map(AbstractParty::getOwningKey).collect(Collectors.toList());
+    public Participants participants() {
+        return Participants.fromParties(this.sender, this.receiver);
     }
 
     @NotNull
     public Party getSender() {
         return sender;
     }
+    public String getSenderX500() {
+        return this.sender.getName().getX500Principal().getName();
+    }
 
     @NotNull
     public Party getReceiver() {
         return receiver;
+    }
+    public String getReceiverX500() {
+        return this.receiver.getName().getX500Principal().getName();
     }
 
     @NotNull
@@ -110,12 +94,6 @@ public class ChatMessageState implements LinearState {
     @Override
     public int hashCode() {
         return Objects.hash(this.getLinearId(), getSender(), getReceiver(), getMessage(), getBaseMessageId());
-    }
-    public String getSenderX500() {
-        return this.sender.getName().getX500Principal().getName();
-    }
-    public String getReceiverX500() {
-        return this.receiver.getName().getX500Principal().getName();
     }
 
 }

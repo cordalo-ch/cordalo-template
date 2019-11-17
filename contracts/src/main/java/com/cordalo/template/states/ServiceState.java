@@ -1,28 +1,23 @@
 package com.cordalo.template.states;
 
 import ch.cordalo.corda.common.contracts.JsonHelper;
+import ch.cordalo.corda.common.states.CordaloLinearState;
 import ch.cordalo.corda.ext.Participants;
 import com.cordalo.template.contracts.ServiceContract;
 import com.cordalo.template.contracts.StateMachine;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.corda.core.contracts.BelongsToContract;
-import net.corda.core.contracts.LinearState;
 import net.corda.core.contracts.UniqueIdentifier;
 import net.corda.core.identity.AbstractParty;
 import net.corda.core.identity.Party;
 import net.corda.core.serialization.ConstructorForDeserialization;
 import org.jetbrains.annotations.NotNull;
 
-import java.security.PublicKey;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @BelongsToContract(ServiceContract.class)
-public class ServiceState implements LinearState {
+public class ServiceState extends CordaloLinearState {
 
-
-    @NotNull
-    private final UniqueIdentifier linearId;
     @NotNull
     private final StateMachine.State state;
     @NotNull
@@ -42,7 +37,7 @@ public class ServiceState implements LinearState {
 
     @ConstructorForDeserialization
     public ServiceState(@NotNull UniqueIdentifier linearId, @NotNull String serviceName, @NotNull Party initiator, @NotNull StateMachine.State state, Map<String, Object> serviceData, Party serviceProvider, Integer price) {
-        this.linearId = linearId;
+        super(linearId);
         this.state = state;
         this.serviceName = serviceName;
         this.initiator = initiator;
@@ -52,22 +47,10 @@ public class ServiceState implements LinearState {
     }
 
     @NotNull
-    @Override
-    public UniqueIdentifier getLinearId() {
-        return this.linearId;
-    }
-
-    @NotNull
     @JsonIgnore
     @Override
-    public List<AbstractParty> getParticipants() {
-        return new Participants(this.initiator, this.serviceProvider).getParties();
-    }
-
-    @NotNull
-    @JsonIgnore
-    public List<PublicKey> getParticipantKeys() {
-        return Participants.fromAbstractParties(this.getParticipants()).getPublicKeys();
+    public Participants participants() {
+        return new Participants(this.initiator, this.serviceProvider);
     }
 
     @NotNull
@@ -78,22 +61,20 @@ public class ServiceState implements LinearState {
     public Party getInitiator() {
         return initiator;
     }
+    public String getInitiatorX500() { return Participants.partyToX500(this.initiator); }
     @NotNull
     public StateMachine.State getState() { return state; }
     public Party getServiceProvider() {
         return serviceProvider;
     }
+    public String getServiceProviderX500() {
+        return Participants.partyToX500(this.serviceProvider);
+    }
 
     public List<String> getParticipantsX500() {
-        return this.getParticipants().stream().map(x -> x.nameOrNull().getX500Principal().getName()).collect(Collectors.toList());
+        return this.participants().getPartiesX500();
     }
-    @NotNull
-    public String getInitiatorX500() {
-        return initiator.getName().getX500Principal().getName();
-    }
-    public String getServiceProviderX500() {
-        return serviceProvider != null ? serviceProvider.getName().getX500Principal().getName() : "";
-    }
+
     public Integer getPrice() {
         return price;
     }

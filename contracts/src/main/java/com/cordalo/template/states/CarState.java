@@ -1,25 +1,20 @@
 package com.cordalo.template.states;
 
+import ch.cordalo.corda.common.states.CordaloLinearState;
 import ch.cordalo.corda.ext.Participants;
 import com.cordalo.template.contracts.CarContract;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.corda.core.contracts.BelongsToContract;
-import net.corda.core.contracts.LinearState;
 import net.corda.core.contracts.UniqueIdentifier;
-import net.corda.core.identity.AbstractParty;
 import net.corda.core.identity.Party;
 import net.corda.core.serialization.ConstructorForDeserialization;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @BelongsToContract(CarContract.class)
-public class CarState implements LinearState {
-
-    @NotNull
-    private final UniqueIdentifier linearId;
+public class CarState extends CordaloLinearState {
 
     @NotNull
     private final String make;
@@ -42,19 +37,13 @@ public class CarState implements LinearState {
 
     @NotNull
     @Override
-    public UniqueIdentifier getLinearId() {
-        return this.linearId;
-    }
-
-    @NotNull
-    @Override
-    public List<AbstractParty> getParticipants() {
-        return null;
+    public Participants participants() {
+        return Participants.fromParties(this.creator).add(this.owners);
     }
 
     @ConstructorForDeserialization
     public CarState(@NotNull UniqueIdentifier linearId, Party creator, @NotNull String make, @NotNull String model, @NotNull String type, @NotNull String stammNr, List<Party> owners) {
-        this.linearId = linearId;
+        super(linearId);
         this.creator = creator;
         this.make = make;
         this.model = model;
@@ -72,7 +61,7 @@ public class CarState implements LinearState {
         return owners;
     }
     public List<String> getOwnersX500() {
-        return this.getOwners().stream().map(Participants::partyToX500).collect(Collectors.toList());
+        return Participants.fromParties(this.owners).getPartiesX500();
     }
 
     @NotNull
