@@ -6,6 +6,7 @@ import ch.cordalo.corda.common.client.webserver.StateAndLinks;
 import ch.cordalo.corda.common.client.webserver.StateBuilder;
 import ch.cordalo.corda.common.contracts.JsonHelper;
 import ch.cordalo.corda.common.contracts.StateVerifier;
+import ch.cordalo.template.contracts.ServiceStateMachine;
 import ch.cordalo.template.contracts.StateMachine;
 import ch.cordalo.template.flows.ServiceFlow;
 import ch.cordalo.template.states.ServiceState;
@@ -42,21 +43,19 @@ public class ControllerServices extends CordaloController {
 
     public ControllerServices(RpcConnection rpcConnection) {
         super(rpcConnection);
-        StateMachine.State.values();
-        StateMachine.StateTransition.values();
     }
 
     private ResponseEntity<List<StateAndLinks<ServiceState>>> getResponses(HttpServletRequest request, List<ServiceState> list, HttpStatus status) throws URISyntaxException {
         return new StateBuilder<>(list, ResponseEntity.status(status))
                 .stateMapping(MAPPING_PATH, BASE_PATH, request)
-                .links(x -> x.getState().getNextActions())
+                .links(x -> x.getStateObject().getNextActions())
                 .self()
                 .buildList();
     }
     private ResponseEntity<StateAndLinks<ServiceState>> getResponses(HttpServletRequest request, ServiceState service, HttpStatus status) throws URISyntaxException {
         return new StateBuilder<>(service, ResponseEntity.status(HttpStatus.OK))
                 .stateMapping(MAPPING_PATH, BASE_PATH, request)
-                .links(x -> x.getState().getNextActions())
+                .links(x -> x.getStateObject().getNextActions())
                 .self()
                 .build();
     }
@@ -195,12 +194,12 @@ public class ControllerServices extends CordaloController {
             @PathVariable("id") String id,
             @PathVariable("action") String action) {
         UniqueIdentifier uid = new UniqueIdentifier(null, UUID.fromString(id));
-        StateMachine.State state = StateMachine.StateTransition.valueOf(action).getNextState();
+        StateMachine.State state = ServiceStateMachine.StateTransition(action).getNextState();
         if (state == null) {
             return this.buildResponseFromException(HttpStatus.METHOD_NOT_ALLOWED, "illegal action <"+action+">. Method not allowed");
         }
         try {
-            if (state.equals(StateMachine.State.SHARED)) {
+            if (state.equals(ServiceStateMachine.State("SHARED"))) {
                 if (serviceProvider == null || serviceProvider.isEmpty()) {
                     return this.buildResponseFromException(HttpStatus.BAD_REQUEST, "service-provider not specified in post");
                 }

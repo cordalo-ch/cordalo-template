@@ -4,6 +4,7 @@ import ch.cordalo.corda.common.contracts.JsonHelper;
 import ch.cordalo.corda.common.flows.BaseFlow;
 import ch.cordalo.corda.common.flows.FlowHelper;
 import ch.cordalo.corda.common.flows.ResponderBaseFlow;
+import ch.cordalo.template.contracts.ServiceStateMachine;
 import co.paralleluniverse.fibers.Suspendable;
 import ch.cordalo.template.contracts.ServiceContract;
 import ch.cordalo.template.contracts.StateMachine;
@@ -59,7 +60,7 @@ public class ServiceFlow {
                     new UniqueIdentifier(),
                     this.serviceName,
                     me,
-                    StateMachine.State.CREATED,
+                    ServiceStateMachine.State("CREATED"),
                     JsonHelper.convertStringToJson(this.data),
                     null, this.price);
 
@@ -192,14 +193,14 @@ public class ServiceFlow {
              *          TODO 2 - Write our contract to control issuance!
              * ===========================================================================*/
             // We check our transaction is valid based on its contracts.
-            if (service.getState().isLaterState(StateMachine.State.SHARED)) {
+            if (service.getStateObject().isLaterState(ServiceStateMachine.State("SHARED"))) {
                 // We check our transaction is valid based on its contracts.
                 if (service.getServiceProvider() == null) {
                     return signAndFinalize(transactionBuilder);
                 } else {
                     return signSyncCollectAndFinalize(service.getCounterParties(me), transactionBuilder);
                 }
-            } else if (!service.getState().equals(StateMachine.State.SHARED)) {
+            } else if (!service.getState().equals(ServiceStateMachine.State("SHARED"))) {
                 return signAndFinalize(transactionBuilder);
             }
             return signSyncCollectAndFinalize(service.getCounterParties(me), transactionBuilder);
@@ -285,7 +286,7 @@ public class ServiceFlow {
         }
 
         private StateMachine.StateTransition getTransition() {
-            return StateMachine.StateTransition.valueOf(this.action);
+            return ServiceStateMachine.StateTransition(this.action);
         }
 
         @Suspendable
@@ -313,7 +314,7 @@ public class ServiceFlow {
              * ===========================================================================*/
             // We build our transaction.
             getProgressTracker().setCurrentStep(BUILDING);
-            if (newService.getState().isLaterState(StateMachine.State.SHARED)) {
+            if (newService.getStateObject().isLaterState(ServiceStateMachine.State("SHARED"))) {
                 // new state is follow up state of SHARED
                 TransactionBuilder transactionBuilder = getTransactionBuilderSignedByParticipants(
                         newService,
@@ -330,7 +331,7 @@ public class ServiceFlow {
                 } else {
                     return signSyncCollectAndFinalize(newService.getCounterParties(me), transactionBuilder);
                 }
-            } else if (!newService.getState().equals(StateMachine.State.SHARED)) {
+            } else if (!newService.getState().equals(ServiceStateMachine.State("SHARED"))) {
                 // current state is predecessor of SHARED or parallel states of shared
                 getProgressTracker().setCurrentStep(BUILDING);
                 TransactionBuilder transactionBuilder = getTransactionBuilderSignedByParticipants(

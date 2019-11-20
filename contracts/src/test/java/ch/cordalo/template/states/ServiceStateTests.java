@@ -2,6 +2,7 @@ package ch.cordalo.template.states;
 
 import ch.cordalo.corda.common.contracts.JsonHelper;
 import ch.cordalo.template.CordaloTemplateBaseTests;
+import ch.cordalo.template.contracts.ServiceStateMachine;
 import ch.cordalo.template.contracts.StateMachine;
 import net.corda.core.contracts.UniqueIdentifier;
 import org.junit.After;
@@ -41,7 +42,7 @@ public class ServiceStateTests extends CordaloTemplateBaseTests {
                 this.companyA.party,
                 JsonHelper.convertStringToJson(dataJSONString()));
         Assert.assertEquals("state must be CREATED",
-                StateMachine.State.CREATED, service.getState());
+                ServiceStateMachine.State("CREATED"), service.getState());
     }
     @Test
     public void test_update_after_create() {
@@ -52,7 +53,7 @@ public class ServiceStateTests extends CordaloTemplateBaseTests {
                 JsonHelper.convertStringToJson(dataJSONString()));
         ServiceState serviceUpdated = service.update(JsonHelper.convertStringToJson(dataUpdateJSONString()));
         Assert.assertEquals("state must be still CREATED",
-                StateMachine.State.CREATED, service.getState());
+                ServiceStateMachine.State("CREATED"), service.getState());
         Assert.assertEquals("old addOns value must be false",
                 "false", JsonHelper.getDataValue(service.getServiceData(), "flags.addOns"));
         Assert.assertEquals("old addOns value must be true",

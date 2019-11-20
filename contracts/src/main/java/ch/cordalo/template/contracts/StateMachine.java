@@ -3,12 +3,88 @@ package ch.cordalo.template.contracts;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.corda.core.serialization.ConstructorForDeserialization;
 import net.corda.core.serialization.CordaSerializable;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class StateMachine {
+@CordaSerializable
+public abstract class StateMachine {
+
+    public static final State[] EMPTY_STATES = new State[0];
+    private final String name;
+    private final Map<String, State> stateMap = new LinkedHashMap<>();
+    private final Map<String, StateTransition> transitionMap = new LinkedHashMap<>();
+
+    public abstract void initStates();
+    public abstract void initTransitions();
+
+    public StateMachine(String name) {
+        this.name = name;
+        this.initStates();
+        this.initTransitions();
+    }
+
+    public StateMachine.State state(String name) {
+        if (name != null && !name.isEmpty()) {
+            State state = this.stateMap.get(name);
+            if (state == null)
+                throw new IllegalArgumentException(name + " is not a valid state in state machine " + this.name);
+            return state;
+        } else {
+            return null;
+        }
+    }
+    public StateMachine.StateTransition transition(String name) {
+        StateTransition stateTransition = this.transitionMap.get(name);
+        if (stateTransition == null) throw new IllegalArgumentException(name+" is not a valid state transition in state machine "+this.name);
+        return stateTransition;
+    }
+    public StateMachine.State newState(String value, StateMachine.StateType type) {
+        State state = new State(value, type);
+        this.stateMap.put(value, state);
+        return state;
+    }
+    public StateMachine.State newState(String value, String type) {
+        return this.newState(value, StateType.valueOf(type));
+    }
+    public StateMachine.State newState(String value) {
+        return newState(value, StateMachine.StateType.CONDITIONAL);
+    }
+    public StateMachine.StateTransition newTransition(String action, State next, String... previous) {
+        if (previous != null) {
+            StateMachine.State[] prevStates = new State[previous.length];
+            StateTransition stateTransition = new StateTransition(
+                    action, next,
+                    Arrays.stream(previous).map(x -> this.state(x)).toArray(value -> prevStates));
+            this.transitionMap.put(action, stateTransition);
+            return stateTransition;
+        } else {
+            StateTransition stateTransition = new StateTransition(action, next);
+            this.transitionMap.put(action, stateTransition);
+            return stateTransition;
+        }
+    }
+
+    public StateMachine.StateTransition newTransition(String... values) {
+        String action = values[0];
+        String next = values[1];
+        if (values.length > 2) {
+            String[] currentStates = Arrays.copyOfRange(values, 2, values.length);
+            return newTransition(action, this.state(next), currentStates);
+        } else {
+            return newTransition(action, this.state(next));
+        }
+    }
+
+    public StateMachine.StateTransition newTransitionSameState(String... values) {
+        String action = values[0];
+        if (values.length > 1) {
+            String[] currentStates = Arrays.copyOfRange(values, 1, values.length - 1);
+            return newTransition(action, null, currentStates);
+        } else {
+            return newTransition(action, (State)null);
+        }
+    }
     @CordaSerializable
     public enum StateType {
         INITIAL,
@@ -18,41 +94,27 @@ public class StateMachine {
     }
 
     @CordaSerializable
-    public enum State {
-        CREATED(StateType.INITIAL),
-        REGISTERED,
-        INFORMED,
-        CONFIRMED,
+    public static class State {
 
-        TIMEOUTS(StateType.FINAL),
-        WITHDRAWN(StateType.FINAL),
-
-        SHARED(StateType.SHARE_STATE),
-        NOT_SHARED(StateType.FINAL),
-        DUPLICATE(StateType.FINAL),
-
-        PAYMENT_SENT,
-
-        ACCEPTED(StateType.FINAL),
-        DECLINED(StateType.FINAL);
-
-        @JsonIgnore
-        private StateType type;
-        private List<StateMachine.StateTransition> transitions;
+        private final String value;
+        private final StateType type;
+        private final List<StateMachine.StateTransition> transitions;
 
         @ConstructorForDeserialization
-        State(StateType type, List<StateMachine.StateTransition> transitions) {
+        public State(String value, StateType type, List<StateMachine.StateTransition> transitions) {
+            this.value = value;
             this.type = type;
             this.transitions = transitions;
         }
-        State(StateType type) { this(type, new ArrayList<>()); }
-        State() {
-            this(StateType.CONDITIONAL, new ArrayList<>());
+        public State(String value, StateType type) { this(value, type, new ArrayList<>()); }
+        public State(String value) {
+            this(value, StateType.CONDITIONAL, new ArrayList<>());
         }
 
         public StateType getType() { return this.type; }
-        @JsonIgnore
+        public String getValue() { return this.value; }
         public boolean isFinalState() { return this.type == StateType.FINAL; }
+        @JsonIgnore
         public boolean isSharingState() { return this.type == StateType.SHARE_STATE; }
         public boolean isInitialState() { return this.type == StateType.INITIAL; }
         public void addTransition(StateMachine.StateTransition transition) {
@@ -95,41 +157,47 @@ public class StateMachine {
             return state.hasLaterState(this);
         }
 
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o instanceof String) {
+            return this.getValue().equals(o);
+            };
+            if (!(o instanceof State)) return false;
+            State state = (State) o;
+            return getValue().equals(state.getValue());
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(getValue());
+        }
     }
 
     @CordaSerializable
-    public enum StateTransition {
-        CREATE(State.CREATED),
+    public static class StateTransition {
 
-        REGISTER(State.REGISTERED, State.CREATED),
-        INFORM(State.INFORMED,     State.CREATED, State.REGISTERED),
-        CONFIRM(State.CONFIRMED,   State.INFORMED),
-        TIMEOUT(State.TIMEOUTS,    State.INFORMED),
-
-        UPDATE(null,      State.CREATED, State.SHARED),
-
-        WITHDRAW(State.WITHDRAWN,   State.CONFIRMED, State.INFORMED, State.REGISTERED, State.CREATED),
-        NO_SHARE(State.NOT_SHARED,  State.CONFIRMED, State.INFORMED),
-        DUPLICATE(State.DUPLICATE,  State.CONFIRMED, State.INFORMED, State.REGISTERED, State.CREATED),
-        SHARE(State.SHARED,         State.CONFIRMED, State.INFORMED, State.REGISTERED, State.CREATED),
-
-
-        SEND_PAYMENT(State.PAYMENT_SENT, State.SHARED),
-
-        ACCEPT(State.ACCEPTED,      State.SHARED, State.PAYMENT_SENT),
-        DECLINE(State.DECLINED,     State.SHARED, State.PAYMENT_SENT);
-
+        private final String value;
         @JsonIgnore
-        private State nextState;
+        private final State nextState;
         @JsonIgnore
-        private State[] currentStates;
-        StateTransition(State nextState, @NotNull State... currentStates) {
-            Arrays.sort(currentStates);
+        private final State[] currentStates;
+
+        @ConstructorForDeserialization
+        StateTransition(String value, State nextState, State[] currentStates) {
+            this.value = value;
             this.currentStates = currentStates;
             this.nextState = nextState;
-            for (State states : currentStates) {
-                states.addTransition(this);
+            if (currentStates != null) {
+                for (State states : currentStates) {
+                    states.addTransition(this);
+                }
             }
+        }
+        StateTransition(String value, State nextState) {
+            this.value = value;
+            this.currentStates = EMPTY_STATES;
+            this.nextState = nextState;
         }
         @JsonIgnore
         public boolean willBeInFinalState() {
@@ -145,13 +213,16 @@ public class StateMachine {
         }
         public State getNextStateFrom(State from) throws IllegalStateException {
             if (from.isFinalState()) {
-                throw new IllegalStateException("state <"+from+"> is final state and cannot be transitioned");
+                throw new IllegalStateException("state <"+from.getValue()+"> is final state and cannot be transitioned");
             }
-            if (Arrays.binarySearch(this.currentStates, from) >= 0) {
-                return this.nextState != null ? this.nextState : from;
+            for(State s : this.currentStates) {
+                if (s.equals(from)) {
+                    return this.nextState != null ? this.nextState : from;
+                }
             }
-            throw new IllegalStateException("state <"+from+"> is not allowed in this current transition");
+            throw new IllegalStateException("state <"+from.getValue()+"> is not allowed in this current transition");
         }
+        @JsonIgnore
         public State getInitialState() throws IllegalStateException {
             if (this.currentStates.length == 0) {
                 return this.nextState;
