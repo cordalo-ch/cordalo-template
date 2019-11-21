@@ -1,7 +1,6 @@
 package ch.cordalo.template;
 
 import ch.cordalo.corda.common.test.CordaNodeEnvironment;
-import ch.cordalo.corda.common.test.CordaNotaryNodeEnvironment;
 import ch.cordalo.corda.common.test.CordaTestNetwork;
 import ch.cordalo.corda.common.test.CordaloBaseTests;
 import com.google.common.collect.ImmutableList;

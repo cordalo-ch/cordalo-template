@@ -5,7 +5,6 @@ import ch.cordalo.corda.common.client.webserver.RpcConnection;
 import ch.cordalo.corda.common.client.webserver.StateAndLinks;
 import ch.cordalo.corda.common.client.webserver.StateBuilder;
 import ch.cordalo.corda.common.contracts.StateVerifier;
-import ch.cordalo.template.contracts.E178StateMachine;
 import ch.cordalo.template.flows.E178EventFlow;
 import ch.cordalo.template.states.E178EventState;
 import net.corda.core.contracts.UniqueIdentifier;

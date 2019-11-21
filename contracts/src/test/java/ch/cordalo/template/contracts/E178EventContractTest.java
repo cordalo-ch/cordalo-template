@@ -2,7 +2,6 @@ package ch.cordalo.template.contracts;
 
 import ch.cordalo.template.E178BaseTests;
 import ch.cordalo.template.states.E178EventState;
-import net.corda.core.contracts.UniqueIdentifier;
 import net.corda.core.identity.Party;
 import org.junit.After;
 import org.junit.Before;

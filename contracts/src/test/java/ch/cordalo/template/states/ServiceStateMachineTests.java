@@ -1,7 +1,7 @@
 package ch.cordalo.template.states;
 
-import ch.cordalo.template.contracts.ServiceStateMachine;
 import ch.cordalo.corda.common.contracts.StateMachine.State;
+import ch.cordalo.template.contracts.ServiceStateMachine;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

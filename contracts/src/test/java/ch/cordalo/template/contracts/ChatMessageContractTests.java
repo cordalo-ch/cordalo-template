@@ -2,10 +2,8 @@ package ch.cordalo.template.contracts;
 
 import ch.cordalo.template.CordaloTemplateBaseTests;
 import ch.cordalo.template.states.ChatMessageState;
-import ch.cordalo.template.states.ServiceState;
 import net.corda.core.contracts.UniqueIdentifier;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 

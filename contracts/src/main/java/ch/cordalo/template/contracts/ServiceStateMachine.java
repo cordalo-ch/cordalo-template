@@ -2,8 +2,6 @@ package ch.cordalo.template.contracts;
 
 import ch.cordalo.corda.common.contracts.StateMachine;
 
-import java.util.Arrays;
-
 public class ServiceStateMachine extends StateMachine {
 
     private final static ServiceStateMachine INSTANCE = new ServiceStateMachine();

@@ -2,19 +2,16 @@ package ch.cordalo.template.flows.test;
 
 import ch.cordalo.corda.common.contracts.StateVerifier;
 import ch.cordalo.corda.common.test.CordaNodeEnvironment;
-import ch.cordalo.corda.common.test.MockCordaProxy;
-import ch.cordalo.corda.ext.CordaProxy;
 import ch.cordalo.template.flows.ChatMessageFlow;
 import ch.cordalo.template.states.ChatMessageState;
-import net.corda.core.concurrent.CordaFuture;
 import net.corda.core.contracts.UniqueIdentifier;
 import net.corda.core.flows.FlowException;
 import net.corda.core.flows.FlowLogic;
 import net.corda.core.transactions.SignedTransaction;
-import org.junit.*;
-
-import java.util.List;
-import java.util.concurrent.ExecutionException;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 public class ChatMessageFlowTests extends CordaloTemplateBaseFlowTests {
 

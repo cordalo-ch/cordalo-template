@@ -1,22 +1,18 @@
 package ch.cordalo.template.flows;
 
-import ch.cordalo.corda.common.flows.BaseFlow;
 import ch.cordalo.corda.common.flows.ResponderBaseFlow;
 import ch.cordalo.corda.common.flows.SimpleBaseFlow;
 import ch.cordalo.corda.common.flows.SimpleFlow;
-import co.paralleluniverse.fibers.Suspendable;
 import ch.cordalo.template.contracts.ChatMessageContract;
 import ch.cordalo.template.states.ChatMessageState;
+import co.paralleluniverse.fibers.Suspendable;
 import kotlin.Unit;
-import net.corda.core.contracts.ContractState;
 import net.corda.core.contracts.StateAndRef;
 import net.corda.core.contracts.UniqueIdentifier;
 import net.corda.core.flows.*;
 import net.corda.core.identity.Party;
-import net.corda.core.internal.Emoji;
 import net.corda.core.transactions.SignedTransaction;
 import net.corda.core.transactions.TransactionBuilder;
-import net.corda.core.utilities.ProgressTracker;
 
 import java.util.Random;
 
