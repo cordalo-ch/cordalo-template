@@ -1,0 +1,9 @@
+ch.cordalo:corda-common-contracts:0.10-SNAPSHOT
+ch.cordalo:corda-common-test:0.10-SNAPSHOT
+ch.cordalo:corda-ext:0.10-SNAPSHOT
+junit:junit:4.12
+net.corda:corda-core:4.1
+net.corda:corda-jackson:4.1
+net.corda:corda-node-driver:4.1
+net.corda:corda:4.1
+org.jolokia:jolokia-jvm:1.6.0
