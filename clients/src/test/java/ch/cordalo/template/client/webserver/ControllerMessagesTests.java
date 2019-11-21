@@ -2,10 +2,10 @@ package ch.cordalo.template.client.webserver;
 
 import ch.cordalo.corda.common.test.CordaTestNetwork;
 import ch.cordalo.corda.common.test.MockCordaProxy;
-import ch.cordalo.corda.ext.CordaProxy;
 import ch.cordalo.template.flows.ChatMessageFlow;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -53,7 +53,7 @@ public class ControllerMessagesTests extends CordaloControllerBaseTests {
         String content = mvcResult.getResponse().getContentAsString();
     }
 
-    @Test
+    @Ignore
     public void post_message() throws Exception {
         String uri = "/api/v1/cordalo/template/messages";
         MvcResult mvcResult = mvc.perform(

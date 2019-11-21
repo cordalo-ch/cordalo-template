@@ -2,7 +2,6 @@ package ch.cordalo.template.client.webserver;
 
 import ch.cordalo.corda.common.client.webserver.CordaloController;
 import ch.cordalo.corda.common.client.webserver.RpcConnection;
-import ch.cordalo.template.contracts.StateMachine;
 import com.google.common.collect.ImmutableMap;
 import net.corda.core.identity.CordaX500Name;
 import net.corda.core.node.NodeInfo;

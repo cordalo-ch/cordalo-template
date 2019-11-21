@@ -3,7 +3,6 @@ package ch.cordalo.template.states;
 import ch.cordalo.corda.common.contracts.JsonHelper;
 import ch.cordalo.template.CordaloTemplateBaseTests;
 import ch.cordalo.template.contracts.ServiceStateMachine;
-import ch.cordalo.template.contracts.StateMachine;
 import net.corda.core.contracts.UniqueIdentifier;
 import org.junit.After;
 import org.junit.Assert;

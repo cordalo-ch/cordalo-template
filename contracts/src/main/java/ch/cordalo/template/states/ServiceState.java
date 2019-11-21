@@ -1,11 +1,11 @@
 package ch.cordalo.template.states;
 
 import ch.cordalo.corda.common.contracts.JsonHelper;
+import ch.cordalo.corda.common.contracts.StateMachine;
 import ch.cordalo.corda.common.states.CordaloLinearState;
 import ch.cordalo.corda.common.states.Parties;
 import ch.cordalo.template.contracts.ServiceContract;
 import ch.cordalo.template.contracts.ServiceStateMachine;
-import ch.cordalo.template.contracts.StateMachine;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.corda.core.contracts.BelongsToContract;
 import net.corda.core.contracts.UniqueIdentifier;

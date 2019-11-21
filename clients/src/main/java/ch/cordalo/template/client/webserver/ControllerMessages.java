@@ -5,7 +5,6 @@ import ch.cordalo.corda.common.client.webserver.RpcConnection;
 import ch.cordalo.corda.common.client.webserver.StateAndLinks;
 import ch.cordalo.corda.common.client.webserver.StateBuilder;
 import ch.cordalo.corda.common.contracts.StateVerifier;
-import ch.cordalo.template.contracts.StateMachine;
 import ch.cordalo.template.flows.ChatMessageFlow;
 import ch.cordalo.template.states.ChatMessageState;
 import ch.cordalo.template.states.ServiceState;

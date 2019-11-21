@@ -1,5 +1,6 @@
 package ch.cordalo.template.contracts;
 
+import ch.cordalo.corda.common.contracts.StateMachine;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.corda.core.serialization.ConstructorForDeserialization;
 import net.corda.core.serialization.CordaSerializable;

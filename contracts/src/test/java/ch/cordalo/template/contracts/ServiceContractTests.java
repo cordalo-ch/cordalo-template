@@ -1,6 +1,7 @@
 package ch.cordalo.template.contracts;
 
 import ch.cordalo.corda.common.contracts.JsonHelper;
+import ch.cordalo.corda.common.contracts.StateMachine;
 import ch.cordalo.template.CordaloTemplateBaseTests;
 import ch.cordalo.template.states.ServiceState;
 import ch.cordalo.template.states.ServiceStateTests;

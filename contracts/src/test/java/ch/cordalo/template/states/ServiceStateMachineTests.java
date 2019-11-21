@@ -1,13 +1,12 @@
 package ch.cordalo.template.states;
 
 import ch.cordalo.template.contracts.ServiceStateMachine;
-import ch.cordalo.template.contracts.StateMachine;
-import ch.cordalo.template.contracts.StateMachine.State;
+import ch.cordalo.corda.common.contracts.StateMachine.State;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class StateMachineTests {
+public class ServiceStateMachineTests {
 
     @Before
     public void setup() {
