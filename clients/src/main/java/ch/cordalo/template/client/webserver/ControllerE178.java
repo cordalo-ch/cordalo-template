@@ -41,9 +41,6 @@ public class ControllerE178 extends CordaloController {
 
     public ControllerE178(RpcConnection rpcConnection) {
         super(rpcConnection);
-        E178StateMachine.State.values();
-        E178StateMachine.StateTransition.values();
-
     }
 
 
@@ -51,7 +48,7 @@ public class ControllerE178 extends CordaloController {
         return new StateBuilder<>(e178, ResponseEntity.status(HttpStatus.OK))
                 .stateMapping(MAPPING_PATH, BASE_PATH, request)
                 .self()
-                .links(x -> x.getStatus().getNextActions())
+                .links(x -> x.getStatusObject().getNextActions())
                 .build();
     }
 
@@ -59,7 +56,7 @@ public class ControllerE178 extends CordaloController {
         return new StateBuilder<>(list, ResponseEntity.status(HttpStatus.OK))
                 .stateMapping(MAPPING_PATH, BASE_PATH, request)
                 .self()
-                .links(x -> x.getStatus().getNextActions())
+                .links(x -> x.getStatusObject().getNextActions())
                 .buildList();
     }
     /**

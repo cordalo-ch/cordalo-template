@@ -62,7 +62,7 @@ public class ServiceContract implements Contract {
                             .isEmpty(ServiceState::getServiceProvider, "service provider must be empty on creation")
                             .object();
                     req.using("state must be an initial state",
-                            StateMachine.StateTransition.CREATE
+                            ServiceStateMachine.StateTransition("CREATE")
                               .getInitialState()
                                   .equals(service.getState()));
                     return null;
@@ -79,8 +79,8 @@ public class ServiceContract implements Contract {
                     req.using("state must be the same",
                             service1.getState().equals(service2.getState()));
                     req.using("state <"+service2.getState()+"> is not valid next state from <"+service1.getState()+">",
-                        StateMachine.StateTransition.UPDATE
-                                .getNextStateFrom(service1.getState())
+                        ServiceStateMachine.StateTransition("UPDATE")
+                                .getNextStateFrom(service1.getStateObject())
                                     .equals(service2.getState()));
                     if (service1.getServiceProvider() == null) {
                             req.using("service provider must be both null",
@@ -117,8 +117,8 @@ public class ServiceContract implements Contract {
                     req.using("state must be different",
                             !service1.getState().equals(service2.getState()));
                     req.using("state <"+service2.getState()+"> is not valid next state from <"+service1.getState()+">",
-                            StateMachine.StateTransition.SHARE
-                                    .getNextStateFrom(service1.getState())
+                            ServiceStateMachine.StateTransition("SHARE")
+                                    .getNextStateFrom(service1.getStateObject())
                                     .equals(service2.getState()));
                     if (service1.getServiceProvider() != null) {
                         req.using("service provider must be the same",
@@ -134,15 +134,15 @@ public class ServiceContract implements Contract {
         }
 
         class AnyAction extends Common implements ServiceContract.Commands {
-            private final StateMachine.StateTransition transition;
+            private final ServiceStateMachine.StateTransition transition;
             public AnyAction(String transition) {
-                this.transition = StateMachine.StateTransition.valueOf(transition);
+                this.transition = ServiceStateMachine.StateTransition(transition);
             }
             @ConstructorForDeserialization
-            public AnyAction(StateMachine.StateTransition transition) {
+            public AnyAction(ServiceStateMachine.StateTransition transition) {
                 this.transition = transition;
             }
-            public StateMachine.StateTransition getTransition() {
+            public ServiceStateMachine.StateTransition getTransition() {
                 return this.transition;
             }
 
@@ -155,7 +155,7 @@ public class ServiceContract implements Contract {
                             !service1.getState().equals(service2.getState()));
                     req.using("state <"+service2.getState()+"> is not valid next state from <"+service1.getState()+">",
                             this.getTransition()
-                                    .getNextStateFrom(service1.getState())
+                                    .getNextStateFrom(service1.getStateObject())
                                     .equals(service2.getState()));
                     return pair;
                 });
@@ -167,7 +167,7 @@ public class ServiceContract implements Contract {
                 super(transition);
             }
             @ConstructorForDeserialization
-            public ActionBeforeShare(StateMachine.StateTransition transition) {
+            public ActionBeforeShare(ServiceStateMachine.StateTransition transition) {
                 super(transition);
             }
 
@@ -197,7 +197,7 @@ public class ServiceContract implements Contract {
                 super(transition);
             }
             @ConstructorForDeserialization
-            public ActionAfterShare(StateMachine.StateTransition transition) {
+            public ActionAfterShare(ServiceStateMachine.StateTransition transition) {
                 super(transition);
             }
 

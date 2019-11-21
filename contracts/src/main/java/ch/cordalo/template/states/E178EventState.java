@@ -9,6 +9,7 @@ import net.corda.core.contracts.BelongsToContract;
 import net.corda.core.contracts.UniqueIdentifier;
 import net.corda.core.identity.Party;
 import net.corda.core.serialization.ConstructorForDeserialization;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,7 +41,7 @@ public class E178EventState extends CordaloLinearState {
     private final String stammNr;
 
     @NotNull
-    private final E178StateMachine.State status;
+    private final String status;
 
     @NotNull
     @JsonIgnore
@@ -60,7 +61,7 @@ public class E178EventState extends CordaloLinearState {
                           @Nullable Party leasing,
                           @Nullable Party insurer,
                           @Nullable Party regulator,
-                          @NotNull String state, @NotNull E178StateMachine.State status) {
+                          @NotNull String state, @NotNull String status) {
         super(linearId);
         this.stammNr = stammNr;
         this.retailer = retailer;
@@ -70,7 +71,14 @@ public class E178EventState extends CordaloLinearState {
         this.state = state;
         this.status = status;
     }
-
+    public E178EventState(@NotNull UniqueIdentifier linearId, String stammNr,
+                          @Nullable Party retailer,
+                          @Nullable Party leasing,
+                          @Nullable Party insurer,
+                          @Nullable Party regulator,
+                          @NotNull String state, @NotNull E178StateMachine.State status) {
+        this(linearId, stammNr, retailer, leasing, insurer, regulator, state, status.getValue());
+    }
     @Nullable
     public Party getRegulator() {
         return regulator;
@@ -106,9 +114,11 @@ public class E178EventState extends CordaloLinearState {
     }
 
     @NotNull
-    public E178StateMachine.State getStatus() {
-        return status;
-    }
+    public String getStatus() { return this.status; }
+    @NotNull
+
+    @JsonIgnore
+    public E178StateMachine.State getStatusObject() { return E178StateMachine.State(this.status); }
 
     @Override
     public boolean equals(Object o) {
@@ -135,27 +145,29 @@ public class E178EventState extends CordaloLinearState {
     protected E178EventState changeState(E178StateMachine.State status){
         return new E178EventState(this.getLinearId(), this.getStammNr(), this.getRetailer(), this.getLeasing(), this.getInsurer(), this.getRegulator(), this.getState(), status);
     }
+    @NotNull
+    @Contract("_, _, _, _ -> new")
     public static E178EventState request(String stammNr, Party retail, Party leasing, String state) {
-        return new E178EventState(new UniqueIdentifier(), stammNr, retail, leasing, null, null, state, E178StateMachine.State.REQUESTED);
+        return new E178EventState(new UniqueIdentifier(), stammNr, retail, leasing, null, null, state, E178StateMachine.State("REQUESTED"));
     }
     public E178EventState issue(String state, Party regulator) {
-        return new E178EventState(this.getLinearId(), this.getStammNr(), this.getRetailer(), this.getLeasing(), this.getInsurer(), regulator, state, E178StateMachine.State.ISSUED);
+        return new E178EventState(this.getLinearId(), this.getStammNr(), this.getRetailer(), this.getLeasing(), this.getInsurer(), regulator, state, E178StateMachine.State("ISSUED"));
     }
     public E178EventState issue(Party regulator) {
-        return new E178EventState(this.getLinearId(), this.getStammNr(), this.getRetailer(), this.getLeasing(), this.getInsurer(), regulator, this.getState(), E178StateMachine.State.ISSUED);
+        return new E178EventState(this.getLinearId(), this.getStammNr(), this.getRetailer(), this.getLeasing(), this.getInsurer(), regulator, this.getState(), E178StateMachine.State("ISSUED"));
     }
 
     public E178EventState requestInsurance(Party insurer) {
-        return new E178EventState(this.getLinearId(), this.getStammNr(), this.getRetailer(), this.getLeasing(), insurer, this.getRegulator(), this.getState(), E178StateMachine.State.INSURANCE_REQUESTED);
+        return new E178EventState(this.getLinearId(), this.getStammNr(), this.getRetailer(), this.getLeasing(), insurer, this.getRegulator(), this.getState(), E178StateMachine.State("INSURANCE_REQUESTED"));
     }
     public E178EventState insure() {
-        return this.changeState(E178StateMachine.State.INSURED);
+        return this.changeState(E178StateMachine.State("INSURED"));
     }
     public E178EventState registered() {
-        return this.changeState(E178StateMachine.State.REGISTERED);
+        return this.changeState(E178StateMachine.State("REGISTERED"));
     }
     public E178EventState cancel() {
-        return this.changeState(E178StateMachine.State.CANCELED);
+        return this.changeState(E178StateMachine.State("CANCELED"));
     }
 
 }

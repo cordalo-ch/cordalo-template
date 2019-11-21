@@ -112,7 +112,7 @@ public class E178EventFlowTests extends E178BaseTests {
         Assert.assertTrue("insurer is set", e178.getInsurer().equals(this.insurer1.party));
 
         e178 = verifyAndGet(E178EventState.class, this.newInsureE178(e178, this.insurer1));
-        Assert.assertTrue("e178 is insured", e178.getStatus().equals(E178StateMachine.State.INSURED));
+        Assert.assertTrue("e178 is insured", e178.getStatusObject().equals(E178StateMachine.State("INSURED")));
     }
 
     @Test
@@ -147,7 +147,7 @@ public class E178EventFlowTests extends E178BaseTests {
         network.runNetwork();
         SignedTransaction signedTransaction = future.get();
         E178EventState e178EventState = verifyAndGet(E178EventState.class, signedTransaction);
-        Assert.assertTrue("e178 is cancelled", e178EventState.getStatus().equals(E178StateMachine.State.CANCELED));
+        Assert.assertTrue("e178 is cancelled", e178EventState.getStatusObject().equals(E178StateMachine.State("CANCELED")));
     }
 
     @Test
@@ -162,10 +162,10 @@ public class E178EventFlowTests extends E178BaseTests {
         Assert.assertTrue("insurer is set", e178.getInsurer().equals(this.insurer1.party));
 
         e178 = verifyAndGet(E178EventState.class, this.newInsureE178(e178, this.insurer1));
-        Assert.assertTrue("e178 is insured", e178.getStatus().equals(E178StateMachine.State.INSURED));
+        Assert.assertTrue("e178 is insured", e178.getStatusObject().equals(E178StateMachine.State("INSURED")));
 
         e178 = verifyAndGet(E178EventState.class, this.newRegisterE178(e178, this.regulator));
-        Assert.assertTrue("e178 is registered", e178.getStatus().equals(E178StateMachine.State.REGISTERED));
+        Assert.assertTrue("e178 is registered", e178.getStatusObject().equals(E178StateMachine.State("REGISTERED")));
     }
 
 

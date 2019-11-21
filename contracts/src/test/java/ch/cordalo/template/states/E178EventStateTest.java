@@ -35,7 +35,7 @@ public class E178EventStateTest extends E178BaseTests {
                 this.insurer1.party,
                 this.regulator.party,
                 "ZH",
-                E178StateMachine.State.REQUESTED
+                E178StateMachine.State("REQUESTED")
         );
 
         // Assert
@@ -46,7 +46,8 @@ public class E178EventStateTest extends E178BaseTests {
         assertThat(e178EventState.getRetailer(), is(this.retailer.party));
         assertThat(e178EventState.getLeasing(), is(this.leasing.party));
         assertThat(e178EventState.getInsurer(), is(this.insurer1.party));
-        assertThat(e178EventState.getStatus(), is(E178StateMachine.State.REQUESTED));
+        assertThat(e178EventState.getStatusObject(), is(E178StateMachine.State("REQUESTED")));
+        assertThat(e178EventState.getStatus(), is("REQUESTED"));
     }
 
 }
