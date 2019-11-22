@@ -2,7 +2,7 @@ buildscript {
     ext {
         corda_release_group = 'net.corda'
         corda_release_version = '4.1'
-        corda_gradle_plugins_version = '4.0.46'
+        corda_gradle_plugins_version = '5.0.6'
         junit_version = '4.12'
         spring_boot_version = '2.0.9.RELEASE'
         spring_boot_gradle_plugin_version = '2.0.9.RELEASE'
@@ -113,8 +113,6 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
             "ch.cordalo:corda-common-contracts:$cordalo_version",
             "ch.cordalo:corda-common-workflows:$cordalo_version"
         ]
-
-
     }
     node {
         name "O=Notary,L=Bern,ST=BE,C=CH"
