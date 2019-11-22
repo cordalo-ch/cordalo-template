@@ -1,7 +1,10 @@
 package ch.cordalo.template.contracts;
 
+import ch.cordalo.corda.common.contracts.CommandVerifier;
 import ch.cordalo.corda.common.contracts.StateVerifier;
 import ch.cordalo.template.states.CarState;
+import ch.cordalo.template.states.E178EventState;
+import kotlin.Pair;
 import net.corda.core.contracts.CommandData;
 import net.corda.core.contracts.Contract;
 import net.corda.core.transactions.LedgerTransaction;
@@ -43,5 +46,32 @@ public class CarContract implements Contract {
             }
         }
 
+        class Update implements CarContract.Commands {
+            @Override
+            public void verify(LedgerTransaction tx, StateVerifier verifier) throws IllegalArgumentException {
+                requireThat(req -> {
+                    // validate 1 input and 1 output - simple update for same or different values
+                    CommandVerifier.Parameters<CarState> params = new CommandVerifier.Parameters<>();
+                    params.notEmpty(
+                            CarState::getLinearId,
+                            CarState::getMake,
+                            CarState::getModel,
+                            CarState::getType,
+                            CarState::getStammNr,
+                            CarState::getCreator,
+                            CarState::getOwners
+                    );
+                    params.equal(
+                            CarState::getLinearId,
+                            CarState::getStammNr,
+                            CarState::getCreator,
+                            CarState::getOwners);
+
+                    Pair<CarState, CarState> pair = new CommandVerifier(verifier)
+                            .verify_update1(CarState.class, params);
+                    return null;
+                });
+            }
+        }
     }
 }

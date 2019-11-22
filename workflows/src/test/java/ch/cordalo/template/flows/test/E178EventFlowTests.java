@@ -10,13 +10,10 @@ import net.corda.core.concurrent.CordaFuture;
 import net.corda.core.contracts.LinearState;
 import net.corda.core.flows.FlowLogic;
 import net.corda.core.transactions.SignedTransaction;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 import java.util.concurrent.ExecutionException;
-
+@Ignore
 public class E178EventFlowTests extends E178BaseTests {
     private final static String STAMM_NR = "123.456.786";
     @Before

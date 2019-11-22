@@ -85,6 +85,10 @@ public class CarState extends CordaloLinearState {
         return stammNr;
     }
 
+    public CarState update(@NotNull String make, @NotNull String model, @NotNull String type) {
+        return new CarState(this.linearId, this.creator, make, model, type, this.stammNr, this.owners);
+    }
+
     public CarState share(Party owner) {
         List<Party> list = new ArrayList<>(this.owners);
         list.add(owner);
