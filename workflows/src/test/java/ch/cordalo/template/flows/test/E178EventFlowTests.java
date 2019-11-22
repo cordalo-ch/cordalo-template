@@ -13,7 +13,7 @@ import net.corda.core.transactions.SignedTransaction;
 import org.junit.*;
 
 import java.util.concurrent.ExecutionException;
-@Ignore
+
 public class E178EventFlowTests extends E178BaseTests {
     private final static String STAMM_NR = "123.456.786";
     @Before

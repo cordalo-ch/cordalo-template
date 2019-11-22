@@ -73,5 +73,37 @@ public class CarContract implements Contract {
                 });
             }
         }
+
+
+        class Share implements CarContract.Commands {
+            @Override
+            public void verify(LedgerTransaction tx, StateVerifier verifier) throws IllegalArgumentException {
+                requireThat(req -> {
+                    // validate 1 input and 1 output - simple update for same or different values
+                    CommandVerifier.Parameters<CarState> params = new CommandVerifier.Parameters<>();
+                    params.notEmpty(
+                            CarState::getLinearId,
+                            CarState::getMake,
+                            CarState::getModel,
+                            CarState::getType,
+                            CarState::getStammNr,
+                            CarState::getCreator,
+                            CarState::getOwners);
+                    params.equal(
+                            CarState::getLinearId,
+                            CarState::getMake,
+                            CarState::getModel,
+                            CarState::getType,
+                            CarState::getStammNr,
+                            CarState::getCreator);
+                    params.notEqual(
+                            CarState::getOwners);
+
+                    Pair<CarState, CarState> pair = new CommandVerifier(verifier)
+                            .verify_update1(CarState.class, params);
+                    return null;
+                });
+            }
+        }
     }
 }

@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @BelongsToContract(CarContract.class)
 public class CarState extends CordaloLinearState {
@@ -93,5 +94,24 @@ public class CarState extends CordaloLinearState {
         List<Party> list = new ArrayList<>(this.owners);
         list.add(owner);
         return new CarState(this.linearId, this.creator, this.make, this.model, this.type, this.stammNr, list);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CarState)) return false;
+        if (!super.equals(o)) return false;
+        CarState carState = (CarState) o;
+        return getMake().equals(carState.getMake()) &&
+                getModel().equals(carState.getModel()) &&
+                getType().equals(carState.getType()) &&
+                getStammNr().equals(carState.getStammNr()) &&
+                getCreator().equals(carState.getCreator()) &&
+                getOwners().equals(carState.getOwners());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getMake(), getModel(), getType(), getStammNr(), getCreator(), getOwners());
     }
 }

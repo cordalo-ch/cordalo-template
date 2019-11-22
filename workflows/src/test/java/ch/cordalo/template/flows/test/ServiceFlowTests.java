@@ -4,7 +4,6 @@ import ch.cordalo.template.flows.ServiceFlow;
 import ch.cordalo.template.states.ServiceState;
 import org.junit.*;
 
-@Ignore
 public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
 
     @Before
