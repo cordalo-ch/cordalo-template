@@ -23,7 +23,7 @@ public class ServiceFlow {
 
     @InitiatingFlow(version = 2)
     @StartableByRPC
-    public static class Create extends SimpleBaseFlow implements SimpleFlow.Create<ServiceState> {
+    public static class Create extends SimpleBaseFlow<SignedTransaction> implements SimpleFlow.Create<ServiceState> {
         private final String serviceName;
         private final String data;
         private final Integer price;
@@ -62,7 +62,7 @@ public class ServiceFlow {
 
     @InitiatingFlow(version = 2)
     @StartableByRPC
-    public static class Update extends SimpleBaseFlow implements SimpleFlow.Update<ServiceState> {
+    public static class Update extends SimpleBaseFlow<SignedTransaction> implements SimpleFlow.Update<ServiceState> {
         private final UniqueIdentifier id;
         private final String data;
         private final Integer price;
@@ -96,7 +96,7 @@ public class ServiceFlow {
 
     @InitiatingFlow(version = 2)
     @StartableByRPC
-    public static class Delete extends SimpleBaseFlow implements SimpleFlow.Delete<ServiceState> {
+    public static class Delete extends SimpleBaseFlow<SignedTransaction> implements SimpleFlow.Delete<ServiceState> {
         private final UniqueIdentifier id;
         public Delete(UniqueIdentifier id) {
             this.id = id;
@@ -123,7 +123,7 @@ public class ServiceFlow {
 
     @InitiatingFlow(version = 2)
     @StartableByRPC
-    public static class Share extends BaseFlow {
+    public static class Share extends BaseFlow<SignedTransaction> {
         private final UniqueIdentifier id;
         private final Party serviceProvider;
 
@@ -134,14 +134,14 @@ public class ServiceFlow {
 
         @Override
         public ProgressTracker getProgressTracker() {
-            return this.progressTracker_sync;
+            return progress.PROGRESSTRACKER_SYNC;
         }
 
 
         @Suspendable
         @Override
         public SignedTransaction call() throws FlowException {
-            getProgressTracker().setCurrentStep(PREPARATION);
+            getProgressTracker().setCurrentStep(progress.PREPARATION);
             // We get a reference to our own identity.
             Party me = getOurIdentity();
 
@@ -162,7 +162,7 @@ public class ServiceFlow {
              *      TODO 3 - Build our issuance transaction to update the ledger!
              * ===========================================================================*/
             // We build our transaction.
-            getProgressTracker().setCurrentStep(BUILDING);
+            getProgressTracker().setCurrentStep(progress.BUILDING);
             TransactionBuilder transactionBuilder = getTransactionBuilderSignedByParticipants(
                     sharedService,
                     new ServiceContract.Commands.Share());
@@ -183,7 +183,7 @@ public class ServiceFlow {
 
     @InitiatingFlow(version = 2)
     @StartableByRPC
-    public static class Action extends BaseFlow {
+    public static class Action extends BaseFlow<SignedTransaction> {
         private final UniqueIdentifier id;
         private final String action;
 
@@ -194,7 +194,7 @@ public class ServiceFlow {
 
         @Override
         public ProgressTracker getProgressTracker() {
-            return this.progressTracker_sync;
+            return progress.PROGRESSTRACKER_SYNC;
         }
 
         private StateMachine.StateTransition getTransition() {
@@ -204,7 +204,7 @@ public class ServiceFlow {
         @Suspendable
         @Override
         public SignedTransaction call() throws FlowException {
-            getProgressTracker().setCurrentStep(PREPARATION);
+            getProgressTracker().setCurrentStep(progress.PREPARATION);
             // We get a reference to our own identity.
             Party me = getOurIdentity();
 
@@ -225,7 +225,7 @@ public class ServiceFlow {
              *      TODO 3 - Build our issuance transaction to update the ledger!
              * ===========================================================================*/
             // We build our transaction.
-            getProgressTracker().setCurrentStep(BUILDING);
+            getProgressTracker().setCurrentStep(progress.BUILDING);
             CommandData command = null;
             if (newService.getStateObject().isLaterState(ServiceStateMachine.State("SHARED"))) {
                 command = new ServiceContract.Commands.ActionAfterShare(this.action);

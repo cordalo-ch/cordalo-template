@@ -20,7 +20,7 @@ public class ChatMessageFlow {
 
     @InitiatingFlow(version = 2)
     @StartableByRPC
-    public static class Send extends SimpleBaseFlow implements SimpleFlow.Create<ChatMessageState> {
+    public static class Send extends SimpleBaseFlow<SignedTransaction> implements SimpleFlow.Create<ChatMessageState> {
 
         private final Party to;
         private final String message;
@@ -53,7 +53,7 @@ public class ChatMessageFlow {
 
     @InitiatingFlow(version = 2)
     @StartableByRPC
-    public static class Reply extends SimpleBaseFlow implements SimpleFlow.UpdateBuilder<ChatMessageState> {
+    public static class Reply extends SimpleBaseFlow<SignedTransaction> implements SimpleFlow.UpdateBuilder<ChatMessageState> {
 
         private final UniqueIdentifier id;
         private final String message;
@@ -97,7 +97,7 @@ public class ChatMessageFlow {
 
     @InitiatingFlow(version = 2)
     @StartableByRPC
-    public static class Delete extends SimpleBaseFlow implements SimpleFlow.Delete<ChatMessageState> {
+    public static class Delete extends SimpleBaseFlow<SignedTransaction> implements SimpleFlow.Delete<ChatMessageState> {
 
         private final UniqueIdentifier id;
         public Delete(UniqueIdentifier id) {

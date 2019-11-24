@@ -16,7 +16,7 @@ public class E178EventFlow {
 
     @InitiatingFlow(version = 2)
     @StartableByRPC
-    public static class Request extends SimpleBaseFlow implements SimpleFlow.Create<E178EventState> {
+    public static class Request extends SimpleBaseFlow<SignedTransaction> implements SimpleFlow.Create<E178EventState> {
 
         private final String stammNr;
         private final Party leasing;
@@ -43,7 +43,7 @@ public class E178EventFlow {
 
     @InitiatingFlow(version = 2)
     @StartableByRPC
-    public static class Issue extends SimpleBaseFlow implements SimpleFlow.Update<E178EventState> {
+    public static class Issue extends SimpleBaseFlow<SignedTransaction> implements SimpleFlow.Update<E178EventState> {
 
         private final UniqueIdentifier id;
         private final String state;
@@ -79,7 +79,7 @@ public class E178EventFlow {
 
     @InitiatingFlow(version = 2)
     @StartableByRPC
-    public static class RequestInsurance extends SimpleBaseFlow implements SimpleFlow.Update<E178EventState> {
+    public static class RequestInsurance extends SimpleBaseFlow<SignedTransaction> implements SimpleFlow.Update<E178EventState> {
 
         private final UniqueIdentifier id;
         private final Party insurer;
@@ -108,7 +108,7 @@ public class E178EventFlow {
 
     @InitiatingFlow(version = 2)
     @StartableByRPC
-    public static class Insure extends SimpleBaseFlow implements SimpleFlow.Update<E178EventState> {
+    public static class Insure extends SimpleBaseFlow<SignedTransaction> implements SimpleFlow.Update<E178EventState> {
 
         private final UniqueIdentifier id;
 
@@ -134,7 +134,7 @@ public class E178EventFlow {
 
     @InitiatingFlow(version = 2)
     @StartableByRPC
-    public static class Cancel extends SimpleBaseFlow implements SimpleFlow.Update<E178EventState> {
+    public static class Cancel extends SimpleBaseFlow<SignedTransaction> implements SimpleFlow.Update<E178EventState> {
 
         private final UniqueIdentifier id;
 
@@ -158,7 +158,7 @@ public class E178EventFlow {
 
     @InitiatingFlow(version = 2)
     @StartableByRPC
-    public static class Register extends SimpleBaseFlow implements SimpleFlow.Update<E178EventState> {
+    public static class Register extends SimpleBaseFlow<SignedTransaction> implements SimpleFlow.Update<E178EventState> {
 
         private final UniqueIdentifier id;
 
@@ -185,7 +185,7 @@ public class E178EventFlow {
 
     @InitiatingFlow(version = 2)
     @StartableByRPC
-    public static class Delete extends SimpleBaseFlow implements SimpleFlow.Delete<E178EventState> {
+    public static class Delete extends SimpleBaseFlow<SignedTransaction> implements SimpleFlow.Delete<E178EventState> {
 
         private final UniqueIdentifier id;
 

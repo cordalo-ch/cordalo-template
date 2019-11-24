@@ -4,18 +4,23 @@ import ch.cordalo.corda.common.states.CordaloLinearState;
 import ch.cordalo.corda.common.states.Parties;
 import ch.cordalo.template.contracts.CarContract;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.collect.Lists;
 import net.corda.core.contracts.BelongsToContract;
 import net.corda.core.contracts.UniqueIdentifier;
 import net.corda.core.identity.Party;
+import net.corda.core.schemas.MappedSchema;
+import net.corda.core.schemas.PersistentState;
+import net.corda.core.schemas.QueryableState;
 import net.corda.core.serialization.ConstructorForDeserialization;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @BelongsToContract(CarContract.class)
-public class CarState extends CordaloLinearState {
+public class CarState extends CordaloLinearState implements QueryableState {
 
     @NotNull
     private final String make;
@@ -113,5 +118,29 @@ public class CarState extends CordaloLinearState {
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), getMake(), getModel(), getType(), getStammNr(), getCreator(), getOwners());
+    }
+
+    @NotNull
+    @Override
+    public PersistentState generateMappedObject(@NotNull MappedSchema schema) {
+        if (schema != null) {
+            return new CarSchemaV1.PersistentCar(
+                    this.getLinearId().getId(),
+                    this.getMake(),
+                    this.getModel(),
+                    this.getType(),
+                    this.getStammNr(),
+                    this.getCreatorX500(),
+                    this.getOwnersX500().stream().collect(Collectors.joining("|"))
+            );
+        } else {
+            throw new IllegalArgumentException("Unrecognised schema "+schema);
+        }
+    }
+
+    @NotNull
+    @Override
+    public Iterable<MappedSchema> supportedSchemas() {
+        return Lists.newArrayList(new CarSchemaV1());
     }
 }

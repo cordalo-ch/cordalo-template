@@ -1,34 +1,69 @@
 package ch.cordalo.template.flows;
 
-import ch.cordalo.corda.common.contracts.StateMachine;
-import ch.cordalo.corda.common.flows.*;
-import ch.cordalo.corda.common.states.Parties;
+import ch.cordalo.corda.common.flows.FlowHelper;
+import ch.cordalo.corda.common.flows.ResponderBaseFlow;
+import ch.cordalo.corda.common.flows.SimpleBaseFlow;
+import ch.cordalo.corda.common.flows.SimpleFlow;
 import ch.cordalo.template.contracts.CarContract;
-import ch.cordalo.template.contracts.ServiceContract;
-import ch.cordalo.template.contracts.ServiceStateMachine;
+import ch.cordalo.template.states.CarSchemaV1;
 import ch.cordalo.template.states.CarState;
-import ch.cordalo.template.states.ServiceState;
 import co.paralleluniverse.fibers.Suspendable;
 import kotlin.Unit;
-import net.corda.core.contracts.CommandData;
 import net.corda.core.contracts.StateAndRef;
 import net.corda.core.contracts.UniqueIdentifier;
 import net.corda.core.flows.*;
 import net.corda.core.identity.Party;
+import net.corda.core.node.ServiceHub;
+import net.corda.core.node.services.Vault;
+import net.corda.core.node.services.vault.Builder;
+import net.corda.core.node.services.vault.CriteriaExpression;
+import net.corda.core.node.services.vault.FieldInfo;
+import net.corda.core.node.services.vault.QueryCriteria;
 import net.corda.core.transactions.SignedTransaction;
-import net.corda.core.transactions.TransactionBuilder;
-import net.corda.core.utilities.ProgressTracker;
-import net.corda.core.utilities.UntrustworthyData;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+import static net.corda.core.node.services.vault.QueryCriteriaUtils.getField;
+
 public class CarFlow {
+
+    @NotNull
+    @Suspendable
+    protected static QueryCriteria getStammNrQueryCriteria(String stammNr) throws FlowException {
+        QueryCriteria generalCriteria = new QueryCriteria.VaultQueryCriteria(Vault.StateStatus.UNCONSUMED);
+        FieldInfo stammNrField = null;
+        try {
+            stammNrField = getField("stammNr", CarSchemaV1.PersistentCar.class);
+        } catch (NoSuchFieldException e) {
+            throw new FlowException("error while getting stammNr fields", e);
+        }
+
+        CriteriaExpression stammNrCriteria = Builder.equal(stammNrField, stammNr);
+        QueryCriteria stammNrQuery = new QueryCriteria.VaultCustomQueryCriteria(stammNrCriteria);
+
+        return generalCriteria.and(stammNrQuery);
+    }
+
+    @NotNull
+    @Suspendable
+    protected static StateAndRef<CarState> getCarByStammNr(String stammNr, ServiceHub serviceHub) throws FlowException {
+        QueryCriteria query = getStammNrQueryCriteria(stammNr);
+        return new FlowHelper<CarState>(serviceHub)
+                .getLastStateByCriteria(CarState.class, query);
+    }
+    @NotNull
+    @Suspendable
+    protected static StateAndRef<CarState> getCarByLinearId(UniqueIdentifier id, ServiceHub serviceHub) throws FlowException {
+        return new FlowHelper<CarState>(serviceHub)
+                .getLastStateByLinearId(CarState.class, id);
+    }
+
+
 
     @InitiatingFlow(version = 2)
     @StartableByRPC
-    public static class Create extends SimpleBaseFlow implements SimpleFlow.Create<CarState> {
+    public static class Create extends SimpleBaseFlow<SignedTransaction> implements SimpleFlow.Create<CarState> {
 
         @NotNull
         private final UniqueIdentifier id;
@@ -68,7 +103,7 @@ public class CarFlow {
 
     @InitiatingFlow(version = 2)
     @StartableByRPC
-    public static class Update extends SimpleBaseFlow implements SimpleFlow.Update<CarState> {
+    public static class Update extends SimpleBaseFlow<SignedTransaction> implements SimpleFlow.Update<CarState> {
 
         @NotNull
         private final UniqueIdentifier id;
@@ -102,7 +137,7 @@ public class CarFlow {
 
     @InitiatingFlow(version = 2)
     @StartableByRPC
-    public static class Share extends SimpleBaseFlow implements SimpleFlow.Update<CarState> {
+    public static class Share extends SimpleBaseFlow<SignedTransaction> implements SimpleFlow.Update<CarState> {
 
         @NotNull
         private final UniqueIdentifier id;
@@ -131,7 +166,7 @@ public class CarFlow {
 
     @InitiatingFlow(version = 2)
     @StartableByRPC
-    public static class Search extends FlowLogic<CarState> {
+    public static class Search extends SimpleBaseFlow<CarState> {
 
         @NotNull
         private final UniqueIdentifier id;
@@ -149,11 +184,27 @@ public class CarFlow {
         @Suspendable
         @Override
         public CarState call() throws FlowException {
+            /* search on local vault if already shared */
+            StateAndRef<CarState> carByStammNr = getCarByStammNr(this.stammNr, this.getServiceHub());
+            if (carByStammNr != null) {
+                return carByStammNr.getState().getData();
+            }
+
+            /* initiate flow at counterparty to get LinearId from car after successful sharing within responder */
             FlowSession flowSession = this.initiateFlow(this.cardossier);
-            CarState car = flowSession.sendAndReceive(CarState.class, this.stammNr).unwrap(data -> {
-                return data;
+            UniqueIdentifier carLinearId = flowSession.sendAndReceive(UniqueIdentifier.class, this.stammNr).unwrap(id -> {
+                return id;
             });
-            return car;
+            /* car not found and not synched */
+            if (carLinearId == null) {
+                return null;
+            }
+            /* car found and synched with linear Id */
+            StateAndRef<CarState> lastStateByLinearId = getCarByLinearId(carLinearId, this.getServiceHub());
+            if (lastStateByLinearId == null) {
+                throw new FlowException("Car not found in vault after search & share id="+carLinearId);
+            }
+            return lastStateByLinearId.getState().getData();
         }
 
     }
@@ -203,7 +254,6 @@ public class CarFlow {
 
 
     /* running in counter party node */
-
     @InitiatedBy(CarFlow.Search.class)
     public static class SearchResponder extends ResponderBaseFlow<CarState> {
 
@@ -211,27 +261,32 @@ public class CarFlow {
             super(otherFlow);
         }
 
+
         @Suspendable
         @Override
         public Unit call() throws FlowException {
+
             /* receive the requested StammNr from sender */
             String stammNr = this.otherFlow.receive(String.class).unwrap(data -> {
                 return data;
             });
+
             /* search unconsumed car by StammNr */
-            StateAndRef<CarState> lastStateRef = new FlowHelper<CarState>(this.getServiceHub()).getLastState(CarState.class);
-            if (lastStateRef == null) {
-                throw new FlowException("no car found in vault with stammNr "+stammNr);
+            StateAndRef<CarState> carByStammNr = getCarByStammNr(stammNr, this.getServiceHub());
+            if (carByStammNr == null) {
+                this.otherFlow.send(null);
+                return null;
             }
-            CarState car = lastStateRef.getState().getData();
 
+            CarState car = carByStammNr.getState().getData();
             /* try to share officially with corda the car and send back */
-            // Share shareFlow = new Share(car.getLinearId(), this.otherFlow.getCounterparty());
-            // subFlow(shareFlow);
+            Share shareFlow = new Share(car.getLinearId(), this.otherFlow.getCounterparty());
+            subFlow(shareFlow);
 
-            /* send back car to counter party */
-            this.otherFlow.send(car);
+            /* send back car linear id to counter party */
+            this.otherFlow.send(car.getLinearId());
             return null;
         }
     }
+
 }
