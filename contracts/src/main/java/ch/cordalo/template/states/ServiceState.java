@@ -90,18 +90,6 @@ public class ServiceState extends CordaloLinearState {
     public Map<String, Object> getServiceData() {
         return serviceData;
     }
-    public List<AbstractParty> getCounterParties(Party me) {
-        if (me != null) {
-            if (this.getServiceProvider() != null) {
-                if (this.getInitiator().equals(me)) return Arrays.asList(this.serviceProvider);
-                if (this.getServiceProvider().equals(me)) return Arrays.asList(this.initiator);
-            } else {
-                if (this.getInitiator().equals(me)) return Collections.EMPTY_LIST;
-            }
-        }
-        return Collections.EMPTY_LIST;
-    }
-
 
     /* actions CREATE */
     public static ServiceState create(@NotNull UniqueIdentifier linearId, @NotNull String serviceName, @NotNull Party initiator, Map<String, Object> serviceData) {

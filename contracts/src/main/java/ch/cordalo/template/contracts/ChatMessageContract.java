@@ -2,6 +2,7 @@ package ch.cordalo.template.contracts;
 
 import ch.cordalo.corda.common.contracts.StateVerifier;
 import ch.cordalo.template.states.ChatMessageState;
+import ch.cordalo.template.states.ServiceState;
 import net.corda.core.contracts.CommandData;
 import net.corda.core.contracts.Contract;
 import net.corda.core.transactions.LedgerTransaction;
@@ -59,26 +60,24 @@ public class ChatMessageContract implements Contract {
             @Override
             public void verify(LedgerTransaction tx, StateVerifier verifier) throws IllegalArgumentException {
                 requireThat(req -> {
-                    ChatMessageState message = verifier
+                    verifier
                             .input()
                             .one()
-                            .one(ChatMessageState.class)
-                            .object();
-                    ChatMessageState origMessage = verifier
+                            .one(ChatMessageState.class);
+                    verifier
                             .output()
-                            .count(2)
-                            .filterWhere(
-                                x -> ((ChatMessageState)x).getLinearId().equals(message.getLinearId()))
-                            .one()
+                            .count(2);
+
+                    ChatMessageState refMessage = verifier
+                            .intersection(ChatMessageState.class)
+                            .one("1 input and 1 output the same - used as a reference")
                             .one(ChatMessageState.class)
                             .object();
-                    req.using("input and output original message must identical", message.equals(origMessage));
 
                     ChatMessageState reply = verifier
                             .output()
                             .count(2)
-                            .filterWhere(
-                                    x -> message.getLinearId().equals(((ChatMessageState)x).getBaseMessageId()))
+                            .newOutput(ChatMessageState.class)
                             .one()
                             .one(ChatMessageState.class)
                             .isNotEmpty(ChatMessageState::getLinearId, "id must be provided")
@@ -87,9 +86,9 @@ public class ChatMessageContract implements Contract {
                             .isNotEmpty(ChatMessageState::getMessage, "message cannot be empty")
                             .isNotEqual(ChatMessageState::getSender, ChatMessageState::getReceiver, "selfie-messages are not allowed")
                             .object();
-                    req.using("receiver must be sender", reply.getReceiver().equals(message.getSender()));
-                    req.using("sender must be receiver", reply.getSender().equals(message.getReceiver()));
-                    req.using("reply base id must be id from input", reply.getBaseMessageId().equals(message.getLinearId()));
+                    req.using("receiver must be sender", reply.getReceiver().equals(refMessage.getSender()));
+                    req.using("sender must be receiver", reply.getSender().equals(refMessage.getReceiver()));
+                    req.using("reply base id must be id from input", reply.getBaseMessageId().equals(refMessage.getLinearId()));
                     return null;
                 });
             }

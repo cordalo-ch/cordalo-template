@@ -7,6 +7,7 @@ import ch.cordalo.template.contracts.ChatMessageContract;
 import ch.cordalo.template.states.ChatMessageState;
 import co.paralleluniverse.fibers.Suspendable;
 import kotlin.Unit;
+import net.corda.core.contracts.CommandData;
 import net.corda.core.contracts.StateAndRef;
 import net.corda.core.contracts.UniqueIdentifier;
 import net.corda.core.flows.*;
@@ -73,8 +74,7 @@ public class ChatMessageFlow {
             return this.simpleFlow_UpdateBuilder(
                     ChatMessageState.class,
                     this.id,
-                    this,
-                    new ChatMessageContract.Commands.Reply());
+                    this);
         }
 
         @Override
@@ -87,6 +87,13 @@ public class ChatMessageFlow {
         }
 
         @Override
+        @Suspendable
+        public CommandData getCommand(StateAndRef<ChatMessageState> stateRef, ChatMessageState state, ChatMessageState newState) throws FlowException {
+            return new ChatMessageContract.Commands.Reply();
+        }
+
+        @Override
+        @Suspendable
         public void updateBuilder(TransactionBuilder transactionBuilder, StateAndRef<ChatMessageState> stateRef, ChatMessageState state, ChatMessageState newState) throws FlowException {
             transactionBuilder.addInputState(stateRef);
             transactionBuilder.addOutputState(state);

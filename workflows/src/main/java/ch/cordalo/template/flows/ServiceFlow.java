@@ -6,6 +6,7 @@ import ch.cordalo.corda.common.flows.*;
 import ch.cordalo.corda.common.states.Parties;
 import ch.cordalo.template.contracts.ServiceContract;
 import ch.cordalo.template.contracts.ServiceStateMachine;
+import ch.cordalo.template.states.CarState;
 import ch.cordalo.template.states.ServiceState;
 import co.paralleluniverse.fibers.Suspendable;
 import kotlin.Unit;
@@ -123,7 +124,7 @@ public class ServiceFlow {
 
     @InitiatingFlow(version = 2)
     @StartableByRPC
-    public static class Share extends BaseFlow<SignedTransaction> {
+    public static class Share extends SimpleBaseFlow<SignedTransaction> implements SimpleFlow.Update<ServiceState> {
         private final UniqueIdentifier id;
         private final Party serviceProvider;
 
@@ -132,50 +133,18 @@ public class ServiceFlow {
             this.serviceProvider = serviceProvider;
         }
 
-        @Override
-        public ProgressTracker getProgressTracker() {
-            return progress.PROGRESSTRACKER_SYNC;
-        }
-
-
         @Suspendable
         @Override
         public SignedTransaction call() throws FlowException {
-            getProgressTracker().setCurrentStep(progress.PREPARATION);
-            // We get a reference to our own identity.
-            Party me = getOurIdentity();
-
-            /* ============================================================================
-             *         TODO 1 - Create our object !
-             * ===========================================================================*/
-
-            StateAndRef<ServiceState> serviceRef = new FlowHelper<ServiceState>(this.getServiceHub()).getLastStateByLinearId(ServiceState.class, this.id);
-            if (serviceRef == null) {
-                throw new FlowException("service with id "+this.id+" not found");
-            }
-            ServiceState service = this.getStateByRef(serviceRef);
-
-            // We create our new TokenState.
-            ServiceState sharedService = service.share(this.serviceProvider);
-
-            /* ============================================================================
-             *      TODO 3 - Build our issuance transaction to update the ledger!
-             * ===========================================================================*/
-            // We build our transaction.
-            getProgressTracker().setCurrentStep(progress.BUILDING);
-            TransactionBuilder transactionBuilder = getTransactionBuilderSignedByParticipants(
-                    sharedService,
-                    new ServiceContract.Commands.Share());
-            transactionBuilder.addInputState(serviceRef);
-            transactionBuilder.addOutputState(sharedService);
-
-            /* ============================================================================
-             *          TODO 2 - Write our contract to control issuance!
-             * ===========================================================================*/
-            // We check our transaction is valid based on its contracts.
-            return signSyncCollectAndFinalize(this.serviceProvider, transactionBuilder);
+            return this.simpleFlow_Update(
+                    ServiceState.class, this.id,this,new ServiceContract.Commands.Share());
         }
 
+        @Override
+        @Suspendable
+        public ServiceState update(ServiceState state) throws FlowException {
+            return state.share(this.serviceProvider);
+        }
     }
 
 
@@ -183,7 +152,7 @@ public class ServiceFlow {
 
     @InitiatingFlow(version = 2)
     @StartableByRPC
-    public static class Action extends BaseFlow<SignedTransaction> {
+    public static class Action extends SimpleBaseFlow<SignedTransaction> implements SimpleFlow.UpdateBuilder<ServiceState> {
         private final UniqueIdentifier id;
         private final String action;
 
@@ -192,56 +161,37 @@ public class ServiceFlow {
             this.action = action;
         }
 
-        @Override
-        public ProgressTracker getProgressTracker() {
-            return progress.PROGRESSTRACKER_SYNC;
-        }
-
-        private StateMachine.StateTransition getTransition() {
-            return ServiceStateMachine.StateTransition(this.action);
-        }
-
         @Suspendable
         @Override
         public SignedTransaction call() throws FlowException {
-            getProgressTracker().setCurrentStep(progress.PREPARATION);
-            // We get a reference to our own identity.
-            Party me = getOurIdentity();
+            return this.simpleFlow_UpdateBuilder(ServiceState.class, this.id, this);
+        }
 
-            /* ============================================================================
-             *         TODO 1 - Create our object !
-             * ===========================================================================*/
-
-            StateAndRef<ServiceState> serviceRef = new FlowHelper<ServiceState>(this.getServiceHub()).getLastStateByLinearId(ServiceState.class, this.id);
-            if (serviceRef == null) {
-                throw new FlowException("service with id "+this.id+" not found");
-            }
-            ServiceState service = this.getStateByRef(serviceRef);
-
-            // We create our new TokenState.
-            ServiceState newService = service.withAction(this.getTransition());
-
-            /* ============================================================================
-             *      TODO 3 - Build our issuance transaction to update the ledger!
-             * ===========================================================================*/
-            // We build our transaction.
-            getProgressTracker().setCurrentStep(progress.BUILDING);
-            CommandData command = null;
-            if (newService.getStateObject().isLaterState(ServiceStateMachine.State("SHARED"))) {
-                command = new ServiceContract.Commands.ActionAfterShare(this.action);
-            } else if (!newService.getState().equals(ServiceStateMachine.State("SHARED"))) {
-                command = new ServiceContract.Commands.ActionBeforeShare(this.action);
+        @Override
+        @Suspendable
+        public CommandData getCommand(StateAndRef<ServiceState> stateRef, ServiceState state, ServiceState newState) throws FlowException {
+            if (newState.getStateObject().isLaterState(ServiceStateMachine.State("SHARED"))) {
+                return new ServiceContract.Commands.ActionAfterShare(this.action);
+            } else if (!newState.getState().equals(ServiceStateMachine.State("SHARED"))) {
+                return new ServiceContract.Commands.ActionBeforeShare(this.action);
             } else {
                 throw new FlowException("Sharing cannot be executed as action");
             }
-            TransactionBuilder transactionBuilder = getTransactionBuilderSignedByParticipants(
-                    newService,
-                    command);
-            transactionBuilder.addInputState(serviceRef);
-            transactionBuilder.addOutputState(newService);
-            return signSyncCollectAndFinalize(new Parties(service, newService), transactionBuilder);
         }
 
+        @Override
+        @Suspendable
+        public void updateBuilder(TransactionBuilder transactionBuilder, StateAndRef<ServiceState> stateRef, ServiceState state, ServiceState newState) throws FlowException {
+            transactionBuilder.addInputState(stateRef);
+            transactionBuilder.addOutputState(newState);
+        }
+
+        @Override
+        @Suspendable
+        public ServiceState update(ServiceState state) throws FlowException {
+            return state.withAction(
+                    ServiceStateMachine.StateTransition(this.action));
+        }
     }
 
 

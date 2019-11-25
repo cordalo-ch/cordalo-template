@@ -75,19 +75,6 @@ public class CarFlowTests extends CordaloTemplateBaseFlowTests {
     }
 
 
-    @Suspendable
-    public <T extends ContractState> T startFlowAndState(CordaNodeEnvironment env, FlowLogic<T> flow) throws FlowException {
-        CordaFuture<T> future = env.node.startFlow(flow);
-        env.network.runNetwork();
-        try {
-            return future.get();
-        } catch (InterruptedException var5) {
-            throw new FlowException("InterruptedException while start flow", var5);
-        } catch (ExecutionException var6) {
-            throw new FlowException("ExecutionException while start flow", var6);
-        }
-    }
-
     @Test
     public void search_car() throws Exception {
         CarState car = this.newCar(companyC, "123.123.999","Audi", "A8");

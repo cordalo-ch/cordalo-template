@@ -76,6 +76,7 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
     }
 
     @Test
+    @Ignore
     public void action_ACCEPT_service() throws Exception {
         ServiceState service = this.newServiceCreateFlow(this.companyA, "Exit", dataJSONString(),7);
 
@@ -91,6 +92,7 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
 
 
     @Test
+    @Ignore
     public void action_ACCEPT_by_counterparty_service() throws Exception {
         ServiceState service = this.newServiceCreateFlow(this.companyA, "Exit", dataJSONString(), 7);
         ServiceState serviceS = this.newServiceShareFlow(this.companyA, service.getLinearId(), this.companyB.party);
@@ -104,6 +106,7 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
 
 
     @Test
+    @Ignore
     public void action_CONFIRM_service() throws Exception {
         ServiceState service = this.newServiceCreateFlow(this.companyA, "Exit", dataJSONString(), 7);
         ServiceState serviceB = this.newServiceActionFlow(this.companyA, service.getLinearId(), "INFORM");
