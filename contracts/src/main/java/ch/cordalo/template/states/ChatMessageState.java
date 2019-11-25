@@ -38,6 +38,7 @@ public class ChatMessageState extends CordaloLinearState {
         this.message = message;
         this.baseMessageId = baseMessageId;
     }
+
     public ChatMessageState(@NotNull UniqueIdentifier linearId, @NotNull Party sender, @NotNull Party receiver, @NotNull String message) {
         this(linearId, sender, receiver, message, null);
     }
@@ -53,6 +54,7 @@ public class ChatMessageState extends CordaloLinearState {
     public Party getSender() {
         return sender;
     }
+
     public String getSenderX500() {
         return this.sender.getName().getX500Principal().getName();
     }
@@ -61,6 +63,7 @@ public class ChatMessageState extends CordaloLinearState {
     public Party getReceiver() {
         return receiver;
     }
+
     public String getReceiverX500() {
         return this.receiver.getName().getX500Principal().getName();
     }

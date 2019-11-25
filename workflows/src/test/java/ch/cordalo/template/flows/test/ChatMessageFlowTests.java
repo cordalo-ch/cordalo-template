@@ -27,14 +27,16 @@ public class ChatMessageFlowTests extends CordaloTemplateBaseFlowTests {
     }
 
 
-    protected ChatMessageState newMessageFlow(CordaNodeEnvironment from, CordaNodeEnvironment to, String message) throws  FlowException {
+    protected ChatMessageState newMessageFlow(CordaNodeEnvironment from, CordaNodeEnvironment to, String message) throws FlowException {
         FlowLogic<SignedTransaction> flow = new ChatMessageFlow.Send(to.party, message);
         return this.startFlowAndResult(from, flow, ChatMessageState.class);
     }
+
     protected ChatMessageState newJokeMessageFlow(CordaNodeEnvironment from, CordaNodeEnvironment to) throws FlowException {
         FlowLogic<SignedTransaction> flow = new ChatMessageFlow.Send(to.party);
         return this.startFlowAndResult(from, flow, ChatMessageState.class);
     }
+
     protected StateVerifier newReplyFlow(CordaNodeEnvironment from, UniqueIdentifier id, String message) throws FlowException {
         FlowLogic<SignedTransaction> flow = new ChatMessageFlow.Reply(id, message);
         return this.startFlow(from, flow);
@@ -42,9 +44,10 @@ public class ChatMessageFlowTests extends CordaloTemplateBaseFlowTests {
 
     @Test
     public void send_message() throws Exception {
-        ChatMessageState message = this.newMessageFlow(companyA, companyB,"hello world");
+        ChatMessageState message = this.newMessageFlow(companyA, companyB, "hello world");
         Assert.assertEquals("message text", "hello world", message.getMessage());
     }
+
     @Test
     public void send_joke_message() throws Exception {
         ChatMessageState message = this.newJokeMessageFlow(companyA, companyB);
@@ -54,7 +57,7 @@ public class ChatMessageFlowTests extends CordaloTemplateBaseFlowTests {
 
     @Test
     public void reply_message() throws Exception {
-        ChatMessageState message = this.newMessageFlow(companyA, companyB,"hello");
+        ChatMessageState message = this.newMessageFlow(companyA, companyB, "hello");
         Assert.assertEquals("chat message", "hello", message.getMessage());
 
         StateVerifier verifier = this.newReplyFlow(companyB, message.getLinearId(), "world");

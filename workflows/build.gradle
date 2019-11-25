@@ -52,7 +52,7 @@ dependencies {
     testCompile "$corda_release_group:corda-node-driver:$corda_release_version"
     testCompile "ch.cordalo:corda-common-test:$cordalo_version"
     testCompile project(":contracts").sourceSets.test.output
-    
+
     // CorDapp dependencies.
     cordapp "ch.cordalo:corda-ext:$cordalo_version"
     cordapp "ch.cordalo:corda-common-contracts:$cordalo_version"

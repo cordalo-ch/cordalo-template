@@ -48,13 +48,12 @@ function getServiceData() {
 }
 
 
-
 function onServiceSelectionChanged(select) {
     if ($(select).val() !== '') {
         var url = $(select).val();
         var action = url.split("/").reverse()[0];
 
-        var data = action !== "SHARE" ? "": "service-provider=" + encodeURI(this.get_random_peer());
+        var data = action !== "SHARE" ? "" : "service-provider=" + encodeURI(this.get_random_peer());
         animationOn();
         $.ajax(
             {
@@ -101,7 +100,9 @@ function show_services(tagName, result) {
             {
                 title: "Partners", name: "state", type: "text", itemTemplate: function (value, item) {
                     i = i + 1;
-                    var x500_O = participantsWithoutMe(item.state.participantsX500).map(x => X500toO(x));
+                    var x500_O = participantsWithoutMe(item.state.participantsX500).map(x = > X500toO(x)
+                )
+                    ;
                     return strongS(i) + x500_O.join(",") + strongE(i);
                 }
             },

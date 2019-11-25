@@ -16,7 +16,7 @@ public class E178EventContract implements Contract {
     @Override
     public void verify(LedgerTransaction tx) throws IllegalArgumentException {
         StateVerifier verifier = StateVerifier.fromTransaction(tx, E178EventContract.Commands.class);
-        E178EventContract.Commands commandData = (E178EventContract.Commands)verifier.command();
+        E178EventContract.Commands commandData = (E178EventContract.Commands) verifier.command();
         commandData.verify(tx, verifier);
     }
 
@@ -192,7 +192,6 @@ public class E178EventContract implements Contract {
         }
 
 
-
         // regulator  --> update same e178
         //      set status to registered
         class Register implements E178EventContract.Commands {
@@ -241,7 +240,6 @@ public class E178EventContract implements Contract {
         }
 
 
-
         // any  --> update same e178
         //      set status to canceled
         class Cancel implements E178EventContract.Commands {
@@ -284,8 +282,8 @@ public class E178EventContract implements Contract {
                 });
             }
         }
-        
-        
+
+
         class Delete implements E178EventContract.Commands {
             @Override
             public void verify(LedgerTransaction tx, StateVerifier verifier) throws IllegalArgumentException {

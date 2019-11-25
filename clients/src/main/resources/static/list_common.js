@@ -7,12 +7,12 @@ if (cordaloEnv) {
 
 function mapX500(x500) {
     x500_map = {
-        "O=Notary,L=Bern,ST=BE,C=CH" :          "O=Notary, L=Bern, ST=BE,C=CH",
-        "O=Company-A,L=Zurich,ST=ZH,C=CH" :     "O=Retail, L=Zurich, ST=ZH,C=CH",
-        "O=Company-B,L=Winterthur,ST=ZH,C=CH" : "O=Leasing, L=Cham, ST=ZG,C=CH",
-        "O=Company-C,L=Zug,ST=ZG,C=CH" :        "O=Regulator, L=Aarau, ST=AG,C=CH",
-        "O=Company-D,L=Geneva,ST=ZH,C=CH" :     "O=Insurance-A, L=Winterthur, ST=ZH,C=CH",
-        "O=Company-E,L=Uster,ST=ZH,C=CH" :      "O=Insurance-M, L=Bern,S T=BE,C=CH"
+        "O=Notary,L=Bern,ST=BE,C=CH": "O=Notary, L=Bern, ST=BE,C=CH",
+        "O=Company-A,L=Zurich,ST=ZH,C=CH": "O=Retail, L=Zurich, ST=ZH,C=CH",
+        "O=Company-B,L=Winterthur,ST=ZH,C=CH": "O=Leasing, L=Cham, ST=ZG,C=CH",
+        "O=Company-C,L=Zug,ST=ZG,C=CH": "O=Regulator, L=Aarau, ST=AG,C=CH",
+        "O=Company-D,L=Geneva,ST=ZH,C=CH": "O=Insurance-A, L=Winterthur, ST=ZH,C=CH",
+        "O=Company-E,L=Uster,ST=ZH,C=CH": "O=Insurance-M, L=Bern,S T=BE,C=CH"
     }
     return x500_map[x500];
 }

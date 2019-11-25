@@ -54,6 +54,7 @@ public class E178EventFlow {
             this.state = state;
             this.regulator = regulator;
         }
+
         public Issue(UniqueIdentifier id, Party regulator) {
             this(id, null, regulator);
         }
@@ -72,7 +73,7 @@ public class E178EventFlow {
                 throw new FlowException("issue e178 must be done by leasing company");
             }
             return (this.state != null) ?
-                    state.issue(this.state, this.regulator)  : state.issue(this.regulator);
+                    state.issue(this.state, this.regulator) : state.issue(this.regulator);
         }
     }
 
@@ -207,12 +208,12 @@ public class E178EventFlow {
     }
 
 
-
     @InitiatedBy(E178EventFlow.Request.class)
     public static class RequestResponder extends ResponderBaseFlow<E178EventState> {
         public RequestResponder(FlowSession otherFlow) {
             super(otherFlow);
         }
+
         @Suspendable
         @Override
         public Unit call() throws FlowException {
@@ -226,6 +227,7 @@ public class E178EventFlow {
         public IssueResponder(FlowSession otherFlow) {
             super(otherFlow);
         }
+
         @Suspendable
         @Override
         public Unit call() throws FlowException {
@@ -239,6 +241,7 @@ public class E178EventFlow {
         public RequestInsuranceResponder(FlowSession otherFlow) {
             super(otherFlow);
         }
+
         @Suspendable
         @Override
         public Unit call() throws FlowException {
@@ -252,6 +255,7 @@ public class E178EventFlow {
         public InsureResponder(FlowSession otherFlow) {
             super(otherFlow);
         }
+
         @Suspendable
         @Override
         public Unit call() throws FlowException {
@@ -265,6 +269,7 @@ public class E178EventFlow {
         public RegisterResponder(FlowSession otherFlow) {
             super(otherFlow);
         }
+
         @Suspendable
         @Override
         public Unit call() throws FlowException {
@@ -277,6 +282,7 @@ public class E178EventFlow {
         public DeleteResponder(FlowSession otherFlow) {
             super(otherFlow);
         }
+
         @Suspendable
         @Override
         public Unit call() throws FlowException {
@@ -289,6 +295,7 @@ public class E178EventFlow {
         public CancelResponder(FlowSession otherFlow) {
             super(otherFlow);
         }
+
         @Suspendable
         @Override
         public Unit call() throws FlowException {

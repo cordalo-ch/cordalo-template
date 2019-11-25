@@ -18,13 +18,14 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
     }
 
 
-
     public static String dataJSONString() {
         return "{ \"service-industry\" : \"manufacturing\", \"flags\" : { \"valid\" : true, \"addOn\" : false } }";
     }
+
     public static String dataUpdateJSONString() {
         return "{ \"service-industry\" : \"manufacturing\", \"flags\" : { \"valid\" : true, \"addOn\" : true, \"ADD-ON1\" : true } }";
     }
+
     public static String dataUpdateAfterShareJSONString() {
         return "{ \"service-industry\" : \"manufacturing\", \"flags\" : { \"valid\" : true, \"addOn\" : true, \"ADD-ON1\" : true, \"UW\" : true } }";
     }
@@ -57,7 +58,6 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
     }
 
 
-
     @Test
     public void share_service() throws Exception {
         ServiceState service = this.newServiceCreateFlow(this.companyA, "Exit", dataJSONString(), 7);
@@ -78,7 +78,7 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
     @Test
     @Ignore
     public void action_ACCEPT_service() throws Exception {
-        ServiceState service = this.newServiceCreateFlow(this.companyA, "Exit", dataJSONString(),7);
+        ServiceState service = this.newServiceCreateFlow(this.companyA, "Exit", dataJSONString(), 7);
 
         ServiceState serviceS = this.newServiceShareFlow(this.companyA, service.getLinearId(), this.companyB.party);
         Assert.assertEquals("state is SHARED", "SHARED", serviceS.getState().toString());
@@ -88,7 +88,6 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
         Assert.assertEquals("Service2 must be service provider", companyB.party, serviceA.getServiceProvider());
         Assert.assertEquals("state is ACCEPTED", "ACCEPTED", serviceA.getState().toString());
     }
-
 
 
     @Test
@@ -114,7 +113,6 @@ public class ServiceFlowTests extends CordaloTemplateBaseFlowTests {
         Assert.assertEquals("addOn be false", "false", serviceC.getData("flags.addOn"));
         Assert.assertEquals("state is CONFIRMED", "CONFIRMED", serviceC.getState().toString());
     }
-
 
 
 }

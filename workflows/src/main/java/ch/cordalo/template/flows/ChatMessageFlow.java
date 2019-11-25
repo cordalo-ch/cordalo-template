@@ -30,6 +30,7 @@ public class ChatMessageFlow {
             this.to = to;
             this.message = message;
         }
+
         public Send(Party to) {
             this(to, ChatMessageFlow.randomMessage());
         }
@@ -48,7 +49,7 @@ public class ChatMessageFlow {
         @Suspendable
         public ChatMessageState create() {
             return new ChatMessageState(
-                    new UniqueIdentifier(), this.getOurIdentity(),  this.to, this.message);
+                    new UniqueIdentifier(), this.getOurIdentity(), this.to, this.message);
         }
     }
 
@@ -63,6 +64,7 @@ public class ChatMessageFlow {
             this.id = id;
             this.message = message;
         }
+
         public Reply(UniqueIdentifier id) {
             this(id, ChatMessageFlow.randomMessage());
         }
@@ -107,6 +109,7 @@ public class ChatMessageFlow {
     public static class Delete extends SimpleBaseFlow<SignedTransaction> implements SimpleFlow.Delete<ChatMessageState> {
 
         private final UniqueIdentifier id;
+
         public Delete(UniqueIdentifier id) {
             this.id = id;
         }
@@ -271,9 +274,11 @@ public class ChatMessageFlow {
             "How did the Java programmer get rich?\nThey inherited a factory.",
             "Why did the developer quit his job?\nHe didn't get ar-rays.",
             "Quantum computer jokes are both\n funny and not funny at the same time."};
+
     public static String randomJoke() {
         return jokes[new Random().nextInt(jokes.length)];
     }
+
     public static String randomMessageOfTheDay() {
         return messageOfTheDay[new Random().nextInt(messageOfTheDay.length)];
     }

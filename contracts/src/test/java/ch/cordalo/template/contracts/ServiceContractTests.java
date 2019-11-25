@@ -27,9 +27,11 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
                 new UniqueIdentifier(), "ServiceA", this.companyA.party,
                 JsonHelper.convertStringToJson(ServiceStateTests.dataJSONString()));
     }
+
     private ServiceState updateService(ServiceState service) {
         return service.update(JsonHelper.convertStringToJson(ServiceStateTests.dataUpdateJSONString()));
     }
+
     private ServiceState shareService(ServiceState service, @NotNull Party serviceProvider) {
         return service.share(serviceProvider);
     }
@@ -37,6 +39,7 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
     private ServiceState withAction(ServiceState service, StateMachine.StateTransition transition) {
         return service.withAction(transition);
     }
+
     private ServiceState withAction(ServiceState service, String transition) {
         return service.withAction(ServiceStateMachine.StateTransition(transition));
     }
@@ -55,6 +58,7 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
                 serviceState.getServiceProvider(),
                 serviceState.getPrice());
     }
+
     private ServiceState setInvalidStateProvider(ServiceState serviceState, StateMachine.State newState, Party newProvider) {
         return new ServiceState(
                 serviceState.getLinearId(),
@@ -249,7 +253,6 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
     }
 
 
-
     @Test
     public void service_share_direct_failed() {
         transaction(companyA.ledgerServices, tx -> {
@@ -371,7 +374,6 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
     }
 
 
-
     @Test
     public void service_update_shared_updated() {
         transaction(companyA.ledgerServices, tx -> {
@@ -400,7 +402,6 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
     }
 
 
-
     @Test
     public void service_decline() {
         transaction(companyA.ledgerServices, tx -> {
@@ -413,7 +414,6 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
             return null;
         });
     }
-
 
 
     @Test
@@ -472,7 +472,6 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
     }
 
 
-
     @Test
     public void service_accept() {
         transaction(companyA.ledgerServices, tx -> {
@@ -485,7 +484,6 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
             return null;
         });
     }
-
 
 
     @Test
@@ -542,8 +540,6 @@ public class ServiceContractTests extends CordaloTemplateBaseTests {
             return null;
         });
     }
-
-
 
 
 }

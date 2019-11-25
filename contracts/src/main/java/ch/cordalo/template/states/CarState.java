@@ -62,11 +62,15 @@ public class CarState extends CordaloLinearState implements QueryableState {
     public Party getCreator() {
         return creator;
     }
-    public String getCreatorX500() { return Parties.partyToX500(this.creator); }
+
+    public String getCreatorX500() {
+        return Parties.partyToX500(this.creator);
+    }
 
     public List<Party> getOwners() {
         return owners;
     }
+
     public List<String> getOwnersX500() {
         return Parties.fromParties(this.owners).getPartiesX500();
     }
@@ -134,7 +138,7 @@ public class CarState extends CordaloLinearState implements QueryableState {
                     this.getOwnersX500().stream().collect(Collectors.joining("|"))
             );
         } else {
-            throw new IllegalArgumentException("Unrecognised schema "+schema);
+            throw new IllegalArgumentException("Unrecognised schema " + schema);
         }
     }
 

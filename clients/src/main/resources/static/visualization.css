@@ -3,11 +3,12 @@
     vertical-align: top;
     background-color: azure;
 }
-.jsgrid-header-row>.jsgrid-header-cell {
+
+.jsgrid-header-row > .jsgrid-header-cell {
     background-color: lightcyan;
 }
 
-.jsgrid-row>.jsgrid-cell {
+.jsgrid-row > .jsgrid-cell {
     background-color: azure;
 }
 
@@ -62,15 +63,17 @@ h1 {
     font-weight: bold;
     margin: 1px;
 }
+
 h3 {
     font-size: 1.17em;
     font-weight: bold;
     margin: 1em 0.1em 0.1em 0.1em;
 }
 
-.jsgrid  {
+.jsgrid {
     font-size: 12px;
 }
+
 .jsgrid-nodata-row .jsgrid-cell {
     padding: 0.2em 0;
 }

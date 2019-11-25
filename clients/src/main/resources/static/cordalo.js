@@ -1,20 +1,21 @@
-var cordaloEnv = (function() {
+var cordaloEnv = (function () {
     function _GETvar(parameterName) {
         var result = null,
-        tmp = [];
+            tmp = [];
         location.search
             .substr(1)
             .split("&")
             .forEach(function (item) {
                 tmp = item.split("=");
                 if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
-        });
+            });
         return result;
     };
+
     function _GetMainUrl() {
         if (port != null) {
             if (local != null) {
-                return "http://"+local+":"+port
+                return "http://" + local + ":" + port
             } else {
                 return document.location.protocol + "//" + document.location.hostname + ":" + port
             }
@@ -22,10 +23,11 @@ var cordaloEnv = (function() {
             return document.location.protocol + "//" + document.location.hostname + ":" + document.location.port
         }
     }
+
     function init() {
-        jQuery.fn.fail = function(f) {
+        jQuery.fn.fail = function (f) {
             var o = $(this[0]) // This is the element
-            f("missing mock for "+o);
+            f("missing mock for " + o);
             return this; // This is needed so other functions can keep chaining off of this
         };
         if (local) {
@@ -34,6 +36,7 @@ var cordaloEnv = (function() {
             }
         }
     }
+
     var port = _GETvar("port");
     var local = _GETvar("local");
     var mock = _GETvar("mock");
@@ -43,19 +46,19 @@ var cordaloEnv = (function() {
     init();
 
     return {
-        API_URL: function(file) {
+        API_URL: function (file) {
             return (file != null) ? MAIN_URL + file : MAIN_URL
         },
-        addMock: function(url, data) {
+        addMock: function (url, data) {
             MOCK_DATA[url] = data;
         },
-        setME: function(key, value) {
+        setME: function (key, value) {
             ME[key] = value;
         },
-        ME: function(key) {
+        ME: function (key) {
             return ME[key];
         },
-        findAPI: function(url) {
+        findAPI: function (url) {
             const regex = /http[s]?\:\/\/[^\/]*\:?[0-9]*(\/.*)/gs;
             let m;
             var resultMatch = url;
@@ -67,23 +70,26 @@ var cordaloEnv = (function() {
                 }
 
                 // The result can be accessed through the `m`-variable.
-                m.forEach((match, groupIndex) => {
-                    if (match != url) {
-                        resultMatch = match;
-                        return match;
-                    }
-                });
+                m.forEach((match, groupIndex) = > {
+                    if(match != url
+            )
+                {
+                    resultMatch = match;
+                    return match;
+                }
+            })
+                ;
             }
             return resultMatch;
         },
-        jQuery_get: function(object) {
+        jQuery_get: function (object) {
             if (mock) {
                 var api = cordaloEnv.findAPI(object.url);
                 if (api && MOCK_DATA[api]) {
-                    console.log("successful MOCK_DATA for url "+object.url);
+                    console.log("successful MOCK_DATA for url " + object.url);
                     object.success(MOCK_DATA[api]);
                 } else {
-                    console.log("missing MOCK_DATA for url "+object.url);
+                    console.log("missing MOCK_DATA for url " + object.url);
                 }
                 return $(API_Failed());
             }
@@ -96,8 +102,9 @@ var cordaloEnv = (function() {
 function API_Failed() {
     this.f;
 }
-API_Failed.prototype.fail = function(f) {
+
+API_Failed.prototype.fail = function (f) {
     this.f = f;
 }
 
-$get=cordaloEnv.jQuery_get;
+$get = cordaloEnv.jQuery_get;

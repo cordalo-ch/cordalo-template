@@ -45,7 +45,7 @@ public class ControllerMessages extends CordaloController {
 
 
     private ResponseEntity<StateAndLinks<ChatMessageState>> getResponse(HttpServletRequest request, ChatMessageState message, HttpStatus status) throws URISyntaxException {
-        String[] actions = { "reply" };
+        String[] actions = {"reply"};
         return new StateBuilder<>(message, ResponseEntity.status(HttpStatus.OK))
                 .stateMapping(MAPPING_PATH, BASE_PATH, request)
                 .self()
@@ -54,13 +54,14 @@ public class ControllerMessages extends CordaloController {
     }
 
     private ResponseEntity<List<StateAndLinks<ChatMessageState>>> getResponses(HttpServletRequest request, List<ChatMessageState> list, HttpStatus status) throws URISyntaxException {
-        String[] actions = { "reply" };
+        String[] actions = {"reply"};
         return new StateBuilder<>(list, ResponseEntity.status(HttpStatus.OK))
                 .stateMapping(MAPPING_PATH, BASE_PATH, request)
                 .self()
                 .links(actions)
                 .buildList();
     }
+
     /**
      * returns all unconsumed services that exist in the node's vault.
      */
@@ -79,8 +80,9 @@ public class ControllerMessages extends CordaloController {
 
     /**
      * create a new chat message with from sender to receiver
+     *
      * @param request is the original http request to calculate links in response
-     * @param to string repesenting a party
+     * @param to      string repesenting a party
      * @param message optional - string message of chat, if empty german joke is choosen
      */
     @RequestMapping(
@@ -94,11 +96,11 @@ public class ControllerMessages extends CordaloController {
             @RequestParam(value = "to", required = true) String to,
             @RequestParam(name = "message", required = false) String message) {
         Party receiverParty = this.partyFromString(to);
-        if (receiverParty == null){
+        if (receiverParty == null) {
             return this.buildResponseFromException(HttpStatus.BAD_REQUEST, "receiver not a valid peer.");
         }
         try {
-            SignedTransaction signedTx= null;
+            SignedTransaction signedTx = null;
             if (message != null && !message.isEmpty()) {
                 FlowProgressHandle<SignedTransaction> tFlowProgressHandle = this.getProxy()
                         .startTrackedFlowDynamic(ChatMessageFlow.Send.class,
@@ -126,6 +128,7 @@ public class ControllerMessages extends CordaloController {
 
     /**
      * receives a unconsumed service with a given ID from the node's vault.
+     *
      * @param id unique identifier as UUID for service
      */
     @RequestMapping(
@@ -148,7 +151,7 @@ public class ControllerMessages extends CordaloController {
         if (messages.isEmpty()) {
             return null;
         } else {
-            ChatMessageState message = messages.get(messages.size()-1);
+            ChatMessageState message = messages.get(messages.size() - 1);
             return this.getResponse(request, message, HttpStatus.OK);
         }
     }
@@ -156,6 +159,7 @@ public class ControllerMessages extends CordaloController {
 
     /**
      * deletes an unconsumed message with a given ID from the node's vault.
+     *
      * @param id unique identifier as UUID for service
      */
     @RequestMapping(
@@ -179,7 +183,6 @@ public class ControllerMessages extends CordaloController {
             return this.buildResponseFromException(HttpStatus.EXPECTATION_FAILED, ex);
         }
     }
-
 
 
 }

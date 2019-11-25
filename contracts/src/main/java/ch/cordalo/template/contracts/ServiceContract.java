@@ -63,12 +63,13 @@ public class ServiceContract implements Contract {
                             .object();
                     req.using("state must be an initial state",
                             ServiceStateMachine.StateTransition("CREATE")
-                              .getInitialState()
-                                  .equals(service.getState()));
+                                    .getInitialState()
+                                    .equals(service.getState()));
                     return null;
                 });
             }
         }
+
         class Update extends Common implements ServiceContract.Commands {
             @Override
             public void verify(LedgerTransaction tx, StateVerifier verifier) throws IllegalArgumentException {
@@ -78,15 +79,15 @@ public class ServiceContract implements Contract {
                     ServiceState service2 = pair.component2();
                     req.using("state must be the same",
                             service1.getState().equals(service2.getState()));
-                    req.using("state <"+service2.getState()+"> is not valid next state from <"+service1.getState()+">",
-                        ServiceStateMachine.StateTransition("UPDATE")
-                                .getNextStateFrom(service1.getStateObject())
+                    req.using("state <" + service2.getState() + "> is not valid next state from <" + service1.getState() + ">",
+                            ServiceStateMachine.StateTransition("UPDATE")
+                                    .getNextStateFrom(service1.getStateObject())
                                     .equals(service2.getState()));
                     if (service1.getServiceProvider() == null) {
-                            req.using("service provider must be both null",
-                                    service2.getServiceProvider() == null);
+                        req.using("service provider must be both null",
+                                service2.getServiceProvider() == null);
                     } else {
-                       req.using("service provider must be the same",
+                        req.using("service provider must be the same",
                                 service1.getServiceProvider().equals(service2.getServiceProvider()));
                         req.using("service provider must be different than initiator",
                                 !service2.getInitiator().equals(service2.getServiceProvider()));
@@ -95,6 +96,7 @@ public class ServiceContract implements Contract {
                 });
             }
         }
+
         class Delete extends Common implements ServiceContract.Commands {
             @Override
             public void verify(LedgerTransaction tx, StateVerifier verifier) throws IllegalArgumentException {
@@ -107,6 +109,7 @@ public class ServiceContract implements Contract {
                 });
             }
         }
+
         class Share extends Common implements ServiceContract.Commands {
             @Override
             public void verify(LedgerTransaction tx, StateVerifier verifier) throws IllegalArgumentException {
@@ -116,7 +119,7 @@ public class ServiceContract implements Contract {
                     ServiceState service2 = pair.component2();
                     req.using("state must be different",
                             !service1.getState().equals(service2.getState()));
-                    req.using("state <"+service2.getState()+"> is not valid next state from <"+service1.getState()+">",
+                    req.using("state <" + service2.getState() + "> is not valid next state from <" + service1.getState() + ">",
                             ServiceStateMachine.StateTransition("SHARE")
                                     .getNextStateFrom(service1.getStateObject())
                                     .equals(service2.getState()));
@@ -135,13 +138,16 @@ public class ServiceContract implements Contract {
 
         class AnyAction extends Common implements ServiceContract.Commands {
             private final ServiceStateMachine.StateTransition transition;
+
             public AnyAction(String transition) {
                 this.transition = ServiceStateMachine.StateTransition(transition);
             }
+
             @ConstructorForDeserialization
             public AnyAction(ServiceStateMachine.StateTransition transition) {
                 this.transition = transition;
             }
+
             public ServiceStateMachine.StateTransition getTransition() {
                 return this.transition;
             }
@@ -153,7 +159,7 @@ public class ServiceContract implements Contract {
                     ServiceState service2 = pair.component2();
                     req.using("state must be different",
                             !service1.getState().equals(service2.getState()));
-                    req.using("state <"+service2.getState()+"> is not valid next state from <"+service1.getState()+">",
+                    req.using("state <" + service2.getState() + "> is not valid next state from <" + service1.getState() + ">",
                             this.getTransition()
                                     .getNextStateFrom(service1.getStateObject())
                                     .equals(service2.getState()));
@@ -161,11 +167,13 @@ public class ServiceContract implements Contract {
                 });
             }
         }
+
         class ActionBeforeShare extends AnyAction implements ServiceContract.Commands {
 
             public ActionBeforeShare(String transition) {
                 super(transition);
             }
+
             @ConstructorForDeserialization
             public ActionBeforeShare(ServiceStateMachine.StateTransition transition) {
                 super(transition);
@@ -196,6 +204,7 @@ public class ServiceContract implements Contract {
             public ActionAfterShare(String transition) {
                 super(transition);
             }
+
             @ConstructorForDeserialization
             public ActionAfterShare(ServiceStateMachine.StateTransition transition) {
                 super(transition);
@@ -237,7 +246,7 @@ public class ServiceContract implements Contract {
     @Override
     public void verify(LedgerTransaction tx) throws IllegalArgumentException {
         StateVerifier verifier = StateVerifier.fromTransaction(tx, ServiceContract.Commands.class);
-        ServiceContract.Commands commandData = (ServiceContract.Commands)verifier.command();
+        ServiceContract.Commands commandData = (ServiceContract.Commands) verifier.command();
         commandData.verify(tx, verifier);
     }
 

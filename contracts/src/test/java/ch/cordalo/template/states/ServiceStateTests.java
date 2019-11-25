@@ -25,9 +25,11 @@ public class ServiceStateTests extends CordaloTemplateBaseTests {
     public static String dataJSONString() {
         return "{ \"service-industry\" : \"manufacturing\", \"flags\" : { \"valid\" : true, \"addOns\" : false } }";
     }
+
     public static String dataUpdateJSONString() {
         return "{ \"service-industry\" : \"manufacturing\", \"flags\" : { \"valid\" : true, \"addOns\" : true, \"ADD-ON1\" : true } }";
     }
+
     public static String dataUpdateAfterShareJSONString() {
         return "{ \"service-industry\" : \"manufacturing\", \"flags\" : { \"valid\" : true, \"addOns\" : true, \"ADD-ON1\" : true, \"UW\" : true } }";
     }
@@ -43,6 +45,7 @@ public class ServiceStateTests extends CordaloTemplateBaseTests {
         Assert.assertEquals("state must be CREATED",
                 ServiceStateMachine.State("CREATED"), service.getState());
     }
+
     @Test
     public void test_update_after_create() {
         ServiceState service = ServiceState.create(

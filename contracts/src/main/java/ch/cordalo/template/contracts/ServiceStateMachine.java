@@ -6,7 +6,10 @@ public class ServiceStateMachine extends StateMachine {
 
     private final static ServiceStateMachine INSTANCE = new ServiceStateMachine();
 
-    public static ServiceStateMachine get() { return INSTANCE; }
+    public static ServiceStateMachine get() {
+        return INSTANCE;
+    }
+
     private ServiceStateMachine() {
         super("services");
     }
@@ -14,6 +17,7 @@ public class ServiceStateMachine extends StateMachine {
     public static StateTransition StateTransition(String transition) {
         return INSTANCE.transition(transition);
     }
+
     public static State State(String state) {
         return INSTANCE.state(state);
     }
@@ -40,22 +44,22 @@ public class ServiceStateMachine extends StateMachine {
 
     @Override
     public void initTransitions() {
-        newTransition("CREATE"          ,"CREATED");
+        newTransition("CREATE", "CREATED");
 
-        newTransition("REGISTER"        ,"REGISTERED"   ,"CREATED");
-        newTransition("INFORM"          ,"INFORMED"     ,"CREATED","REGISTERED");
-        newTransition("CONFIRM"         ,"CONFIRMED"    ,"INFORMED");
-        newTransition("TIMEOUT"         ,"TIMEOUTS"     ,"INFORMED");
+        newTransition("REGISTER", "REGISTERED", "CREATED");
+        newTransition("INFORM", "INFORMED", "CREATED", "REGISTERED");
+        newTransition("CONFIRM", "CONFIRMED", "INFORMED");
+        newTransition("TIMEOUT", "TIMEOUTS", "INFORMED");
 
-        newTransition("UPDATE"          ,"",            "CREATED","SHARED");
+        newTransition("UPDATE", "", "CREATED", "SHARED");
 
-        newTransition("WITHDRAW"        ,"WITHDRAWN"    ,"CONFIRMED","INFORMED","REGISTERED","CREATED");
-        newTransition("NO_SHARE"        ,"NOT_SHARED"   ,"CONFIRMED","INFORMED");
-        newTransition("DUPLICATE"       ,"DUPLICATE"    ,"CONFIRMED","INFORMED","REGISTERED","CREATED");
-        newTransition("SHARE"           ,"SHARED"       ,"CONFIRMED","INFORMED","REGISTERED","CREATED");
+        newTransition("WITHDRAW", "WITHDRAWN", "CONFIRMED", "INFORMED", "REGISTERED", "CREATED");
+        newTransition("NO_SHARE", "NOT_SHARED", "CONFIRMED", "INFORMED");
+        newTransition("DUPLICATE", "DUPLICATE", "CONFIRMED", "INFORMED", "REGISTERED", "CREATED");
+        newTransition("SHARE", "SHARED", "CONFIRMED", "INFORMED", "REGISTERED", "CREATED");
 
-        newTransition("SEND_PAYMENT"    ,"PAYMENT_SENT" ,"SHARED");
+        newTransition("SEND_PAYMENT", "PAYMENT_SENT", "SHARED");
 
-        newTransition("ACCEPT"          ,"ACCEPTED"     ,"SHARED","PAYMENT_SENT");
+        newTransition("ACCEPT", "ACCEPTED", "SHARED", "PAYMENT_SENT");
     }
 }

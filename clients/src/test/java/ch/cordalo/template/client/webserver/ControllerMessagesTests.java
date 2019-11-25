@@ -25,6 +25,7 @@ public class ControllerMessagesTests extends CordaloControllerBaseTests {
         MockCordaProxy.updateInstance(companyA);
         this.setUpSpringTests();
     }
+
     @After
     public void tearDown() {
         super.tearDown();
@@ -57,13 +58,13 @@ public class ControllerMessagesTests extends CordaloControllerBaseTests {
     public void post_message() throws Exception {
         String uri = "/api/v1/cordalo/template/messages";
         MvcResult mvcResult = mvc.perform(
-            MockMvcRequestBuilders.post(uri)
-                    .content(
-                            "to="+encode(this.companyB.party.toString())+"&message="+encode("hello world")
-                    )
-                    .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                    .accept(MediaType.APPLICATION_JSON_VALUE)
-            ).andReturn();
+                MockMvcRequestBuilders.post(uri)
+                        .content(
+                                "to=" + encode(this.companyB.party.toString()) + "&message=" + encode("hello world")
+                        )
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+        ).andReturn();
 
         int status = mvcResult.getResponse().getStatus();
         assertEquals(HttpStatus.CREATED, HttpStatus.valueOf(status));

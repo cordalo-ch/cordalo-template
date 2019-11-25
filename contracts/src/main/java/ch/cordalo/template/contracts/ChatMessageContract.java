@@ -15,7 +15,7 @@ public class ChatMessageContract implements Contract {
     @Override
     public void verify(LedgerTransaction tx) throws IllegalArgumentException {
         StateVerifier verifier = StateVerifier.fromTransaction(tx, ChatMessageContract.Commands.class);
-        ChatMessageContract.Commands commandData = (ChatMessageContract.Commands)verifier.command();
+        ChatMessageContract.Commands commandData = (ChatMessageContract.Commands) verifier.command();
         commandData.verify(tx, verifier);
     }
 

@@ -17,7 +17,7 @@ public class CarContract implements Contract {
     @Override
     public void verify(LedgerTransaction tx) throws IllegalArgumentException {
         StateVerifier verifier = StateVerifier.fromTransaction(tx, CarContract.Commands.class);
-        CarContract.Commands commandData = (CarContract.Commands)verifier.command();
+        CarContract.Commands commandData = (CarContract.Commands) verifier.command();
         commandData.verify(tx, verifier);
     }
 

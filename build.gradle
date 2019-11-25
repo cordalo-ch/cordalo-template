@@ -9,7 +9,7 @@ buildscript {
         slf4j_version = '1.7.28'
         log4j_version = '2.12.1'
         corda_platform_version = '4'
-        cordalo_version='0.11-SNAPSHOT'
+        cordalo_version = '0.11-SNAPSHOT'
     }
 
     repositories {
@@ -109,21 +109,21 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
         cordapp project(':contracts')
         cordapp project(':workflows')
         cordapps = [
-            "ch.cordalo:corda-ext:$cordalo_version",
-            "ch.cordalo:corda-common-contracts:$cordalo_version",
-            "ch.cordalo:corda-common-workflows:$cordalo_version"
+                "ch.cordalo:corda-ext:$cordalo_version",
+                "ch.cordalo:corda-common-contracts:$cordalo_version",
+                "ch.cordalo:corda-common-workflows:$cordalo_version"
         ]
     }
     node {
         name "O=Notary,L=Bern,ST=BE,C=CH"
-        notary = [validating : false]
+        notary = [validating: false]
         p2pPort 10002
         rpcSettings {
             address("localhost:10003")
             adminAddress("localhost:10043")
         }
         sshdPort 10103
-        rpcUsers = [[ user: "user1", "password": "test", "permissions": ["ALL"]]]
+        rpcUsers = [[user: "user1", "password": "test", "permissions": ["ALL"]]]
     }
     node {
         name "O=Company-A,L=Zurich,ST=ZH,C=CH"
@@ -133,7 +133,7 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
             adminAddress("localhost:10046")
         }
         sshdPort 10106
-        rpcUsers = [[ user: "user1", "password": "test", "permissions": ["ALL"]]]
+        rpcUsers = [[user: "user1", "password": "test", "permissions": ["ALL"]]]
     }
     node {
         name "O=Company-B,L=Winterthur,ST=ZH,C=CH"
@@ -143,7 +143,7 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
             adminAddress("localhost:10049")
         }
         sshdPort 10109
-        rpcUsers = [[ user: "user1", "password": "test", "permissions": ["ALL"]]]
+        rpcUsers = [[user: "user1", "password": "test", "permissions": ["ALL"]]]
     }
     node {
         name "O=Company-C,L=Zug,ST=ZG,C=CH"
@@ -153,7 +153,7 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
             adminAddress("localhost:10052")
         }
         sshdPort 10112
-        rpcUsers = [[ user: "user1", "password": "test", "permissions": ["ALL"]]]
+        rpcUsers = [[user: "user1", "password": "test", "permissions": ["ALL"]]]
     }
     node {
         name "O=Company-D,L=Geneva,ST=ZH,C=CH"
@@ -163,7 +163,7 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
             adminAddress("localhost:10055")
         }
         sshdPort 10115
-        rpcUsers = [[ user: "user1", "password": "test", "permissions": ["ALL"]]]
+        rpcUsers = [[user: "user1", "password": "test", "permissions": ["ALL"]]]
     }
     node {
         name "O=Company-E,L=Uster,ST=ZH,C=CH"
@@ -173,7 +173,7 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
             adminAddress("localhost:10058")
         }
         sshdPort 10118
-        rpcUsers = [[ user: "user1", "password": "test", "permissions": ["ALL"]]]
+        rpcUsers = [[user: "user1", "password": "test", "permissions": ["ALL"]]]
     }
 }
 

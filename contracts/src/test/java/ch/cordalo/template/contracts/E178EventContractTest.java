@@ -12,6 +12,7 @@ import static net.corda.testing.node.NodeTestUtils.transaction;
 public class E178EventContractTest extends E178BaseTests {
 
     private final static String STAMM_NR = "123.456.786";
+
     @Before
     public void setup() {
         this.setup(false);

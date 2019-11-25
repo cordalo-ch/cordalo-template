@@ -28,6 +28,7 @@ public class ChatMessageContractTests extends CordaloTemplateBaseTests {
                 this.companyB.party,
                 msg);
     }
+
     private ChatMessageState newSelfieMessage(String msg) {
         return new ChatMessageState(
                 new UniqueIdentifier(),
@@ -98,7 +99,6 @@ public class ChatMessageContractTests extends CordaloTemplateBaseTests {
             return null;
         });
     }
-
 
 
 }

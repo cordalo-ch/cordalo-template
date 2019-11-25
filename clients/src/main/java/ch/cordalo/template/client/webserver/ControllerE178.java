@@ -58,6 +58,7 @@ public class ControllerE178 extends CordaloController {
                 .links(x -> x.getStatusObject().getNextActions())
                 .buildList();
     }
+
     /**
      * returns all unconsumed e178 that exist in the node's vault.
      */
@@ -76,9 +77,10 @@ public class ControllerE178 extends CordaloController {
 
     /**
      * create a new e178 with from retail to leasing
+     *
      * @param request is the original http request to calculate links in response
      * @param leasing leasing part to issue the e178
-     * @param state state of car to be registered at
+     * @param state   state of car to be registered at
      */
     @RequestMapping(
             value = BASE_PATH,
@@ -92,13 +94,13 @@ public class ControllerE178 extends CordaloController {
             @RequestParam(value = "leasing", required = true) String leasing,
             @RequestParam(name = "state", required = false) String state) {
         Party leasingParty = this.partyFromString(leasing);
-        if (leasingParty == null){
+        if (leasingParty == null) {
             return this.buildResponseFromException(HttpStatus.BAD_REQUEST, "leasing not a valid peer.");
         }
-        if (stammNr == null || stammNr.isEmpty()){
+        if (stammNr == null || stammNr.isEmpty()) {
             return this.buildResponseFromException(HttpStatus.BAD_REQUEST, "stammNr cannot be empty.");
         }
-        if (state == null || state.isEmpty()){
+        if (state == null || state.isEmpty()) {
             return this.buildResponseFromException(HttpStatus.BAD_REQUEST, "state cannot be empty.");
         }
         try {
@@ -119,7 +121,8 @@ public class ControllerE178 extends CordaloController {
 
     /**
      * execute action ISSUE
-     * @param request is the original http request to calculate links in response
+     *
+     * @param request   is the original http request to calculate links in response
      * @param regulator regulator part to issue the e178
      */
     @RequestMapping(
@@ -133,12 +136,12 @@ public class ControllerE178 extends CordaloController {
             @PathVariable("id") String id,
             @RequestParam(value = "regulator", required = true) String regulator) {
         Party regulatorParty = this.partyFromString(regulator);
-        if (regulatorParty == null){
+        if (regulatorParty == null) {
             return this.buildResponseFromException(HttpStatus.BAD_REQUEST, "regulator not a valid peer.");
         }
         UniqueIdentifier uid = new UniqueIdentifier(null, UUID.fromString(id));
         try {
-            SignedTransaction signedTx= null;
+            SignedTransaction signedTx = null;
             signedTx = this.startFlow(
                     E178EventFlow.Issue.class,
                     uid,
@@ -156,6 +159,7 @@ public class ControllerE178 extends CordaloController {
 
     /**
      * execute action CANCEL
+     *
      * @param request is the original http request to calculate links in response
      */
     @RequestMapping(
@@ -169,7 +173,7 @@ public class ControllerE178 extends CordaloController {
             @PathVariable("id") String id) {
         try {
             UniqueIdentifier uid = new UniqueIdentifier(null, UUID.fromString(id));
-            SignedTransaction signedTx= null;
+            SignedTransaction signedTx = null;
             signedTx = this.startFlow(E178EventFlow.Cancel.class, uid);
 
             StateVerifier verifier = StateVerifier.fromTransaction(signedTx, null);
@@ -184,6 +188,7 @@ public class ControllerE178 extends CordaloController {
 
     /**
      * execute action REGISTER
+     *
      * @param request is the original http request to calculate links in response
      */
     @RequestMapping(
@@ -197,7 +202,7 @@ public class ControllerE178 extends CordaloController {
             @PathVariable("id") String id) {
         try {
             UniqueIdentifier uid = new UniqueIdentifier(null, UUID.fromString(id));
-            SignedTransaction signedTx= null;
+            SignedTransaction signedTx = null;
             signedTx = this.startFlow(E178EventFlow.Register.class, uid);
 
             StateVerifier verifier = StateVerifier.fromTransaction(signedTx, null);
@@ -213,6 +218,7 @@ public class ControllerE178 extends CordaloController {
 
     /**
      * execute action REQUEST INSURANCE
+     *
      * @param request is the original http request to calculate links in response
      * @param insurer regulator part to issue the e178
      */
@@ -227,12 +233,12 @@ public class ControllerE178 extends CordaloController {
             @PathVariable("id") String id,
             @RequestParam(value = "insurer", required = true) String insurer) {
         Party insurerParty = this.partyFromString(insurer);
-        if (insurerParty == null){
+        if (insurerParty == null) {
             return this.buildResponseFromException(HttpStatus.BAD_REQUEST, "insurer not a valid peer.");
         }
         try {
             UniqueIdentifier uid = new UniqueIdentifier(null, UUID.fromString(id));
-            SignedTransaction signedTx= null;
+            SignedTransaction signedTx = null;
             signedTx = this.startFlow(
                     E178EventFlow.RequestInsurance.class,
                     uid,
@@ -249,9 +255,9 @@ public class ControllerE178 extends CordaloController {
     }
 
 
-
     /**
      * execute action INSURE
+     *
      * @param request is the original http request to calculate links in response
      */
     @RequestMapping(
@@ -265,7 +271,7 @@ public class ControllerE178 extends CordaloController {
             @PathVariable("id") String id) {
         try {
             UniqueIdentifier uid = new UniqueIdentifier(null, UUID.fromString(id));
-            SignedTransaction signedTx= null;
+            SignedTransaction signedTx = null;
             signedTx = this.startFlow(E178EventFlow.Insure.class, uid);
 
             StateVerifier verifier = StateVerifier.fromTransaction(signedTx, null);
@@ -280,6 +286,7 @@ public class ControllerE178 extends CordaloController {
 
     /**
      * receives a unconsumed E178 with a given ID from the node's vault.
+     *
      * @param id unique identifier as UUID for service
      */
     @RequestMapping(
@@ -302,13 +309,14 @@ public class ControllerE178 extends CordaloController {
         if (e178list.isEmpty()) {
             return null;
         } else {
-            E178EventState e178 = e178list.get(e178list.size()-1);
+            E178EventState e178 = e178list.get(e178list.size() - 1);
             return this.getResponse(request, e178, HttpStatus.OK);
         }
     }
 
     /**
      * deletes an unconsumed e178 with a given ID from the node's vault.
+     *
      * @param id unique identifier as UUID for service
      */
     @RequestMapping(
@@ -330,7 +338,6 @@ public class ControllerE178 extends CordaloController {
             return this.buildResponseFromException(HttpStatus.EXPECTATION_FAILED, ex);
         }
     }
-
 
 
 }

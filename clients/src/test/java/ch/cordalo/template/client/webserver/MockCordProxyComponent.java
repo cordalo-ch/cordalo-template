@@ -15,6 +15,7 @@ public class MockCordProxyComponent extends CordaloControllerBaseTests {
 
     public MockCordProxyComponent() {
     }
+
     @PostConstruct
     public void initialiseNodeRPCConnection() {
         CordaTestNetwork setup = this.setup(false);

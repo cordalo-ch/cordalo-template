@@ -52,13 +52,13 @@ public class CarFlow {
         return new FlowHelper<CarState>(serviceHub)
                 .getLastStateByCriteria(CarState.class, query);
     }
+
     @NotNull
     @Suspendable
     protected static StateAndRef<CarState> getCarByLinearId(UniqueIdentifier id, ServiceHub serviceHub) throws FlowException {
         return new FlowHelper<CarState>(serviceHub)
                 .getLastStateByLinearId(CarState.class, id);
     }
-
 
 
     @InitiatingFlow(version = 2)
@@ -202,7 +202,7 @@ public class CarFlow {
             /* car found and synched with linear Id */
             StateAndRef<CarState> lastStateByLinearId = getCarByLinearId(carLinearId, this.getServiceHub());
             if (lastStateByLinearId == null) {
-                throw new FlowException("Car not found in vault after search & share id="+carLinearId);
+                throw new FlowException("Car not found in vault after search & share id=" + carLinearId);
             }
             return lastStateByLinearId.getState().getData();
         }

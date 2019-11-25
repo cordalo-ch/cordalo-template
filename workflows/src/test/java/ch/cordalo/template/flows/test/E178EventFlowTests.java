@@ -16,6 +16,7 @@ import java.util.concurrent.ExecutionException;
 
 public class E178EventFlowTests extends E178BaseTests {
     private final static String STAMM_NR = "123.456.786";
+
     @Before
     public void setup() {
         this.setup(true,
@@ -36,24 +37,28 @@ public class E178EventFlowTests extends E178BaseTests {
         network.runNetwork();
         return future.get();
     }
+
     protected SignedTransaction newIssueE178(E178EventState e178, CordaNodeEnvironment leasing, String state, CordaNodeEnvironment regulator) throws ExecutionException, InterruptedException {
         FlowLogic<SignedTransaction> flow = new E178EventFlow.Issue(e178.getLinearId(), state, regulator.party);
         CordaFuture<SignedTransaction> future = leasing.node.startFlow(flow);
         network.runNetwork();
         return future.get();
     }
+
     protected SignedTransaction newRequestInsuranceE178(E178EventState e178, CordaNodeEnvironment retailer, CordaNodeEnvironment insurance) throws ExecutionException, InterruptedException {
         FlowLogic<SignedTransaction> flow = new E178EventFlow.RequestInsurance(e178.getLinearId(), insurer1.party);
         CordaFuture<SignedTransaction> future = retailer.node.startFlow(flow);
         network.runNetwork();
         return future.get();
     }
+
     protected SignedTransaction newInsureE178(E178EventState e178, CordaNodeEnvironment insurer) throws ExecutionException, InterruptedException {
         FlowLogic<SignedTransaction> flow = new E178EventFlow.Insure(e178.getLinearId());
         CordaFuture<SignedTransaction> future = insurer.node.startFlow(flow);
         network.runNetwork();
         return future.get();
     }
+
     protected SignedTransaction newRegisterE178(E178EventState e178, CordaNodeEnvironment regulator) throws ExecutionException, InterruptedException {
         FlowLogic<SignedTransaction> flow = new E178EventFlow.Register(e178.getLinearId());
         CordaFuture<SignedTransaction> future = regulator.node.startFlow(flow);

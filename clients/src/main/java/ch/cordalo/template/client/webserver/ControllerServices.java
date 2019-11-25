@@ -51,6 +51,7 @@ public class ControllerServices extends CordaloController {
                 .self()
                 .buildList();
     }
+
     private ResponseEntity<StateAndLinks<ServiceState>> getResponses(HttpServletRequest request, ServiceState service, HttpStatus status) throws URISyntaxException {
         return new StateBuilder<>(service, ResponseEntity.status(HttpStatus.OK))
                 .stateMapping(MAPPING_PATH, BASE_PATH, request)
@@ -77,6 +78,7 @@ public class ControllerServices extends CordaloController {
 
     /**
      * receives a unconsumed service with a given ID from the node's vault.
+     *
      * @param id unique identifier as UUID for service
      */
     @RequestMapping(
@@ -99,7 +101,7 @@ public class ControllerServices extends CordaloController {
         if (states.isEmpty()) {
             return null;
         } else {
-            ServiceState service = states.get(states.size()-1);
+            ServiceState service = states.get(states.size() - 1);
             return this.getResponses(request, service, HttpStatus.OK);
         }
     }
@@ -107,6 +109,7 @@ public class ControllerServices extends CordaloController {
 
     /**
      * deletes an unconsumed service with a given ID from the node's vault.
+     *
      * @param id unique identifier as UUID for service
      */
     @RequestMapping(
@@ -134,10 +137,11 @@ public class ControllerServices extends CordaloController {
 
     /**
      * create a new service with given data
-     * @param request is the original http request to calculate links in response
-     * @param data string contains json data for the service
+     *
+     * @param request     is the original http request to calculate links in response
+     * @param data        string contains json data for the service
      * @param serviceName is the name of the service
-     * @param price is a possible positiv price for the service
+     * @param price       is a possible positiv price for the service
      */
     @RequestMapping(
             value = BASE_PATH,
@@ -161,9 +165,9 @@ public class ControllerServices extends CordaloController {
         try {
             final SignedTransaction signedTx = this.startFlow(
                     ServiceFlow.Create.class,
-                            serviceName,
-                            data,
-                            price);
+                    serviceName,
+                    data,
+                    price);
 
             StateVerifier verifier = StateVerifier.fromTransaction(signedTx, null);
             ServiceState service = verifier.output().one(ServiceState.class).object();
@@ -178,7 +182,8 @@ public class ControllerServices extends CordaloController {
 
     /**
      * execute an action on the services give by id
-     * @param id identifier of the service
+     *
+     * @param id     identifier of the service
      * @param action name of action to be executed
      */
     @RequestMapping(
@@ -195,7 +200,7 @@ public class ControllerServices extends CordaloController {
         UniqueIdentifier uid = new UniqueIdentifier(null, UUID.fromString(id));
         StateMachine.State state = ServiceStateMachine.StateTransition(action).getNextState();
         if (state == null) {
-            return this.buildResponseFromException(HttpStatus.METHOD_NOT_ALLOWED, "illegal action <"+action+">. Method not allowed");
+            return this.buildResponseFromException(HttpStatus.METHOD_NOT_ALLOWED, "illegal action <" + action + ">. Method not allowed");
         }
         try {
             if (state.equals(ServiceStateMachine.State("SHARED"))) {
@@ -203,7 +208,7 @@ public class ControllerServices extends CordaloController {
                     return this.buildResponseFromException(HttpStatus.BAD_REQUEST, "service-provider not specified in post");
                 }
                 Party serviceProviderParty = this.partyFromString(serviceProvider);
-                if (serviceProviderParty == null){
+                if (serviceProviderParty == null) {
                     return this.buildResponseFromException(HttpStatus.BAD_REQUEST, "service-provider not a valid peer.");
                 }
                 final SignedTransaction signedTx = this.startFlow(
@@ -230,7 +235,6 @@ public class ControllerServices extends CordaloController {
             return this.buildResponseFromException(HttpStatus.EXPECTATION_FAILED, ex);
         }
     }
-
 
 
 }

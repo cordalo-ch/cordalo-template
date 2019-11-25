@@ -64,17 +64,17 @@ function show_messages(tagName, result) {
                 title: "Chat", name: "state", type: "text", itemTemplate: function (value, item) {
                     i = i + 1;
                     var chat = "";
-                    var align="";
+                    var align = "";
                     if (value.senderX500 == cordaloEnv.ME("X500")) {
-                        chat = "-> "+X500toO(value.receiverX500);
-                        align="right";
+                        chat = "-> " + X500toO(value.receiverX500);
+                        align = "right";
                     } else {
                         chat = "<- " + X500toO(value.senderX500);
-                        align="left";
+                        align = "left";
                     }
                     var msg = value.message.replace("\n", "<br>");
-                    chat = msg +"<br>("+chat+")";
-                    return "<span style=\"width:100%;text-align:"+align+"\">"+strongS(i) + chat + strongE(i)+"</span>";
+                    chat = msg + "<br>(" + chat + ")";
+                    return "<span style=\"width:100%;text-align:" + align + "\">" + strongS(i) + chat + strongE(i) + "</span>";
                 }
             },
             {

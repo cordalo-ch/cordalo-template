@@ -44,6 +44,7 @@ public class CarSchemaV1 extends MappedSchema {
             this.creator = creator;
             this.owners = owners;
         }
+
         public PersistentCar() {
             this(UUID.randomUUID(), "", "", "", "", "", "");
         }

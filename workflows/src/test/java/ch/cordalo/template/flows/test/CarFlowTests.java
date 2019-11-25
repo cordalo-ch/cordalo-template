@@ -35,40 +35,41 @@ public class CarFlowTests extends CordaloTemplateBaseFlowTests {
     }
 
 
-    protected CarState newCar(CordaNodeEnvironment from, String stammNr, String make, String model) throws  FlowException {
-        FlowLogic<SignedTransaction> flow = new CarFlow.Create(new UniqueIdentifier(),make, model,"PW",stammNr, new ArrayList<>());
+    protected CarState newCar(CordaNodeEnvironment from, String stammNr, String make, String model) throws FlowException {
+        FlowLogic<SignedTransaction> flow = new CarFlow.Create(new UniqueIdentifier(), make, model, "PW", stammNr, new ArrayList<>());
         return this.startFlowAndResult(from, flow, CarState.class);
     }
-    protected CarState newUpdateCar(CordaNodeEnvironment from, CarState car, String make, String model, String type) throws  FlowException {
+
+    protected CarState newUpdateCar(CordaNodeEnvironment from, CarState car, String make, String model, String type) throws FlowException {
         FlowLogic<SignedTransaction> flow = new CarFlow.Update(car.getLinearId(), make, model, type);
         return this.startFlowAndResult(from, flow, CarState.class);
     }
-    protected CarState newShareCar(CordaNodeEnvironment from, CarState car, CordaNodeEnvironment to) throws  FlowException {
+
+    protected CarState newShareCar(CordaNodeEnvironment from, CarState car, CordaNodeEnvironment to) throws FlowException {
         FlowLogic<SignedTransaction> flow = new CarFlow.Share(car.getLinearId(), to.party);
         return this.startFlowAndResult(from, flow, CarState.class);
     }
 
     @Test
     public void create_car() throws Exception {
-        CarState car = this.newCar(companyA, "123.456.789","Audi", "A8");
+        CarState car = this.newCar(companyA, "123.456.789", "Audi", "A8");
         Assert.assertEquals("Audi", "Audi", car.getMake());
     }
 
 
     @Test
     public void update_car() throws Exception {
-        CarState car = this.newCar(companyA, "123.456.789","Audi", "A8");
-        CarState updatedCar = this.newUpdateCar(companyA, car,"Audi", "A8-2019", "PW");
+        CarState car = this.newCar(companyA, "123.456.789", "Audi", "A8");
+        CarState updatedCar = this.newUpdateCar(companyA, car, "Audi", "A8-2019", "PW");
         Assert.assertEquals("A8", "A8", car.getModel());
         Assert.assertEquals("A8", "A8-2019", updatedCar.getModel());
     }
 
 
-
     @Test
     public void share_car() throws Exception {
-        CarState car = this.newCar(companyA, "123.456.789","Audi", "A8");
-        CarState sharedCar = this.newShareCar(companyA, car,companyB);
+        CarState car = this.newCar(companyA, "123.456.789", "Audi", "A8");
+        CarState sharedCar = this.newShareCar(companyA, car, companyB);
         Assert.assertEquals("A8", "A8", car.getModel());
         Assert.assertTrue("Company B is not an owners", !car.getOwners().contains(this.companyB.party));
         Assert.assertTrue("Company B must be part of owners", sharedCar.getOwners().contains(this.companyB.party));
@@ -77,7 +78,7 @@ public class CarFlowTests extends CordaloTemplateBaseFlowTests {
 
     @Test
     public void search_car() throws Exception {
-        CarState car = this.newCar(companyC, "123.123.999","Audi", "A8");
+        CarState car = this.newCar(companyC, "123.123.999", "Audi", "A8");
         Assert.assertTrue("old car owners does not contains companyA", !car.getOwners().contains(companyA.party));
 
         FlowLogic<CarState> flow = new CarFlow.Search(new UniqueIdentifier(), companyC.party, "123.123.999");

@@ -6,7 +6,10 @@ public class E178StateMachine extends StateMachine {
 
     private final static E178StateMachine INSTANCE = new E178StateMachine();
 
-    public static E178StateMachine get() { return INSTANCE; }
+    public static E178StateMachine get() {
+        return INSTANCE;
+    }
+
     private E178StateMachine() {
         super("E178-services");
     }
@@ -14,6 +17,7 @@ public class E178StateMachine extends StateMachine {
     public static StateMachine.StateTransition StateTransition(String transition) {
         return INSTANCE.transition(transition);
     }
+
     public static StateMachine.State State(String state) {
         return INSTANCE.state(state);
     }
@@ -31,12 +35,12 @@ public class E178StateMachine extends StateMachine {
     @Override
     public void initTransitions() {
 
-        newTransition("REQUEST"             , "REQUESTED");
+        newTransition("REQUEST", "REQUESTED");
 
-        newTransition("ISSUE"               ,"ISSUED"                   ,"REQUESTED");
-        newTransition("REQUEST_INSURANCE"   ,"INSURANCE_REQUESTED"      ,"ISSUED");
-        newTransition("INSURE"              ,"INSURED"                  ,"INSURANCE_REQUESTED");
-        newTransition("REGISTER"            ,"REGISTERED"               ,"INSURED");
-        newTransition("CANCEL"              ,"CANCELED"                 ,"REQUESTED","ISSUED","INSURANCE_REQUESTED","INSURED", "REGISTERED");
+        newTransition("ISSUE", "ISSUED", "REQUESTED");
+        newTransition("REQUEST_INSURANCE", "INSURANCE_REQUESTED", "ISSUED");
+        newTransition("INSURE", "INSURED", "INSURANCE_REQUESTED");
+        newTransition("REGISTER", "REGISTERED", "INSURED");
+        newTransition("CANCEL", "CANCELED", "REQUESTED", "ISSUED", "INSURANCE_REQUESTED", "INSURED", "REGISTERED");
     }
 }

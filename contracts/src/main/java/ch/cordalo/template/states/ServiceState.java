@@ -46,6 +46,7 @@ public class ServiceState extends CordaloLinearState {
         this.serviceProvider = serviceProvider;
         this.price = price;
     }
+
     public ServiceState(@NotNull UniqueIdentifier linearId, @NotNull String serviceName, @NotNull Party initiator, @NotNull StateMachine.State state, Map<String, Object> serviceData, Party serviceProvider, Integer price) {
         this(linearId, serviceName, initiator, state.getValue(), serviceData, serviceProvider, price);
     }
@@ -61,21 +62,30 @@ public class ServiceState extends CordaloLinearState {
     public String getServiceName() {
         return serviceName;
     }
+
     @NotNull
     public Party getInitiator() {
         return initiator;
     }
-    public String getInitiatorX500() { return Parties.partyToX500(this.initiator); }
+
+    public String getInitiatorX500() {
+        return Parties.partyToX500(this.initiator);
+    }
 
     @NotNull
-    public String getState() { return this.state; }
+    public String getState() {
+        return this.state;
+    }
 
     @JsonIgnore
-    public StateMachine.State getStateObject() { return ServiceStateMachine.State(this.state); }
+    public StateMachine.State getStateObject() {
+        return ServiceStateMachine.State(this.state);
+    }
 
     public Party getServiceProvider() {
         return serviceProvider;
     }
+
     public String getServiceProviderX500() {
         return Parties.partyToX500(this.serviceProvider);
     }
@@ -87,6 +97,7 @@ public class ServiceState extends CordaloLinearState {
     public Integer getPrice() {
         return price;
     }
+
     public Map<String, Object> getServiceData() {
         return serviceData;
     }
@@ -95,10 +106,12 @@ public class ServiceState extends CordaloLinearState {
     public static ServiceState create(@NotNull UniqueIdentifier linearId, @NotNull String serviceName, @NotNull Party initiator, Map<String, Object> serviceData) {
         return new ServiceState(linearId, serviceName, initiator, ServiceStateMachine.StateTransition("CREATE").getInitialState(), serviceData, null, null);
     }
+
     /* actions UPDATE */
     public ServiceState update(Map<String, Object> newServiceData) {
         return this.update(newServiceData, this.price);
     }
+
     public ServiceState update(Map<String, Object> newServiceData, Integer newPrice) {
         StateMachine.State newState = ServiceStateMachine.StateTransition("UPDATE").getNextStateFrom(this.getStateObject());
         return new ServiceState(this.linearId, this.serviceName, this.initiator, newState, newServiceData, this.serviceProvider, newPrice);

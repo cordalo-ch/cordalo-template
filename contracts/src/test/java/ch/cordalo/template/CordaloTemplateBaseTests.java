@@ -32,8 +32,8 @@ public abstract class CordaloTemplateBaseTests extends CordaloBaseTests {
     public CordaTestNetwork setup(boolean withNodes, List<Class<? extends FlowLogic>> responderClasses) {
         this.network = new CordaTestNetwork(
                 withNodes,
-            this.getCordappPackageNames(),
-            responderClasses
+                this.getCordappPackageNames(),
+                responderClasses
         );
         this.notary = network.startNotaryEnv("Notary", "O=Notary,L=Zurich,ST=ZH,C=CH");
         this.companyA = network.startEnv("Company-A", "O=Company-A,L=Zurich,ST=ZH,C=CH");

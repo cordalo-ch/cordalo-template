@@ -34,6 +34,7 @@ public class ServiceFlow {
             this.data = data;
             this.price = price;
         }
+
         public Create(String serviceName) {
             this.serviceName = serviceName;
             this.data = "{}";
@@ -58,7 +59,6 @@ public class ServiceFlow {
                     null, this.price);
         }
     }
-
 
 
     @InitiatingFlow(version = 2)
@@ -99,6 +99,7 @@ public class ServiceFlow {
     @StartableByRPC
     public static class Delete extends SimpleBaseFlow<SignedTransaction> implements SimpleFlow.Delete<ServiceState> {
         private final UniqueIdentifier id;
+
         public Delete(UniqueIdentifier id) {
             this.id = id;
         }
@@ -137,7 +138,7 @@ public class ServiceFlow {
         @Override
         public SignedTransaction call() throws FlowException {
             return this.simpleFlow_Update(
-                    ServiceState.class, this.id,this,new ServiceContract.Commands.Share());
+                    ServiceState.class, this.id, this, new ServiceContract.Commands.Share());
         }
 
         @Override
@@ -146,8 +147,6 @@ public class ServiceFlow {
             return state.share(this.serviceProvider);
         }
     }
-
-
 
 
     @InitiatingFlow(version = 2)
@@ -195,7 +194,6 @@ public class ServiceFlow {
     }
 
 
-
     @InitiatedBy(ServiceFlow.Create.class)
     public static class CreateResponder extends ResponderBaseFlow<ServiceState> {
 
@@ -238,6 +236,7 @@ public class ServiceFlow {
             return this.receiveIdentitiesCounterpartiesNoTxChecking();
         }
     }
+
     @InitiatedBy(ServiceFlow.Share.class)
     public static class ShareResponder extends ResponderBaseFlow<ServiceState> {
 
@@ -251,6 +250,7 @@ public class ServiceFlow {
             return this.receiveIdentitiesCounterpartiesNoTxChecking();
         }
     }
+
     @InitiatedBy(Action.class)
     public static class ActionResponder extends ResponderBaseFlow<ServiceState> {
 

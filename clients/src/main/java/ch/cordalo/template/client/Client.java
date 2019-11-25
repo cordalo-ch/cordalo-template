@@ -13,7 +13,7 @@ import static net.corda.core.utilities.NetworkHostAndPort.parse;
 
 /**
  * Connects to a Corda node via RPC and performs RPC operations on the node.
- *
+ * <p>
  * The RPC connection is configured using command line arguments.
  */
 public class Client {
@@ -21,7 +21,8 @@ public class Client {
 
     public static void main(String[] args) {
         // Create an RPC connection to the node.
-        if (args.length != 3) throw new IllegalArgumentException("Usage: Client <node address> <rpc username> <rpc password>");
+        if (args.length != 3)
+            throw new IllegalArgumentException("Usage: Client <node address> <rpc username> <rpc password>");
         final NetworkHostAndPort nodeAddress = parse(args[0]);
         final String rpcUsername = args[1];
         final String rpcPassword = args[2];
