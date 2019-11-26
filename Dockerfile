@@ -11,16 +11,12 @@
 # WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
 # COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-
-# Zulu is a fully tested, compatibility verified, and trusted binary distribution of the OpenJDK 8, 7, and 6 platforms.
-# used by Corda official docker image
-FROM azul/zulu-openjdk:8u232
+FROM ubuntu:latest
 
 # net-tools our script require netstat
 RUN apt-get update && \
     apt-get -y upgrade && \
-    apt-get -y install bash curl unzip git net-tools && \
+    apt-get -y install bash curl unzip git net-tools openjdk-8-jdk-headless && \
     git clone https://github.com/cordalo-ch/cordalo-template.git && \
     chmod +x /cordalo-template/scripts/*.sh
 
@@ -34,7 +30,7 @@ ENV WEBSERVER_COMPANY_A=10801 \
     RPC_COMPANY_B=10009 \
     RPC_COMPANY_C=10012 \
     RPC_COMPANY_D=10015 \
-    RPC_COMPANY_E=10018
+    RPC_COMPANY_E=10018 \
     NODE_DEBUG_COMPANY_A=5005 \
     NODE_DEBUG_COMPANY_B=5006 \
     NODE_DEBUG_COMPANY_C=5007 \
@@ -45,7 +41,6 @@ ENV WEBSERVER_COMPANY_A=10801 \
     NODE_JOLOKIA_COMPANY_C=7007 \
     NODE_JOLOKIA_COMPANY_D=7008 \
     NODE_JOLOKIA_COMPANY_E=7009
-
 
 EXPOSE ${WEBSERVER_COMPANY_A}
 EXPOSE ${WEBSERVER_COMPANY_B}

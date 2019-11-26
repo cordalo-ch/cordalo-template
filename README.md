@@ -20,14 +20,16 @@ Example snapshot
 
 ## Docker (recommended)
 
-`docker run -P cordalo-template:latest`
+```
+docker run -t -d -p 10801:10801 -p 10802:10802 -p 10803:10803 -p 10804:10804 -p 10805:10805 -p 10006:10006 -p 10009:10009 -p 10012:10012 -p 10015:10015 -p 10018:10018 cordalo-template:latest
+```
+Then point your browser to http://localhost:10801/?frames=10801+10802+10803,10804,10805
 
-or
-
-`docker run -p 10801:10801 -p 10802:10802 -p 10803:10803 -p 10804:10804 -p 10805:10805 -p 10006:10006 -p 10009:10009 -p 10012:10012 -p 10015:10015 -p 10018:10018 cordalo-template:latest`
-
-add -d to run the container in the background
-replace latest with any version available at https://hub.docker.com/repository/docker/cordalo/cordalo-template
+**Attention**
+* if you are using docker desktop, dont forget to increase memory and number of cpu in docker setting to something like 16gb
+* the -t option allocates a "pseudo-tty". This tricks bash into continuing to run indefinitely because it thinks it is 
+  connected to an interactive TTY (even though you have no way to interact with that particular TTY if you don't pass -i).
+* replace latest with any version available at https://hub.docker.com/repository/docker/cordalo/cordalo-template
 
 
 ## Windows 
@@ -140,15 +142,15 @@ Each above node is able to start the following flow
 
 Building new image, from root of this directory
 
-`docker build -f Dockerfile . -t cordalo-template `
-
-to run image
-`docker run -P cordalo-template:latest`
-
-to push image
-
 ```
+docker system prune -a
+docker build -f Dockerfile . -t cordalo-template
+```
+to push image
+```
+docker login --username=cordalo
+# password in keepass
 docker tag cordalo-template cordalo/cordalo-template:latest
 docker push cordalo/cordalo-template:latest
 ```
-new version now avaliable at https://hub.docker.com/repository/docker/cordalo/cordalo-template
+new version now available at https://hub.docker.com/repository/docker/cordalo/cordalo-template
