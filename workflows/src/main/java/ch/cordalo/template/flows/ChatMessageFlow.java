@@ -134,6 +134,7 @@ public class ChatMessageFlow {
         }
 
         @Override
+        @Suspendable
         public void validateToDelete(ChatMessageState state) throws FlowException {
 
         }
