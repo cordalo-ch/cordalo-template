@@ -18,8 +18,15 @@ Example snapshot
 
 # Running the demo
 
-## Windows 
+## Docker (recommended)
 
+`docker run -p 10801:10801 -p 10802:10802 -p 10803:10803 -p 10804:10804 -p 10805:10805 -p 10006:10006 -p 10009:10009 -p 10012:10012 -p 10015:10015 -p 10018:10018 cordalo-template:latest`
+
+add -d to run the container in the background
+replace latest with any version available at https://hub.docker.com/repository/docker/cordalo/cordalo-template
+
+
+## Windows 
 * Install GIT for windows and use GIT Bash or Cygwin
 * Clone this project and run ./cleanAll.sh from script folder
 ```
@@ -37,7 +44,7 @@ cd script
 
 Be patient! I can take upto some minutes due to issues in the official CORDA starting procedures of nodes running in parallel. The scripts are re-trying until all is up and running.
 The webservers are started after the nodes. If everything is done, the scripts stops and shows the following
-```
+
 ---------------------------------------
 CORDA and Webservers are UP and running
 ---------------------------------------
@@ -58,7 +65,7 @@ Currently 5 Webservers  running
 | checkStates.sh | displays the status of nodes and web |
 | tailServers.sh | tail all web server log files |
 | tailNodes.sh | tail all log files of all nodes |
-
+```
 ## UI
 
 When all Node and webserver are up, you can visit 
@@ -120,12 +127,24 @@ Configuration settings take place in build.gradle file and for the demo we start
 
 We want to 
 
-
-
 Each above node is able to start the following flow
 * Buying some products (P) flow with different costs attached to it (25, 99, 34)
 * Trigger some support (S) flow  with different costs attached to it (9, 10, 45)
 * Trigger some Alarm Services (A) flow  with different costs attached to it (53, 87)
 
+# Docker
 
- 
+Building new image, from root of this directory
+
+`docker build -f Dockerfile . -t cordalo-template `
+
+to run image
+`docker run -p 10801:10801 -p 10802:10802 -p 10803:10803 -p 10804:10804 -p 10805:10805 -p 10006:10006 -p 10009:10009 -p 10012:10012 -p 10015:10015 -p 10018:10018 cordalo-template:latest`
+
+to push image
+
+```
+docker tag cordalo-template cordalo/cordalo-template:latest
+docker push cordalo/cordalo-template:latest
+```
+new version now avaliable at https://hub.docker.com/repository/docker/cordalo/cordalo-template
