@@ -20,6 +20,10 @@ Example snapshot
 
 ## Docker (recommended)
 
+`docker run -P cordalo-template:latest`
+
+or
+
 `docker run -p 10801:10801 -p 10802:10802 -p 10803:10803 -p 10804:10804 -p 10805:10805 -p 10006:10006 -p 10009:10009 -p 10012:10012 -p 10015:10015 -p 10018:10018 cordalo-template:latest`
 
 add -d to run the container in the background
@@ -139,7 +143,7 @@ Building new image, from root of this directory
 `docker build -f Dockerfile . -t cordalo-template `
 
 to run image
-`docker run -p 10801:10801 -p 10802:10802 -p 10803:10803 -p 10804:10804 -p 10805:10805 -p 10006:10006 -p 10009:10009 -p 10012:10012 -p 10015:10015 -p 10018:10018 cordalo-template:latest`
+`docker run -P cordalo-template:latest`
 
 to push image
 
