@@ -68,4 +68,5 @@ EXPOSE ${NODE_JOLOKIA_COMPANY_D}
 EXPOSE ${NODE_JOLOKIA_COMPANY_E}
 
 WORKDIR /cordalo-template
-CMD ["/cordalo-template/scripts/cleanAll.sh"]
+# CMD ["/cordalo-template/scripts/cleanAll.sh"]
+ENTRYPOINT ["tail", "-f", "/dev/null"]
