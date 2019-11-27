@@ -29,6 +29,7 @@ import net.corda.core.node.services.vault.QueryCriteria;
 import net.corda.core.transactions.SignedTransaction;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static net.corda.core.node.services.vault.QueryCriteriaUtils.getField;
@@ -92,6 +93,10 @@ public class CarFlow {
             this.type = type;
             this.stammNr = stammNr;
             this.owners = owners;
+        }
+
+        public Create(@NotNull UniqueIdentifier id, @NotNull String make, @NotNull String model, @NotNull String type, @NotNull String stammNr) {
+            this(id, make, model, type, stammNr, new ArrayList<>());
         }
 
         @Suspendable

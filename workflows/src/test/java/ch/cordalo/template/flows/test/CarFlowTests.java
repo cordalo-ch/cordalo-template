@@ -22,8 +22,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
-
 public class CarFlowTests extends CordaloTemplateBaseFlowTests {
 
     @Before
@@ -39,7 +37,7 @@ public class CarFlowTests extends CordaloTemplateBaseFlowTests {
 
 
     protected CarState newCar(CordaNodeEnvironment from, String stammNr, String make, String model) throws FlowException {
-        FlowLogic<SignedTransaction> flow = new CarFlow.Create(new UniqueIdentifier(), make, model, "PW", stammNr, new ArrayList<>());
+        FlowLogic<SignedTransaction> flow = new CarFlow.Create(new UniqueIdentifier(), make, model, "PW", stammNr);
         return this.startFlowAndResult(from, flow, CarState.class);
     }
 
