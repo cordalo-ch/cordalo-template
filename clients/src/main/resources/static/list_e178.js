@@ -85,9 +85,7 @@ function show_e178(tagName, result) {
             {
                 title: "Partners", name: "state", type: "text", itemTemplate: function (value, item) {
                     i = i + 1;
-                    var x500_O = participantsWithoutMe(item.state.participantsX500).map(x = > X500toO(mapX500(x))
-                )
-                    ;
+                    var x500_O = participantsWithoutMe(item.state.participantsX500).map(function(x) { return X500toO(mapX500(x)) });
                     return strongS(i) + x500_O.join(",<br>") + strongE(i);
                 }
             },

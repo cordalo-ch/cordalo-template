@@ -110,9 +110,7 @@ function show_services(tagName, result) {
             {
                 title: "Partners", name: "state", type: "text", itemTemplate: function (value, item) {
                     i = i + 1;
-                    var x500_O = participantsWithoutMe(item.state.participantsX500).map(x = > X500toO(x)
-                )
-                    ;
+                    var x500_O = participantsWithoutMe(item.state.participantsX500).map(function(x) { return X500toO(x) });
                     return strongS(i) + x500_O.join(",") + strongE(i);
                 }
             },
