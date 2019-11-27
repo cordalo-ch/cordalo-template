@@ -10,10 +10,7 @@
 
 package ch.cordalo.template.flows;
 
-import ch.cordalo.corda.common.flows.FlowHelper;
-import ch.cordalo.corda.common.flows.ResponderBaseFlow;
-import ch.cordalo.corda.common.flows.SimpleBaseFlow;
-import ch.cordalo.corda.common.flows.SimpleFlow;
+import ch.cordalo.corda.common.flows.*;
 import ch.cordalo.template.contracts.CarContract;
 import ch.cordalo.template.states.CarSchemaV1;
 import ch.cordalo.template.states.CarState;
@@ -176,47 +173,36 @@ public class CarFlow {
 
     @InitiatingFlow(version = 2)
     @StartableByRPC
-    public static class Search extends SimpleBaseFlow<CarState> {
+    public static class Search extends SimpleBaseFlow<CarState> implements SimpleFlow.Search<CarState, String> {
 
-        @NotNull
-        private final UniqueIdentifier id;
-        @NotNull
-        private final Party cardossier;
         @NotNull
         private final String stammNr;
+        @NotNull
+        private final Party cardossier;
 
-        public Search(@NotNull UniqueIdentifier id, Party cardossier, String stammNr) {
-            this.id = id;
-            this.cardossier = cardossier;
+        public Search(String stammNr, Party cardossier) {
             this.stammNr = stammNr;
+            this.cardossier = cardossier;
         }
 
         @Suspendable
         @Override
         public CarState call() throws FlowException {
-            /* search on local vault if already shared */
-            StateAndRef<CarState> carByStammNr = getCarByStammNr(this.stammNr, this.getServiceHub());
-            if (carByStammNr != null) {
-                return carByStammNr.getState().getData();
-            }
-
-            /* initiate flow at counterparty to get LinearId from car after successful sharing within responder */
-            FlowSession flowSession = this.initiateFlow(this.cardossier);
-            UniqueIdentifier carLinearId = flowSession.sendAndReceive(UniqueIdentifier.class, this.stammNr).unwrap(id -> {
-                return id;
-            });
-            /* car not found and not synched */
-            if (carLinearId == null) {
-                return null;
-            }
-            /* car found and synched with linear Id */
-            StateAndRef<CarState> lastStateByLinearId = getCarByLinearId(carLinearId, this.getServiceHub());
-            if (lastStateByLinearId == null) {
-                throw new FlowException("Car not found in vault after search & share id=" + carLinearId);
-            }
-            return lastStateByLinearId.getState().getData();
+            return this.simpleFlow_Search(CarState.class, this, this.cardossier);
         }
 
+        @Override
+        @Suspendable
+        public CarState search(FlowHelper<CarState> flowHelper, String valueToSearch) throws FlowException {
+            StateAndRef<CarState> carByStammNr = getCarByStammNr(valueToSearch, this.getServiceHub());
+            return carByStammNr == null ? null : carByStammNr.getState().getData();
+        }
+
+        @Override
+        @Suspendable
+        public String getValueToSearch() {
+            return this.stammNr;
+        }
     }
 
     @InitiatedBy(CarFlow.Create.class)
@@ -265,37 +251,29 @@ public class CarFlow {
 
     /* running in counter party node */
     @InitiatedBy(CarFlow.Search.class)
-    public static class SearchResponder extends ResponderBaseFlow<CarState> {
+    public static class SearchResponder extends SearchResponderBaseFlow implements SimpleFlow.SearchResponder<CarState, String, SignedTransaction> {
 
         public SearchResponder(FlowSession otherFlow) {
             super(otherFlow);
         }
 
-
         @Suspendable
         @Override
         public Unit call() throws FlowException {
+            return this.responderFlow_receiveAndSend(String.class, this);
+        }
 
-            /* receive the requested StammNr from sender */
-            String stammNr = this.otherFlow.receive(String.class).unwrap(data -> {
-                return data;
-            });
+        @Override
+        @Suspendable
+        public CarState search(FlowHelper<CarState> flowHelper, String valueToSearch) throws FlowException {
+            StateAndRef<CarState> carByStammNr = getCarByStammNr(valueToSearch, this.getServiceHub());
+            return carByStammNr == null ? null : carByStammNr.getState().getData();
+        }
 
-            /* search unconsumed car by StammNr */
-            StateAndRef<CarState> carByStammNr = getCarByStammNr(stammNr, this.getServiceHub());
-            if (carByStammNr == null) {
-                this.otherFlow.send(null);
-                return null;
-            }
-
-            CarState car = carByStammNr.getState().getData();
-            /* try to share officially with corda the car and send back */
-            Share shareFlow = new Share(car.getLinearId(), this.otherFlow.getCounterparty());
-            subFlow(shareFlow);
-
-            /* send back car linear id to counter party */
-            this.otherFlow.send(car.getLinearId());
-            return null;
+        @Override
+        @Suspendable
+        public FlowLogic<SignedTransaction> createShareStateFlow(CarState state, Party counterparty) {
+            return new CarFlow.Share(state.getLinearId(), counterparty);
         }
     }
 
