@@ -134,14 +134,14 @@ public class ControllerCar extends CordaloController {
     }
 
     /**
-     * search a new car from cardossier / importer node
+     * search a new car from cardossier / importer node by stamm number
      *
      * @param request is the original http request to calculate links in response
      * @param stammNr of the car to search for
      */
     @RequestMapping(
-            value = BASE_PATH + "/search",
-            method = RequestMethod.GET,
+            value = BASE_PATH + "/searchByStammNr",
+            method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -156,7 +156,7 @@ public class ControllerCar extends CordaloController {
         }
         try {
             CarState sharedCar = this.startFlow(
-                    CarFlow.Search.class, stammNr, searchFromParty);
+                    CarFlow.SearchByStammNr.class, stammNr, searchFromParty);
             return this.getResponse(request, sharedCar, HttpStatus.OK);
 
         } catch (Exception ex) {
@@ -164,6 +164,40 @@ public class ControllerCar extends CordaloController {
             return this.buildResponseFromException(HttpStatus.EXPECTATION_FAILED, ex);
         }
     }
+
+
+    /**
+     * search a new car from cardossier / importer node by id
+     *
+     * @param request is the original http request to calculate links in response
+     * @param id      of the car to search for
+     */
+    @RequestMapping(
+            value = BASE_PATH + "/searchById",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<StateAndLinks<CarState>> searchCarById(
+            HttpServletRequest request,
+            @RequestParam(value = "id", required = true) String id,
+            @RequestParam(value = "from", required = true) String from
+    ) {
+        Party searchFromParty = this.partyFromString(from);
+        if (searchFromParty == null) {
+            return this.buildResponseFromException(HttpStatus.BAD_REQUEST, MessageFormat.format("from party {0} is not a valid peer", from));
+        }
+        try {
+            CarState sharedCar = this.startFlow(
+                    CarFlow.SearchByStammNr.class, id, searchFromParty);
+            return this.getResponse(request, sharedCar, HttpStatus.OK);
+
+        } catch (Exception ex) {
+            logger.error(ex.getMessage(), ex);
+            return this.buildResponseFromException(HttpStatus.EXPECTATION_FAILED, ex);
+        }
+    }
+
 
     /**
      * receives a unconsumed car with a given ID from the node's vault.

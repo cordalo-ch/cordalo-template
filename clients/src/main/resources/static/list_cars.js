@@ -53,12 +53,39 @@ function searchCar(self, stammNr, from) {
     }
     $.ajax(
         {
-            url: cordaloEnv.API_URL("/api/v1/cordalo/template/cars/search"),
+            url: cordaloEnv.API_URL("/api/v1/cordalo/template/cars/searchByStammNr"),
             method: "GET",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"
             },
             data: "stammNr=" + encodeURI(stammNr) + "&from=" + encodeURI(from)
+        }
+    ).done(function (result) {
+        alert(JSON.parse(result));
+    }).fail(function (jqXHR, textStatus) {
+        display_error(jqXHR);
+    });
+}
+
+
+function searchCarById(self, from) {
+    animationOn();
+    var id = prompt("Please enter a UUID?", "");
+    if (!id) {
+        alert("no valid UUID available")
+        return
+    }
+    if (!from) {
+        display_error("from party cannot be empty");
+    }
+    $.ajax(
+        {
+            url: cordaloEnv.API_URL("/api/v1/cordalo/template/cars/searchById"),
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            data: "id=" + encodeURI(id) + "&from=" + encodeURI(from)
         }
     ).done(function (result) {
         alert(JSON.parse(result));
@@ -91,7 +118,7 @@ function show_cars(tagName, result) {
             {
                 title: "Model", name: "state", type: "text", itemTemplate: function (value, item) {
                     i = i + 1;
-                    return strongS(i) + item.model +" "+item.make + strongE(i);
+                    return strongS(i) + value.model +" "+value.make + strongE(i);
                 }
             },
             {

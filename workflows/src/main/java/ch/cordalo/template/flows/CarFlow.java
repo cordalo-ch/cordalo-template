@@ -178,14 +178,14 @@ public class CarFlow {
 
     @InitiatingFlow(version = 2)
     @StartableByRPC
-    public static class Search extends SimpleBaseFlow<CarState> implements SimpleFlow.Search<CarState, String> {
+    public static class SearchByStammNr extends SimpleBaseFlow<CarState> implements SimpleFlow.Search<CarState, String> {
 
         @NotNull
         private final String stammNr;
         @NotNull
         private final Party cardossier;
 
-        public Search(String stammNr, Party cardossier) {
+        public SearchByStammNr(String stammNr, Party cardossier) {
             this.stammNr = stammNr;
             this.cardossier = cardossier;
         }
@@ -207,6 +207,28 @@ public class CarFlow {
         @Suspendable
         public String getValueToSearch() {
             return this.stammNr;
+        }
+    }
+
+
+    @InitiatingFlow(version = 2)
+    @StartableByRPC
+    public static class SearchById extends SimpleBaseFlow<CarState> {
+
+        @NotNull
+        private final UniqueIdentifier id;
+        @NotNull
+        private final Party cardossier;
+
+        public SearchById(UniqueIdentifier id, Party cardossier) {
+            this.id = id;
+            this.cardossier = cardossier;
+        }
+
+        @Suspendable
+        @Override
+        public CarState call() throws FlowException {
+            return this.simpleFlow_SearchById(CarState.class, this.id, this.cardossier);
         }
     }
 
@@ -255,10 +277,10 @@ public class CarFlow {
 
 
     /* running in counter party node */
-    @InitiatedBy(CarFlow.Search.class)
-    public static class SearchResponder extends SearchResponderBaseFlow implements SimpleFlow.SearchResponder<CarState, String, SignedTransaction> {
+    @InitiatedBy(SearchByStammNr.class)
+    public static class SearchByStammNrResponder extends SearchResponderBaseFlow implements SimpleFlow.SearchResponder<CarState, String, SignedTransaction> {
 
-        public SearchResponder(FlowSession otherFlow) {
+        public SearchByStammNrResponder(FlowSession otherFlow) {
             super(otherFlow);
         }
 
@@ -282,4 +304,32 @@ public class CarFlow {
         }
     }
 
+
+    /* running in counter party node */
+    @InitiatedBy(SearchById.class)
+    public static class SearchByIdResponder extends SearchResponderBaseFlow implements SimpleFlow.SearchResponder<CarState, UniqueIdentifier, SignedTransaction> {
+
+        public SearchByIdResponder(FlowSession otherFlow) {
+            super(otherFlow);
+        }
+
+        @Suspendable
+        @Override
+        public Unit call() throws FlowException {
+            return this.responderFlow_receiveAndSend(String.class, this);
+        }
+
+        @Override
+        @Suspendable
+        public CarState search(FlowHelper<CarState> flowHelper, UniqueIdentifier valueToSearch) throws FlowException {
+            StateAndRef<CarState> carById = flowHelper.getLastStateByLinearId(CarState.class, valueToSearch);
+            return carById == null ? null : carById.getState().getData();
+        }
+
+        @Override
+        @Suspendable
+        public FlowLogic<SignedTransaction> createShareStateFlow(CarState state, Party counterparty) {
+            return new CarFlow.Share(state.getLinearId(), counterparty);
+        }
+    }
 }

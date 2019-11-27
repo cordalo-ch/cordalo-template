@@ -82,7 +82,7 @@ public class CarFlowTests extends CordaloTemplateBaseFlowTests {
         CarState car = this.newCar(companyC, "123.123.999", "Audi", "A8");
         Assert.assertTrue("old car owners does not contains companyA", !car.getOwners().contains(companyA.party));
 
-        FlowLogic<CarState> flow = new CarFlow.Search("123.123.999", companyC.party);
+        FlowLogic<CarState> flow = new CarFlow.SearchByStammNr("123.123.999", companyC.party);
 
         CarState copyCar = this.startFlowAndState(companyA, flow);
         Assert.assertEquals("cars identical: id", car.getLinearId(), copyCar.getLinearId());
