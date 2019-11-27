@@ -118,10 +118,10 @@ function show_cars(tagName, result) {
 
 function get_cars() {
     $get({
-        url: cordaloEnv.API_URL("/api/v1/cordalo/template/messages"),
+        url: cordaloEnv.API_URL("/api/v1/cordalo/template/cars"),
         data: {},
         success: function (result) {
-            show_messages("#cars-template", result);
+            show_cars("#cars-template", result);
         }
     });
 }
