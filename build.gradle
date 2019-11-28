@@ -63,6 +63,11 @@ allprojects {
         preserveFileTimestamps = false
         reproducibleFileOrder = true
     }
+
+    test {
+        minHeapSize = "750m"
+        maxHeapSize = "750m"
+    }
 }
 
 

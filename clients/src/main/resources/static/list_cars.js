@@ -54,7 +54,7 @@ function searchCar(self, stammNr, from) {
     $.ajax(
         {
             url: cordaloEnv.API_URL("/api/v1/cordalo/template/cars/searchByStammNr"),
-            method: "GET",
+            method: "POST",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"
             },
