@@ -189,7 +189,8 @@ public class ControllerCar extends CordaloController {
         }
         try {
             CarState sharedCar = this.startFlow(
-                    CarFlow.SearchByStammNr.class, id, searchFromParty);
+                    CarFlow.SearchById.class,
+                    new UniqueIdentifier(null, UUID.fromString(id)), searchFromParty);
             return this.getResponse(request, sharedCar, HttpStatus.OK);
 
         } catch (Exception ex) {
