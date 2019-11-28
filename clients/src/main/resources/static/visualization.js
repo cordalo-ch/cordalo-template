@@ -48,12 +48,6 @@ function connectWebSocket() {
             if (changes.headers.destination == "/topic/vaultChanged/serviceState") {
                 get_services();
             }
-            if (changes.headers.destination == "/topic/vaultChanged/e178") {
-                get_e178();
-            }
-            if (changes.headers.destination == "/topic/vaultChanged/car") {
-                get_cars();
-            }
         });
     });
 }
@@ -66,8 +60,6 @@ $(document).ready(function () {
 
     get_services();
     get_messages();
-    get_e178();
-    get_cars();
 
     connectWebSocket();
 });

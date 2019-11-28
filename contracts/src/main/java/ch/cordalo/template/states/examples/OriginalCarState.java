@@ -10,7 +10,7 @@
 
 package ch.cordalo.template.states.examples;
 
-import ch.cordalo.template.contracts.CarContract;
+import ch.cordalo.template.contracts.ChatMessageContract;
 import net.corda.core.contracts.BelongsToContract;
 import net.corda.core.contracts.LinearState;
 import net.corda.core.contracts.UniqueIdentifier;
@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-@BelongsToContract(CarContract.class)
+@BelongsToContract(ChatMessageContract.class)
 public class OriginalCarState implements LinearState {
     UniqueIdentifier linearId;
     String make;
