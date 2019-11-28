@@ -22,7 +22,7 @@ Example snapshot
 to get access to 6 nodes, 6 webserver and 5 remote debugging node port
 (windows user should use Git Bash)
 ```
-docker run -t -d \
+docker run -d \
 -p 10801:10801 \
 -p 10802:10802 \
 -p 10803:10803 \
@@ -176,7 +176,7 @@ Each above node is able to start the following flow
 Building new image, from root of this directory
 ```
 docker system prune -a
-docker build -f Dockerfile . -<t cordalo-template
+docker build -f Dockerfile . -t cordalo-template
 ```
 to push image
 ```
