@@ -19,9 +19,26 @@ Example snapshot
 # Running the demo
 
 ## Docker (recommended)
-
+to get access to 6 nodes, 6 webserver and 5 remote debugging node port
+(windows user should use Git Bash)
 ```
-docker run -t -d -p 10801:10801 -p 10802:10802 -p 10803:10803 -p 10804:10804 -p 10805:10805 -p 10006:10006 -p 10009:10009 -p 10012:10012 -p 10015:10015 -p 10018:10018 cordalo-template:latest
+docker run -t -d \
+-p 10801:10801 \
+-p 10802:10802 \
+-p 10803:10803 \
+-p 10804:10804 \
+-p 10805:10805 \
+-p 10006:10006 \
+-p 10009:10009 \
+-p 10012:10012 \
+-p 10015:10015 \
+-p 10018:10018 \
+-p 5005:5005 \
+-p 5006:5006 \
+-p 5007:5007 \
+-p 5008:5008 \
+-p 5009:5009 \
+cordalo-template:latest
 ```
 Then point your browser to http://localhost:10801/?frames=10801+10802+10803,10804,10805
 

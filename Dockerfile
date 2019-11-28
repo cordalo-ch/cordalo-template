@@ -16,10 +16,15 @@ FROM ubuntu:latest
 # net-tools our script require netstat
 RUN apt-get update && \
     apt-get -y upgrade && \
-    apt-get -y install bash curl unzip git net-tools openjdk-8-jdk-headless && \
+    apt-get -y install bash curl unzip git net-tools openjdk-8-jdk-headless sshpass && \
     git clone https://github.com/cordalo-ch/cordalo-template.git && \
     chmod +x /cordalo-template/scripts/*.sh
 
+#- RPC   servers starts with 10003, increment by 3
+#- SSH   servers starts with 10103, increment by 3
+#- P2P   servers starts with 10002, increment by 3
+#- Admin servers starts with 10043, increment by 3 (not needed in the future by corda)
+#- Web   servers starts with 10801, increment by 1
 ENV WEBSERVER_COMPANY_A=10801 \
     WEBSERVER_COMPANY_B=10802 \
     WEBSERVER_COMPANY_C=10803 \
@@ -68,5 +73,4 @@ EXPOSE ${NODE_JOLOKIA_COMPANY_D}
 EXPOSE ${NODE_JOLOKIA_COMPANY_E}
 
 WORKDIR /cordalo-template
-# CMD ["/cordalo-template/scripts/cleanAll.sh"]
-ENTRYPOINT ["tail", "-f", "/dev/null"]
+CMD ["/cordalo-template/scripts/entrypoint.sh"]
