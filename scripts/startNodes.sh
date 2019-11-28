@@ -1,8 +1,9 @@
 #!/bin/bash
-BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-. $BASEDIR/env.sh
+BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+. "$BASE_DIR"/env.sh
 
-cd $BASEDIR
+cd "$BASE_DIR" || exit
+
 (( max_nof = NodeNof ))
 max_time=80
 echo "Starting max $max_nof CORDA servers"
@@ -52,7 +53,7 @@ if [ "$retval" -eq $max_nof ]; then
 fi
 
 #$CORDA_HOME/build/nodes/runnodes
-$BASEDIR/startNodes-native.sh
+"$BASE_DIR"/startNodes-native.sh
 
 get_sshd
 if [ "$retval" -eq 0 ]; then
@@ -65,10 +66,10 @@ sleep 40s
 wait_until_all_started
 if [ "$retval" -lt $max_nof ]; then
 	echo "kill unstarted nodes"
-	cd $BASEDIR
-	$BASEDIR/_killUnstartedNodes.sh
+	cd "$BASE_DIR" || exit
+	"$BASE_DIR"/_killUnstartedNodes.sh
 	echo "start unstarted nodes"
-	cd $BASEDIR
-	$BASEDIR/startNodes.sh
+	cd "$BASE_DIR" || exit
+	"$BASE_DIR"/startNodes.sh
 fi
 

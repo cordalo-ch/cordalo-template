@@ -1,12 +1,8 @@
 #!/bin/bash
-BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-. $BASEDIR/env.sh
+BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+. "$BASE_DIR"/env.sh
 
-cd $BASEDIR
-$BASEDIR/stopServers.sh
-$BASEDIR/stopForceNodes.sh
-
-echo "---------------------------------"
-echo "CORDA and Webservers are DOWN now"
-echo "---------------------------------"
-$BASEDIR/status.sh
+cd "$BASE_DIR" || exit
+"$BASE_DIR"/stopServers.sh
+"$BASE_DIR"/stopForceNodes.sh
+"$BASE_DIR"/status.sh

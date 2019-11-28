@@ -1,6 +1,6 @@
 #!/bin/bash
-BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-. $BASEDIR/env.sh
+BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+. "$BASE_DIR"/env.sh
 
 stopped=
 checkPorts(){
@@ -9,7 +9,7 @@ checkPorts(){
 	nof=$(netstat -an | grep $port.*LISTEN | wc -l)
 	if [ $nof -eq 0 ];  then
 		echo "kill Java Nodes for $name"
-		cd $BASEDIR
+		cd "$BASE_DIR" || exit
 		echo "$(eval `./_killNode.sh $name`)"
 		stopped="${stopped}${name}"
 	fi

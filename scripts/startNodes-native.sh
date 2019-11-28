@@ -1,8 +1,8 @@
 #!/bin/bash
-BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-. $BASEDIR/env.sh
+BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+. "$BASE_DIR"/env.sh
 
-cd $BASEDIR
+cd "$BASE_DIR" || exit
 
 i=${NodeDebugPortStart}
 j=${NodeJolokiaPortStart}
@@ -10,7 +10,7 @@ nodes=( $NodeNames )
 for n in "${nodes[@]}"
 do
   echo "start Node $n $i $j"
-  $BASEDIR/startNode-native.sh $n $i $j
+  "$BASE_DIR"/startNode-native.sh $n $i $j
   (( i=i+1 ))
   (( j=j+1 ))
 done

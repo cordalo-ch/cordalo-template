@@ -1,7 +1,8 @@
 #!/bin/bash
-BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-. $BASEDIR/env.sh
-cd $CORDA_HOME
+BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+. "$BASE_DIR"/env.sh
+
+cd "$CORDA_HOME" || exit
 git pull
 ./gradlew deployNodes
 cd ~
