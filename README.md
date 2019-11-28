@@ -38,16 +38,19 @@ docker run -t -d \
 -p 5007:5007 \
 -p 5008:5008 \
 -p 5009:5009 \
+-p 10050:10050 \
+-p 10054:10054 \
+-p 10058:10058 \
+-p 10062:10062 \
+-p 10066:10066 \
 cordalo-template:latest
 ```
 Then point your browser to http://localhost:10801/?frames=10801+10802+10803,10804,10805
 
 **Attention**
 * if you are using docker desktop, dont forget to increase memory and number of cpu in docker setting to something like 16gb
-* the -t option allocates a "pseudo-tty". This tricks bash into continuing to run indefinitely because it thinks it is 
-  connected to an interactive TTY (even though you have no way to interact with that particular TTY if you don't pass -i).
-* replace latest with any version available at https://hub.docker.com/repository/docker/cordalo/cordalo-template
-
+* Replace latest with any version available at https://hub.docker.com/repository/docker/cordalo/cordalo-template
+* Windows only: in Git Bash you may have issue getting a TTY to the container  `the input device is not a TTY.  If you are using mintty, try prefixing the command with 'winpty'` use CMD or powershell instead!
 
 ## Windows 
 * Install GIT for windows and use GIT Bash or Cygwin
@@ -129,14 +132,14 @@ The warning from CordaApp still apply (https://docs.corda.net/tutorial-cordapp.h
 
 Configuration settings take place in build.gradle file and for the demo we start 5 Corda nodes and a Notary.
 
-| Name | RPC | SSH | P2P | Admin | Webserver |
-| ------------- | ------------- | ------------- | ------------- | ------------- | -------------- | 
-| `O=Notary,L=Bern,ST=BE,C=CH`           | 10003 | 10103 | 10002 | 10043 | none
-| `O=Company-A,L=Zurich,ST=ZH,C=CH`      | 10006 | 10106 | 10005 | 10046 | http://localhost:10801
-| `O=Company-B,L=Winterthur,ST=ZH,C=CH`  | 10009 | 10109 | 10008 | 10049 | http://localhost:10802
-| `O=Company-C,L=Zug,ST=ZG,C=CH`         | 10012 | 10112 | 10011 | 10052 | http://localhost:10803
-| `O=Company-D,L=Geneva,ST=ZH,C=CH`      | 10015 | 10115 | 10014 | 10055 | http://localhost:10804
-| `O=Company-E,L=Uster,ST=ZH,C=CH`       | 10018 | 10118 | 10017 | 10058 | http://localhost:10805
+| Name | RPC | SSH | P2P | Admin | Webserver | H2 |
+| ------------- | ------------- | ------------- | ------------- | ------------- | -------------- | -------------- | 
+| `O=Notary,L=Bern,ST=BE,C=CH`           | 10003 | 10103 | 10002 | 10043 | none | none
+| `O=Company-A,L=Zurich,ST=ZH,C=CH`      | 10006 | 10106 | 10005 | 10046 | http://localhost:10801 | jdbc:h2:tcp://localhost:10050/node
+| `O=Company-B,L=Winterthur,ST=ZH,C=CH`  | 10009 | 10109 | 10008 | 10049 | http://localhost:10802 | jdbc:h2:tcp://localhost:10054/node
+| `O=Company-C,L=Zug,ST=ZG,C=CH`         | 10012 | 10112 | 10011 | 10052 | http://localhost:10803 | jdbc:h2:tcp://localhost:10058/node
+| `O=Company-D,L=Geneva,ST=ZH,C=CH`      | 10015 | 10115 | 10014 | 10055 | http://localhost:10804 | jdbc:h2:tcp://localhost:10062/node
+| `O=Company-E,L=Uster,ST=ZH,C=CH`       | 10018 | 10118 | 10017 | 10058 | http://localhost:10805 | jdbc:h2:tcp://localhost:10066/node
 
 ## Port configurations
 - RPC   servers starts with 10003, increment by 3
@@ -144,10 +147,10 @@ Configuration settings take place in build.gradle file and for the demo we start
 - P2P   servers starts with 10002, increment by 3
 - Admin servers starts with 10043, increment by 3 (not needed in the future by corda)
 - Web   servers starts with 10801, increment by 1
+- H2 database servers starts with 10050, increment by 4
 
 
 # Demo
-
 We want to 
 
 Each above node is able to start the following flow
@@ -155,13 +158,25 @@ Each above node is able to start the following flow
 * Trigger some support (S) flow  with different costs attached to it (9, 10, 45)
 * Trigger some Alarm Services (A) flow  with different costs attached to it (53, 87)
 
+# Debugging
+
+# Access to node database
+* Download the last stable h2 http://www.h2database.com/html/download.html zip, unzip the zip, and navigate in a terminal window to the unzipped folder
+* Change directories to the bin folder:` cd h2/bin`
+* Run the following command to open the h2 web console in a web browser tab:
+    * Unix: sh `h2.sh`
+    * Windows: `h2.bat`
+* this open a browser, copy the desired node jdbc url, e.g. `jdbc:h2:tcp://localhost:10050/node` for Company A 
+
+# Access to java running in node
+* Never 'step into' a suspendable method, but set always a breakpoint
+
 # Docker
 
 Building new image, from root of this directory
-
 ```
 docker system prune -a
-docker build -f Dockerfile . -t cordalo-template
+docker build -f Dockerfile . -<t cordalo-template
 ```
 to push image
 ```
