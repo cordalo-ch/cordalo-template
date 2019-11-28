@@ -18,8 +18,38 @@ Example snapshot
 
 # Running the demo
 
-## Windows 
+## Docker (recommended)
+to get access to 6 nodes, 6 webserver and 5 remote debugging node port
+(windows user should use Git Bash)
+```
+docker run -t -d \
+-p 10801:10801 \
+-p 10802:10802 \
+-p 10803:10803 \
+-p 10804:10804 \
+-p 10805:10805 \
+-p 10006:10006 \
+-p 10009:10009 \
+-p 10012:10012 \
+-p 10015:10015 \
+-p 10018:10018 \
+-p 5005:5005 \
+-p 5006:5006 \
+-p 5007:5007 \
+-p 5008:5008 \
+-p 5009:5009 \
+cordalo-template:latest
+```
+Then point your browser to http://localhost:10801/?frames=10801+10802+10803,10804,10805
 
+**Attention**
+* if you are using docker desktop, dont forget to increase memory and number of cpu in docker setting to something like 16gb
+* the -t option allocates a "pseudo-tty". This tricks bash into continuing to run indefinitely because it thinks it is 
+  connected to an interactive TTY (even though you have no way to interact with that particular TTY if you don't pass -i).
+* replace latest with any version available at https://hub.docker.com/repository/docker/cordalo/cordalo-template
+
+
+## Windows 
 * Install GIT for windows and use GIT Bash or Cygwin
 * Clone this project and run ./cleanAll.sh from script folder
 ```
@@ -37,7 +67,7 @@ cd script
 
 Be patient! I can take upto some minutes due to issues in the official CORDA starting procedures of nodes running in parallel. The scripts are re-trying until all is up and running.
 The webservers are started after the nodes. If everything is done, the scripts stops and shows the following
-```
+
 ---------------------------------------
 CORDA and Webservers are UP and running
 ---------------------------------------
@@ -58,7 +88,7 @@ Currently 5 Webservers  running
 | checkStates.sh | displays the status of nodes and web |
 | tailServers.sh | tail all web server log files |
 | tailNodes.sh | tail all log files of all nodes |
-
+```
 ## UI
 
 When all Node and webserver are up, you can visit 
@@ -120,12 +150,24 @@ Configuration settings take place in build.gradle file and for the demo we start
 
 We want to 
 
-
-
 Each above node is able to start the following flow
 * Buying some products (P) flow with different costs attached to it (25, 99, 34)
 * Trigger some support (S) flow  with different costs attached to it (9, 10, 45)
 * Trigger some Alarm Services (A) flow  with different costs attached to it (53, 87)
 
+# Docker
 
- 
+Building new image, from root of this directory
+
+```
+docker system prune -a
+docker build -f Dockerfile . -t cordalo-template
+```
+to push image
+```
+docker login --username=cordalo
+# password in keepass
+docker tag cordalo-template cordalo/cordalo-template:latest
+docker push cordalo/cordalo-template:latest
+```
+new version now available at https://hub.docker.com/repository/docker/cordalo/cordalo-template
