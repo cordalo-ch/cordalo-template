@@ -42,6 +42,7 @@
     <script src="list_messages.js"></script>
     <script src="list_services.js"></script>
     <script src="list_e178.js"></script>
+    <script src="list_cars.js"></script>
     <script src="visualization.js"></script>
     <link rel="stylesheet" type="text/css" href="visualization.css">
 </head>
@@ -58,6 +59,17 @@
 
 </h1>
 
+<span id="cars-data_block">
+<h3>Cars</h3>
+<div id="cars-template"></div>
+</span>
+<span id="cars-data-new" style="display:block">
+    <a href="#" onClick='createNewCar(this, "123.456.786")'>create/123.456.786</a>,
+    <a href="#" onClick='createNewCar(this)'>create/random</a>,
+    <a href="#" onClick='searchCarById(this, "O=Company-C,L=Zug,ST=ZG,C=CH")'>search by Id</a>,
+    <a href="#"
+       onClick='searchCar(this, "123.456.789", "O=Company-C,L=Zug,ST=ZG,C=CH")'>search 123.456.789 / regulator</a>
+</span>
 
 <span id="e178-data_block">
 <h3>E178</h3>

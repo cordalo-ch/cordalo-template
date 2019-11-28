@@ -26,10 +26,9 @@ function makeOptions(id, list, actionText = "Action", onSelectionMethod = "onSel
     var keys = Object.keys(list);
     if (keys.length > 1) {
         var s = "<select id='" + id + "' onChange='" + onSelectionMethod + "(this)'><option>" + actionText + "</option>";
-        Object.entries(list).forEach(([key, value]) = >
-        s = s + (key === "self" ? "" : "<br><option value=\"" + value + "\">" + key + "</option>")
-    )
-        ;
+        Object.entries(list).forEach(function([key, value]) {
+            s = s + (key === "self" ? "" : "<br><option value=\"" + value + "\">" + key + "</option>")
+            });
         s = s + "</select>";
         return s;
     }
@@ -59,7 +58,5 @@ function getRandomInt(max) {
 }
 
 function participantsWithoutMe(list) {
-    return list.filter(x = > x != cordaloEnv.ME("X500")
-)
-    ;
+    return list.filter( function(x) { return x != cordaloEnv.ME("X500") });
 }

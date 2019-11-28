@@ -1,20 +1,16 @@
 #!/bin/bash
-BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-. $BASEDIR/env.sh
+BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+. "$BASE_DIR"/env.sh
 
-cd $CORDA_HOME
+cd "$CORDA_HOME" || exit
 git pull
-cd $BASEDIR
-$BASEDIR/stopServers.sh
+cd "$BASE_DIR" || exit
+"$BASE_DIR"/stopServers.sh
 
-cd $CORDA_HOME
+cd "$CORDA_HOME" || exit
 ./gradlew assemble
-cd $BASEDIR
+cd "$BASE_DIR" || exit
 
-$BASEDIR/startServers.sh
-
-echo "---------------------------------------"
-echo "CORDA and Webservers are UP and running"
-echo "---------------------------------------"
-$BASEDIR/status.sh
+"$BASE_DIR"/startServers.sh
+"$BASE_DIR"/status.sh
 

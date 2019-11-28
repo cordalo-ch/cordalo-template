@@ -1,8 +1,8 @@
 #!/bin/bash
-BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-. $BASEDIR/env.sh
+BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+. "$BASE_DIR"/env.sh
 
-cd $CORDA_HOME
+cd "$CORDA_HOME" || exit
 (( max_nof = NodeNof - 1 ))
 echo "Starting max $max_nof Webserver to CORDA"
 echo "----------------------------------------"
@@ -52,7 +52,7 @@ fi
 n=1
 while [ $n -le $max_nof ]
 do
-    nohup $CORDA_HOME/gradlew runWebserver${n} >> nohup-runWebserver${n}.out 2>/dev/null &
+    nohup "$CORDA_HOME"/gradlew runWebserver${n} >> nohup-runWebserver${n}.out 2>/dev/null &
     (( n++ ))
 done
 
@@ -67,7 +67,7 @@ wait_until_all_started
 if [ "$retval" -lt "$max_nof" ]; then
 	echo "kill all servers again"
 	cd ..
-	$BASEDIR/stopServers.sh
+	"$BASE_DIR"/stopServers.sh
   echo "start servers again"
-  $BASEDIR/startServers.sh
+  "$BASE_DIR"/startServers.sh
 fi

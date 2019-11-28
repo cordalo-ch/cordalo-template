@@ -80,15 +80,12 @@ var cordaloEnv = (function () {
                 }
 
                 // The result can be accessed through the `m`-variable.
-                m.forEach((match, groupIndex) = > {
-                    if(match != url
-            )
-                {
-                    resultMatch = match;
-                    return match;
-                }
-            })
-                ;
+                m.forEach(function(match, groupIndex) {
+                    if(match != url) {
+                        resultMatch = match;
+                        return match;
+                    }
+                });
             }
             return resultMatch;
         },
