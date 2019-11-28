@@ -316,7 +316,7 @@ public class CarFlow {
         @Suspendable
         @Override
         public Unit call() throws FlowException {
-            return this.responderFlow_receiveAndSend(String.class, this);
+            return this.responderFlow_receiveAndSend(UniqueIdentifier.class, this);
         }
 
         @Override
