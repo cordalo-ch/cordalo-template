@@ -149,7 +149,7 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
         }
 //        extraConfig = ['h2Settings.address' : 'localhost:10050'] # if else than localhost, you need a password
         extraConfig = [
-                'h2Settings.address' : '0.0.0.0:10050',
+                'h2Settings.address' : 'localhost:10066',
                 'dataSourceProperties': [
 //                  "dataSourceClassName": 'org.postgresql.ds.PGSimpleDataSource',
 //                  "dataSource.url"     : 'jdbc:postgresql://localhost:5432/postgres',
@@ -169,10 +169,10 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
         }
 //        extraConfig = ['h2Settings.address' : 'localhost:10054'] # if else than localhost, you need a password
         extraConfig = [
-                'h2Settings.address' : '0.0.0.0:10054',
+                'h2Settings.address' : 'localhost:10069',
                 'dataSourceProperties': [
 //                  "dataSourceClassName": 'org.postgresql.ds.PGSimpleDataSource',
-//                  "dataSource.url"     : 'jdbc:postgresql://localhost:5432/postgres',
+//                  "dataSource.url"     : 'jdbc:postgresql://localhost:5433/postgres',
                     "dataSource.user"    : "corda",
                     "dataSource.password": "corda"
                 ]
@@ -189,10 +189,10 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
         }
 //        extraConfig = ['h2Settings.address' : 'localhost:10058'] # if else than localhost, you need a password
         extraConfig = [
-                'h2Settings.address' : '0.0.0.0:10058',
+                'h2Settings.address' : 'localhost:10072',
                 'dataSourceProperties': [
 //                  "dataSourceClassName": 'org.postgresql.ds.PGSimpleDataSource',
-//                  "dataSource.url"     : 'jdbc:postgresql://localhost:5432/postgres',
+//                  "dataSource.url"     : 'jdbc:postgresql://localhost:5434/postgres',
                     "dataSource.user"    : "corda",
                     "dataSource.password": "corda"
                 ]
@@ -209,10 +209,10 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
         }
 //        extraConfig = ['h2Settings.address' : 'localhost:10062'] # if else than localhost, you need a password
         extraConfig = [
-                'h2Settings.address' : '0.0.0.0:10062',
+                'h2Settings.address' : 'localhost:10075',
                 'dataSourceProperties': [
 //                  "dataSourceClassName": 'org.postgresql.ds.PGSimpleDataSource',
-//                  "dataSource.url"     : 'jdbc:postgresql://localhost:5432/postgres',
+//                  "dataSource.url"     : 'jdbc:postgresql://localhost:5435/postgres',
                     "dataSource.user"    : "corda",
                     "dataSource.password": "corda"
                 ]
@@ -229,10 +229,10 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
         }
 //        extraConfig = ['h2Settings.address' : 'localhost:10066'] # if else than localhost, you need a password
         extraConfig = [
-                'h2Settings.address' : '0.0.0.0:10066',
+                'h2Settings.address' : 'localhost:10078',
                 'dataSourceProperties': [
 //                  "dataSourceClassName": 'org.postgresql.ds.PGSimpleDataSource',
-//                  "dataSource.url"     : 'jdbc:postgresql://localhost:5432/postgres',
+//                  "dataSource.url"     : 'jdbc:postgresql://localhost:5436/postgres',
                     "dataSource.user"    : "corda",
                     "dataSource.password": "corda"
                 ]
