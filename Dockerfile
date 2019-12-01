@@ -25,6 +25,7 @@ RUN apt-get update && \
 #- P2P   servers starts with 10002, increment by 3
 #- Admin servers starts with 10043, increment by 3 (not needed in the future by corda)
 #- Web   servers starts with 10801, increment by 1
+#- H2   servers starts with 10066, increment by 3
 #
 # As ENV can be ovverriden at run time: docker run -e WEBSERVER_COMPANY_A=20801
 ENV WEBSERVER_COMPANY_A=10801 \
@@ -48,11 +49,11 @@ ENV WEBSERVER_COMPANY_A=10801 \
     NODE_JOLOKIA_COMPANY_C=7007 \
     NODE_JOLOKIA_COMPANY_D=7008 \
     NODE_JOLOKIA_COMPANY_E=7009 \
-    NODE_H2_COMPANY_A=10050 \
-    NODE_H2_COMPANY_B=10054 \
-    NODE_H2_COMPANY_C=10058 \
-    NODE_H2_COMPANY_D=10062 \
-    NODE_H2_COMPANY_E=10066
+    NODE_H2_COMPANY_A=10066 \
+    NODE_H2_COMPANY_B=10069 \
+    NODE_H2_COMPANY_C=10072 \
+    NODE_H2_COMPANY_D=10075 \
+    NODE_H2_COMPANY_E=10078
 
 EXPOSE ${WEBSERVER_COMPANY_A} ${WEBSERVER_COMPANY_B} ${WEBSERVER_COMPANY_C} ${WEBSERVER_COMPANY_D} ${WEBSERVER_COMPANY_E}
 
