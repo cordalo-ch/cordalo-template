@@ -38,7 +38,7 @@ public class ControllerMe extends CordaloController {
     private final static String BASE_PATH = "";
 
     public ControllerMe(RpcConnection rpcConnection) {
-        super(rpcConnection);
+        super(rpcConnection, MAPPING_PATH, BASE_PATH);
     }
 
     /**

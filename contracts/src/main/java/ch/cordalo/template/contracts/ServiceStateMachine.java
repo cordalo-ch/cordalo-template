@@ -70,6 +70,7 @@ public class ServiceStateMachine extends StateMachine {
 
         newTransition("SEND_PAYMENT", "PAYMENT_SENT", "SHARED");
 
+        newTransition("DECLINE", "DECLINED", "SHARED", "PAYMENT_SENT");
         newTransition("ACCEPT", "ACCEPTED", "SHARED", "PAYMENT_SENT");
     }
 }

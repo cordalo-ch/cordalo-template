@@ -13,14 +13,12 @@ package ch.cordalo.template.client.webserver;
 import ch.cordalo.corda.common.client.webserver.CordaloController;
 import ch.cordalo.corda.common.client.webserver.RpcConnection;
 import ch.cordalo.corda.common.client.webserver.StateAndLinks;
-import ch.cordalo.corda.common.client.webserver.StateBuilder;
 import ch.cordalo.corda.common.contracts.StateVerifier;
 import ch.cordalo.template.flows.ChatMessageFlow;
 import ch.cordalo.template.states.ChatMessageState;
 import ch.cordalo.template.states.ServiceState;
 import net.corda.core.contracts.UniqueIdentifier;
 import net.corda.core.identity.Party;
-import net.corda.core.messaging.FlowProgressHandle;
 import net.corda.core.node.services.Vault;
 import net.corda.core.node.services.vault.QueryCriteria;
 import net.corda.core.transactions.SignedTransaction;
@@ -42,7 +40,7 @@ import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequestMapping("/api/v1/cordalo/template") // The paths for HTTP requests are relative to this base path.
-public class ControllerMessages extends CordaloController {
+public class ControllerMessages extends CordaloController<ChatMessageState> {
 
     private final static Logger logger = LoggerFactory.getLogger(ControllerMessages.class);
 
@@ -50,26 +48,7 @@ public class ControllerMessages extends CordaloController {
     private final static String BASE_PATH = "/messages";
 
     public ControllerMessages(RpcConnection rpcConnection) {
-        super(rpcConnection);
-    }
-
-
-    private ResponseEntity<StateAndLinks<ChatMessageState>> getResponse(HttpServletRequest request, ChatMessageState message, HttpStatus status) throws URISyntaxException {
-        String[] actions = {"reply"};
-        return new StateBuilder<>(message, ResponseEntity.status(HttpStatus.OK))
-                .stateMapping(MAPPING_PATH, BASE_PATH, request)
-                .self()
-                .links(actions)
-                .build();
-    }
-
-    private ResponseEntity<List<StateAndLinks<ChatMessageState>>> getResponses(HttpServletRequest request, List<ChatMessageState> list, HttpStatus status) throws URISyntaxException {
-        String[] actions = {"reply"};
-        return new StateBuilder<>(list, ResponseEntity.status(HttpStatus.OK))
-                .stateMapping(MAPPING_PATH, BASE_PATH, request)
-                .self()
-                .links(actions)
-                .buildList();
+        super(rpcConnection, MAPPING_PATH, BASE_PATH);
     }
 
     /**
@@ -85,7 +64,9 @@ public class ControllerMessages extends CordaloController {
             HttpServletRequest request) throws URISyntaxException {
         List<ChatMessageState> list = this.getProxy().vaultQuery(ChatMessageState.class).getStates()
                 .stream().map(state -> state.getState().getData()).collect(toList());
-        return this.getResponses(request, list, HttpStatus.OK);
+        return this.buildResponseFromStates(request, list, HttpStatus.OK)
+                .link("retry")
+                .buildList();
     }
 
     /**
@@ -112,22 +93,19 @@ public class ControllerMessages extends CordaloController {
         try {
             SignedTransaction signedTx = null;
             if (message != null && !message.isEmpty()) {
-                FlowProgressHandle<SignedTransaction> tFlowProgressHandle = this.getProxy()
-                        .startTrackedFlowDynamic(ChatMessageFlow.Send.class,
-                                receiverParty,
-                                message);
-                signedTx = tFlowProgressHandle.getReturnValue().get();
+                signedTx = this.startFlow(ChatMessageFlow.Send.class,
+                        receiverParty,
+                        message);
             } else {
-                signedTx = this.getProxy()
-                        .startTrackedFlowDynamic(ChatMessageFlow.Send.class,
-                                receiverParty)
-                        .getReturnValue()
-                        .get();
+                signedTx = this.startFlow(ChatMessageFlow.Send.class,
+                        receiverParty);
             }
 
             StateVerifier verifier = StateVerifier.fromTransaction(signedTx, null);
             ChatMessageState chatMessage = verifier.output().one(ChatMessageState.class).object();
-            return this.getResponse(request, chatMessage, HttpStatus.CREATED);
+            return this.buildResponseFromState(request, chatMessage, HttpStatus.CREATED)
+                    .link("retry")
+                    .build();
 
         } catch (Throwable ex) {
             logger.error(ex.getMessage(), ex);
@@ -162,7 +140,9 @@ public class ControllerMessages extends CordaloController {
             return null;
         } else {
             ChatMessageState message = messages.get(messages.size() - 1);
-            return this.getResponse(request, message, HttpStatus.OK);
+            return this.buildResponseFromState(request, message, HttpStatus.OK)
+                    .link("retry")
+                    .build();
         }
     }
 
@@ -182,11 +162,7 @@ public class ControllerMessages extends CordaloController {
             @PathVariable("id") String id) {
         UniqueIdentifier uid = new UniqueIdentifier(null, UUID.fromString(id));
         try {
-            final SignedTransaction signedTx = this.getProxy()
-                    .startTrackedFlowDynamic(ChatMessageFlow.Delete.class, uid)
-                    .getReturnValue()
-                    .get();
-            //this.messagingTemplate.convertAndSend("/topic/vaultChanged/cordalo/template/service", "");
+            this.startFlow(ChatMessageFlow.Delete.class, uid);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         } catch (Throwable ex) {
             logger.error(ex.getMessage(), ex);
