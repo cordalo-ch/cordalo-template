@@ -38,11 +38,11 @@ docker run -d \
 -p 5007:5007 \
 -p 5008:5008 \
 -p 5009:5009 \
--p 10050:10050 \
--p 10054:10054 \
--p 10058:10058 \
--p 10062:10062 \
 -p 10066:10066 \
+-p 10069:10069 \
+-p 10072:10072 \
+-p 10075:10075 \
+-p 10078:10078 \
 cordalo-template:latest
 ```
 Then point your browser to http://localhost:10801/?frames=10801+10802+10803,10804,10805
@@ -134,11 +134,11 @@ Configuration settings take place in build.gradle file and for the demo we start
 | Name | RPC | SSH | P2P | Admin | Webserver | H2 |
 | ------------- | ------------- | ------------- | ------------- | ------------- | -------------- | -------------- | 
 | `O=Notary,L=Bern,ST=BE,C=CH`           | 10003 | 10103 | 10002 | 10043 | none | none
-| `O=Company-A,L=Zurich,ST=ZH,C=CH`      | 10006 | 10106 | 10005 | 10046 | http://localhost:10801 | jdbc:h2:tcp://localhost:10050/node
-| `O=Company-B,L=Winterthur,ST=ZH,C=CH`  | 10009 | 10109 | 10008 | 10049 | http://localhost:10802 | jdbc:h2:tcp://localhost:10054/node
-| `O=Company-C,L=Zug,ST=ZG,C=CH`         | 10012 | 10112 | 10011 | 10052 | http://localhost:10803 | jdbc:h2:tcp://localhost:10058/node
-| `O=Company-D,L=Geneva,ST=ZH,C=CH`      | 10015 | 10115 | 10014 | 10055 | http://localhost:10804 | jdbc:h2:tcp://localhost:10062/node
-| `O=Company-E,L=Uster,ST=ZH,C=CH`       | 10018 | 10118 | 10017 | 10058 | http://localhost:10805 | jdbc:h2:tcp://localhost:10066/node
+| `O=Company-A,L=Zurich,ST=ZH,C=CH`      | 10006 | 10106 | 10005 | 10046 | http://localhost:10801 | jdbc:h2:tcp://localhost:10066/node
+| `O=Company-B,L=Winterthur,ST=ZH,C=CH`  | 10009 | 10109 | 10008 | 10049 | http://localhost:10802 | jdbc:h2:tcp://localhost:10069/node
+| `O=Company-C,L=Zug,ST=ZG,C=CH`         | 10012 | 10112 | 10011 | 10052 | http://localhost:10803 | jdbc:h2:tcp://localhost:10072/node
+| `O=Company-D,L=Geneva,ST=ZH,C=CH`      | 10015 | 10115 | 10014 | 10055 | http://localhost:10804 | jdbc:h2:tcp://localhost:10075/node
+| `O=Company-E,L=Uster,ST=ZH,C=CH`       | 10018 | 10118 | 10017 | 10058 | http://localhost:10805 | jdbc:h2:tcp://localhost:10078/node
 
 ## Port configurations
 - RPC   servers starts with 10003, increment by 3
@@ -146,7 +146,7 @@ Configuration settings take place in build.gradle file and for the demo we start
 - P2P   servers starts with 10002, increment by 3
 - Admin servers starts with 10043, increment by 3 (not needed in the future by corda)
 - Web   servers starts with 10801, increment by 1
-- H2 database servers starts with 10050, increment by 4
+- H2 database servers starts with 10066, increment by 3
 
 
 # Demo
