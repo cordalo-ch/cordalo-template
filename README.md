@@ -76,7 +76,6 @@ CORDA and Webservers are UP and running
 ---------------------------------------
 Currently 6 CORDA nodes running
 Currently 5 Webservers  running
-```
 
 ## Scripts
 | Name | Description | Special note |
@@ -91,7 +90,7 @@ Currently 5 Webservers  running
 | checkStates.sh | displays the status of nodes and web |
 | tailServers.sh | tail all web server log files |
 | tailNodes.sh | tail all log files of all nodes |
-```
+
 ## UI
 
 When all Node and webserver are up, you can visit 
