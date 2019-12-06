@@ -67,7 +67,7 @@ public class ControllerServices extends CordaloController<ServiceState> {
         List<ServiceState> list = this.getProxy().vaultQuery(ServiceState.class).getStates()
                 .stream().map(state -> state.getState().getData()).collect(toList());
         return this.buildResponseFromStates(request, list, HttpStatus.OK)
-                .links(x -> x.getStateObject().getNextActions())
+                .links(x -> x.getStateObject().getNextActionsFor(this.getMe()))
                 .buildList();
     }
 
@@ -98,7 +98,7 @@ public class ControllerServices extends CordaloController<ServiceState> {
         } else {
             ServiceState service = states.get(states.size() - 1);
             return this.buildResponseFromState(request, service, HttpStatus.OK)
-                    .links(x -> x.getStateObject().getNextActions())
+                    .links(x -> x.getStateObject().getNextActionsFor(this.getMe()))
                     .build();
         }
     }
@@ -165,7 +165,7 @@ public class ControllerServices extends CordaloController<ServiceState> {
             StateVerifier verifier = StateVerifier.fromTransaction(signedTx, null);
             ServiceState service = verifier.output().one(ServiceState.class).object();
             return this.buildResponseFromState(request, service, HttpStatus.CREATED)
-                    .links(x -> x.getStateObject().getNextActions())
+                    .links(x -> x.getStateObject().getNextActionsFor(this.getMe()))
                     .build();
         } catch (Throwable ex) {
             logger.error(ex.getMessage(), ex);
@@ -213,7 +213,7 @@ public class ControllerServices extends CordaloController<ServiceState> {
                 StateVerifier verifier = StateVerifier.fromTransaction(signedTx, null);
                 ServiceState service = verifier.output().one(ServiceState.class).object();
                 return this.buildResponseFromState(request, service, HttpStatus.OK)
-                        .links(x -> x.getStateObject().getNextActions())
+                        .links(x -> x.getStateObject().getNextActionsFor(this.getMe()))
                         .build();
             } else {
                 final SignedTransaction signedTx = this.startFlow(
@@ -224,7 +224,7 @@ public class ControllerServices extends CordaloController<ServiceState> {
                 StateVerifier verifier = StateVerifier.fromTransaction(signedTx, null);
                 ServiceState service = verifier.output().one(ServiceState.class).object();
                 return this.buildResponseFromState(request, service, HttpStatus.OK)
-                        .links(x -> x.getStateObject().getNextActions())
+                        .links(x -> x.getStateObject().getNextActionsFor(this.getMe()))
                         .build();
             }
         } catch (Throwable ex) {

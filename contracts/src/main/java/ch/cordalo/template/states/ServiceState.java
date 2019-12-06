@@ -18,11 +18,13 @@ import ch.cordalo.template.contracts.ServiceContract;
 import ch.cordalo.template.contracts.ServiceStateMachine;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.corda.core.contracts.BelongsToContract;
+import net.corda.core.contracts.LinearPointer;
 import net.corda.core.contracts.UniqueIdentifier;
 import net.corda.core.identity.Party;
 import net.corda.core.serialization.ConstructorForDeserialization;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +41,6 @@ public class ServiceState extends CordaloLinearState {
     @NotNull
     private final Party initiator;
 
-
     @NotNull
     private final Map<String, Object> serviceData;
 
@@ -47,8 +48,10 @@ public class ServiceState extends CordaloLinearState {
     private final Party serviceProvider;
     private final Integer price;
 
+    private List<LinearPointer> documents;
+
     @ConstructorForDeserialization
-    public ServiceState(@NotNull UniqueIdentifier linearId, @NotNull String serviceName, @NotNull Party initiator, @NotNull String state, Map<String, Object> serviceData, Party serviceProvider, Integer price) {
+    public ServiceState(@NotNull UniqueIdentifier linearId, @NotNull String serviceName, @NotNull Party initiator, @NotNull String state, Map<String, Object> serviceData, Party serviceProvider, Integer price, List<LinearPointer> documents) {
         super(linearId);
         this.state = state;
         this.serviceName = serviceName;
@@ -56,10 +59,19 @@ public class ServiceState extends CordaloLinearState {
         this.serviceData = serviceData == null ? new LinkedHashMap<>() : serviceData;
         this.serviceProvider = serviceProvider;
         this.price = price;
+        this.documents = documents;
+    }
+
+    public ServiceState(@NotNull UniqueIdentifier linearId, @NotNull String serviceName, @NotNull Party initiator, @NotNull String state, Map<String, Object> serviceData, Party serviceProvider, Integer price) {
+        this(linearId, serviceName, initiator, state, serviceData, serviceProvider, price, new ArrayList<>());
+    }
+
+    public ServiceState(@NotNull UniqueIdentifier linearId, @NotNull String serviceName, @NotNull Party initiator, @NotNull StateMachine.State state, Map<String, Object> serviceData, Party serviceProvider, Integer price, List<LinearPointer> documents) {
+        this(linearId, serviceName, initiator, state.getValue(), serviceData, serviceProvider, price, documents);
     }
 
     public ServiceState(@NotNull UniqueIdentifier linearId, @NotNull String serviceName, @NotNull Party initiator, @NotNull StateMachine.State state, Map<String, Object> serviceData, Party serviceProvider, Integer price) {
-        this(linearId, serviceName, initiator, state.getValue(), serviceData, serviceProvider, price);
+        this(linearId, serviceName, initiator, state.getValue(), serviceData, serviceProvider, price, new ArrayList<>());
     }
 
     @NotNull
@@ -113,6 +125,10 @@ public class ServiceState extends CordaloLinearState {
         return serviceData;
     }
 
+    public List<LinearPointer> getDocuments() {
+        return documents;
+    }
+
     /* actions CREATE */
     public static ServiceState create(@NotNull UniqueIdentifier linearId, @NotNull String serviceName, @NotNull Party initiator, Map<String, Object> serviceData) {
         return new ServiceState(linearId, serviceName, initiator, ServiceStateMachine.StateTransition("CREATE").getInitialState(), serviceData, null, null);
@@ -139,6 +155,13 @@ public class ServiceState extends CordaloLinearState {
     public ServiceState withAction(ServiceStateMachine.StateTransition transition) {
         StateMachine.State newState = transition.getNextStateFrom(this.getStateObject());
         return new ServiceState(this.linearId, this.serviceName, this.initiator, newState, this.serviceData, this.serviceProvider, this.price);
+    }
+
+    /* actions any */
+    public ServiceState addDocument(SignedDocument document) {
+        ArrayList<LinearPointer> newDocuments = new ArrayList<>(this.documents);
+        newDocuments.add(new LinearPointer(document.getLinearId(), SignedDocument.class));
+        return new ServiceState(this.linearId, this.serviceName, this.initiator, this.state, this.serviceData, this.serviceProvider, this.price, newDocuments);
     }
 
     public String getData(String keys) {

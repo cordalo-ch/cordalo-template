@@ -15,13 +15,14 @@ import ch.cordalo.corda.common.contracts.StateMachine;
 public class ServiceStateMachine extends StateMachine {
 
     private final static ServiceStateMachine INSTANCE = new ServiceStateMachine();
+    public static final String STATEMACHINE_NAME = "services";
 
     public static ServiceStateMachine get() {
         return INSTANCE;
     }
 
     private ServiceStateMachine() {
-        super("services");
+        super(STATEMACHINE_NAME);
     }
 
     public static StateTransition StateTransition(String transition) {

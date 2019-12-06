@@ -46,7 +46,6 @@ public class ServiceContract implements Contract {
                     params.equal(ServiceState::getLinearId, ServiceState::getInitiator);
                     new CommandVerifier(verifier).verify_update1(ServiceState.class, params);
 
-
                     ServiceState service1 = verifier.input().notEmpty().one().one(ServiceState.class).object();
                     ServiceState service2 = verifier
                             .output().notEmpty().one(ServiceState.class)
