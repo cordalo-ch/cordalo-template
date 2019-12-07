@@ -12,6 +12,8 @@ package ch.cordalo.template.client.webserver;
 
 import ch.cordalo.corda.common.client.webserver.CordaloController;
 import ch.cordalo.corda.common.client.webserver.RpcConnection;
+import ch.cordalo.corda.common.contracts.Permissions;
+import ch.cordalo.template.contracts.ServicePermissions;
 import com.google.common.collect.ImmutableMap;
 import net.corda.core.identity.CordaX500Name;
 import net.corda.core.node.NodeInfo;
@@ -48,6 +50,16 @@ public class ControllerMe extends CordaloController {
     @ResponseBody
     public Map<String, CordaX500Name> whoami() {
         return ImmutableMap.of("me", this.getMe().getName());
+    }
+
+    /**
+     * Returns all roles, permissions and attributes for this party.
+     */
+    @GetMapping(value = "/permissions", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Map<String, Object> getPermissions() {
+        ServicePermissions.getInstance();
+        return Permissions.getAllPermissions(this.getMe());
     }
 
     /**

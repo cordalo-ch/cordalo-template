@@ -10,6 +10,7 @@
 
 package ch.cordalo.template.client.webserver;
 
+import ch.cordalo.template.contracts.ServicePermissions;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -29,6 +30,8 @@ public class Starter {
      * Starts our Spring Boot application.
      */
     public static void main(String[] args) {
+        ServicePermissions.getInstance();
+
         SpringApplication app = new SpringApplication(Starter.class);
         app.setBannerMode(Banner.Mode.OFF);
         app.setWebApplicationType(SERVLET);

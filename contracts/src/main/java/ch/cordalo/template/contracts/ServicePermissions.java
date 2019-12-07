@@ -8,6 +8,10 @@ public class ServicePermissions extends Permissions {
 
     private final static ServicePermissions INSTANCE = new ServicePermissions();
 
+    public final static ServicePermissions getInstance() {
+        return INSTANCE;
+    }
+
     public ServicePermissions() {
         super(STATEMACHINE_NAME);
     }
