@@ -64,13 +64,13 @@ public class ControllerMessagesTests extends CordaloControllerBaseTests {
         String content = mvcResult.getResponse().getContentAsString();
     }
 
-    @Ignore
+    @Test
     public void post_message() throws Exception {
         String uri = "/api/v1/cordalo/template/messages";
         MvcResult mvcResult = mvc.perform(
                 MockMvcRequestBuilders.post(uri)
                         .content(
-                                "to=" + encode(this.companyB.party.toString()) + "&message=" + encode("hello world")
+                                "to=" + encode(this.companyB.x500.getX500Principal().getName()) + "&message=" + encode("hello world")
                         )
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                         .accept(MediaType.APPLICATION_JSON_VALUE)

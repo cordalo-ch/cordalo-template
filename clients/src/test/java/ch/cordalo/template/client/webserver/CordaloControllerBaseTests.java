@@ -64,6 +64,8 @@ public abstract class CordaloControllerBaseTests extends CordaloTemplateBaseTest
         } catch (UnsupportedEncodingException e) {
             return "Issue while encoding" + e.getMessage();
         }
+
+
     }
 
 }

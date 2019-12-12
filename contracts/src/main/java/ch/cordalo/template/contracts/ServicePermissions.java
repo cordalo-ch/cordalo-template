@@ -42,4 +42,9 @@ public class ServicePermissions extends Permissions {
         this.addPartyAndRoles("O=Company-D,L=Geneva,ST=ZH,C=CH", "admin");
         this.addPartyAndRoles("O=Company-E,L=Uster,ST=ZH,C=CH", "admin");
     }
+
+    @Override
+    protected void initPartiesAndAttributes() {
+
+    }
 }
