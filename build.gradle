@@ -19,7 +19,7 @@ buildscript {
         slf4j_version = '1.7.28'
         log4j_version = '2.12.1'
         corda_platform_version = '4'
-        cordalo_version = '0.12-SNAPSHOT'
+        cordalo_version = '4.1-SNAPSHOT'
     }
 
     repositories {
