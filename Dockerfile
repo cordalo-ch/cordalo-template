@@ -1,23 +1,9 @@
-# Copyright (c) 2019 by cordalo.ch - MIT License
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-# documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
-# to whom the Software is furnished to do so, subject to the following conditions:
-# The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
-# Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
-# WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-# COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-# OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-FROM ubuntu:latest
+FROM cordalo/cordalo-ubuntu-base:latest
 
-# net-tools our script require netstat
-RUN apt-get update && \
-    apt-get -y upgrade && \
-    apt-get -y install bash curl unzip git net-tools openjdk-8-jdk-headless sshpass && \
-    git clone https://github.com/cordalo-ch/cordalo-template.git && \
+# run with --build-arg GITHUB_LOGIN_PASSWD="joe:12345"
+ARG GITHUB_LOGIN_PASSWD=joe:12345
+
+RUN git clone https://github.com/cordalo-ch/cordalo-template.git && \
     chmod +x /cordalo-template/scripts/*.sh
 
 #- RPC   servers starts with 10003, increment by 3
@@ -26,8 +12,6 @@ RUN apt-get update && \
 #- Admin servers starts with 10043, increment by 3 (not needed in the future by corda)
 #- Web   servers starts with 10801, increment by 1
 #- H2   servers starts with 10066, increment by 3
-#
-# As ENV can be ovverriden at run time: docker run -e WEBSERVER_COMPANY_A=20801
 ENV WEBSERVER_COMPANY_A=10801 \
     WEBSERVER_COMPANY_B=10802 \
     WEBSERVER_COMPANY_C=10803 \
@@ -55,15 +39,36 @@ ENV WEBSERVER_COMPANY_A=10801 \
     NODE_H2_COMPANY_D=10075 \
     NODE_H2_COMPANY_E=10078
 
-EXPOSE ${WEBSERVER_COMPANY_A} ${WEBSERVER_COMPANY_B} ${WEBSERVER_COMPANY_C} ${WEBSERVER_COMPANY_D} ${WEBSERVER_COMPANY_E}
+EXPOSE ${WEBSERVER_COMPANY_A}
+EXPOSE ${WEBSERVER_COMPANY_B}
+EXPOSE ${WEBSERVER_COMPANY_C}
+EXPOSE ${WEBSERVER_COMPANY_D}
+EXPOSE ${WEBSERVER_COMPANY_D}
 
-EXPOSE ${RPC_NOTARY} ${RPC_COMPANY_A} ${RPC_COMPANY_B} ${RPC_COMPANY_C} ${RPC_COMPANY_D} ${RPC_COMPANY_E}
+EXPOSE ${RPC_NOTARY}
+EXPOSE ${RPC_COMPANY_A}
+EXPOSE ${RPC_COMPANY_B}
+EXPOSE ${RPC_COMPANY_C}
+EXPOSE ${RPC_COMPANY_D}
+EXPOSE ${RPC_COMPANY_E}
 
-EXPOSE ${NODE_DEBUG_COMPANY_A} ${NODE_DEBUG_COMPANY_B} ${NODE_DEBUG_COMPANY_C} ${NODE_DEBUG_COMPANY_D} ${NODE_DEBUG_COMPANY_E}
+EXPOSE ${NODE_DEBUG_COMPANY_A}
+EXPOSE ${NODE_DEBUG_COMPANY_B}
+EXPOSE ${NODE_DEBUG_COMPANY_C}
+EXPOSE ${NODE_DEBUG_COMPANY_D}
+EXPOSE ${NODE_DEBUG_COMPANY_E}
 
-EXPOSE ${NODE_JOLOKIA_COMPANY_A} ${NODE_JOLOKIA_COMPANY_B} ${NODE_JOLOKIA_COMPANY_C} ${NODE_JOLOKIA_COMPANY_D} ${NODE_JOLOKIA_COMPANY_E}
+EXPOSE ${NODE_JOLOKIA_COMPANY_A}
+EXPOSE ${NODE_JOLOKIA_COMPANY_B}
+EXPOSE ${NODE_JOLOKIA_COMPANY_C}
+EXPOSE ${NODE_JOLOKIA_COMPANY_D}
+EXPOSE ${NODE_JOLOKIA_COMPANY_E}
 
-EXPOSE ${NODE_H2_COMPANY_A} ${NODE_H2_COMPANY_B} ${NODE_H2_COMPANY_C} ${NODE_H2_COMPANY_D} ${NODE_H2_COMPANY_E}
+EXPOSE ${NODE_H2_COMPANY_A}
+EXPOSE ${NODE_H2_COMPANY_B}
+EXPOSE ${NODE_H2_COMPANY_C}
+EXPOSE ${NODE_H2_COMPANY_D}
+EXPOSE ${NODE_H2_COMPANY_E}
 
 WORKDIR /cordalo-template
 CMD ["/cordalo-template/scripts/entrypoint.sh"]

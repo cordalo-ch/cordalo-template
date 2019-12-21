@@ -7,6 +7,6 @@ nodes=( $NodeNames )
 for n in "${nodes[@]}"
 do
   echo "check State $n"
-  sshpass -p test ssh user1@localhost -p $i -oStrictHostKeyChecking=accept-new -oUserKnownHostsFile=/dev/null run vaultQuery contractStateType: ch.cordalo.template.states.ServiceState
+  sshpass -p test ssh user1@localhost -p $i -oStrictHostKeyChecking=accept-new -oUserKnownHostsFile=/dev/null run vaultQuery contractStateType: ch.amag.cardossier.e178.states.CarState
   (( i=i+3 ))
 done

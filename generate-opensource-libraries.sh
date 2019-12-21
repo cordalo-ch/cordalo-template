@@ -1,3 +1,0 @@
-./gradlew :contracts:dependencies | grep -v "|    +" | grep -v "|    |" | grep -v "|    " | grep -v "     +" | grep -v "     " | grep "\-\-\-" | grep -v "\-\-\-\-\-\-\-\-" | awk '{print $2}' | sort | uniq > ./documentation/opensource/1-contracts-libraries.txt
-./gradlew :workflows:dependencies | grep -v "|    +" | grep -v "|    |" | grep -v "|    " | grep -v "     +" | grep -v "     " | grep "\-\-\-" | grep -v "\-\-\-\-\-\-\-\-" | awk '{print $2}' | sort | uniq > ./documentation/opensource/2-workflows-libraries.txt
-./gradlew :clients:dependencies   | grep -v "|    +" | grep -v "|    |" | grep -v "|    " | grep -v "     +" | grep -v "     " | grep "\-\-\-" | grep -v "\-\-\-\-\-\-\-\-" | awk '{print $2}' | sort | uniq > ./documentation/opensource/3-clients-libraries.txt

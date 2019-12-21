@@ -5,5 +5,5 @@ BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 cd "$CORDA_HOME" || exit
 rm -rf ./build ./out
 git pull
-./gradlew clean deployNodes
+"$CORDA_HOME"/gradlew clean deployNodes
 cd ~

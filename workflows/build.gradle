@@ -50,6 +50,7 @@ configurations {
 
 dependencies {
     testCompile "junit:junit:$junit_version"
+    testCompile 'pl.pragmatists:JUnitParams:1.1.1'
 
     // Corda dependencies.
     cordaCompile "$corda_release_group:corda-core:$corda_release_version"

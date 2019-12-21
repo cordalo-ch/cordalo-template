@@ -31,7 +31,7 @@ wait_until_all_started() {
         wait_until_first_started
         nof=$retval
         x=0
-        while [ "$nof" -lt "$max_nof" ] && [ "$x" -lt 80 ]
+        while [ "$nof" -lt "$max_nof" ] && [ "$x" -lt $WAIT_TIME_TILL_ALL_WEBSERVER_STARTED ]
         do
                 get_webd
                 nof=$retval
@@ -49,6 +49,7 @@ if [ "$retval" -eq $max_nof ]; then
 	exit 0
 fi
 
+"$CORDA_HOME"/gradlew assemble
 n=1
 while [ $n -le $max_nof ]
 do

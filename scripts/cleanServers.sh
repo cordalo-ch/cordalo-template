@@ -8,7 +8,7 @@ cd "$BASE_DIR" || exit
 "$BASE_DIR"/stopServers.sh
 
 cd "$CORDA_HOME" || exit
-./gradlew assemble
+"$CORDA_HOME"/gradlew assemble
 cd "$BASE_DIR" || exit
 
 "$BASE_DIR"/startServers.sh
