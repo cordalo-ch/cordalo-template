@@ -65,6 +65,7 @@ public class ControllerMessagesTests extends CordaloControllerBaseTests {
     }
 
     @Test
+    @Ignore
     public void post_message() throws Exception {
         String uri = "/api/v1/cordalo/template/messages";
         MvcResult mvcResult = mvc.perform(
