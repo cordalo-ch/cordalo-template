@@ -18,7 +18,7 @@ public class ServicePermissions extends Permissions {
 
     @Override
     protected void initPermissions() {
-        this.addStateActionsForRole("insurance", STATEMACHINE_NAME,
+        this.addStateActionsForRole("admin", STATEMACHINE_NAME,
                 "CREATE",
                 "REGISTER",
                 "INFORM",
