@@ -1,0 +1,10 @@
+# Copyright (c) 2019 by disruptr.ch
+FROM ubuntu:latest
+
+# run with --build-arg GITHUB_LOGIN_PASSWD="joe:12345"
+ARG GITHUB_LOGIN_PASSWD=joe:12345
+
+# net-tools our script require netstat
+RUN apt-get update && \
+    apt-get -y upgrade && \
+    apt-get -y install bash curl unzip git net-tools openjdk-8-jdk-headless sshpass
