@@ -35,6 +35,7 @@ public class ServiceStateMachine extends StateMachine {
 
     @Override
     public void initStates() {
+        ServicePermissions.getInstance();
         newState("CREATED", StateMachine.StateType.INITIAL);
         newState("REGISTERED");
         newState("INFORMED");

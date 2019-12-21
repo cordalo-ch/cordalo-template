@@ -11,15 +11,28 @@
 package ch.cordalo.template.states;
 
 import ch.cordalo.corda.common.contracts.StateMachine.State;
+import ch.cordalo.template.CordaloTemplateBaseTests;
 import ch.cordalo.template.contracts.ServiceStateMachine;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ServiceStateMachineTests {
+import java.util.List;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+
+public class ServiceStateMachineTests extends CordaloTemplateBaseTests {
 
     @Before
     public void setup() {
+        this.setup(false);
+    }
+
+    @After
+    public void tearDown() {
+        super.tearDown();
     }
 
     @Test
@@ -78,5 +91,11 @@ public class ServiceStateMachineTests {
         Assert.assertEquals("shared is not earlier than not-shared", false, shared.hasEarlierState(notShared));
     }
 
+    @Test
+    public void withStateMachine_getNextActionsFor_expectPermitted() {
+        State created = ServiceStateMachine.State("CREATED");
+        List<String> nextActionsFor = created.getNextActionsFor(this.companyA.party);
+        assertThat(nextActionsFor, contains("SHARE"));
+    }
 
 }
